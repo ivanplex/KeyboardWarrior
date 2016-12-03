@@ -30,6 +30,28 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 # [END imports]
 
+class Excerpt(ndb.Model):
+    id = ndb.IntegerProperty()
+    passage = ndb.TextProperty()
+    created_at = ndb.DateTimeProperty(auto_now_add)
+    updated_at = ndb.DateTimeProperty(auto_now)
+    source = ndb.StringProperty()
+
+class RacerStats(ndb.Model):
+    id = ndb.IntegerProperty()
+    race_id = ndb.IntegerProperty()
+    user_id = ndb.IntegerProperty()
+    wpm = ndb.FloatProperty()
+    wpm_percentile = ndb.FloatProperty()
+    created_at = ndb.DateTimeProperty(auto_now_add)
+    updated_at = ndb.DateTimeProperty(auto_now)
+
+class Race(ndb.Model):
+    id = ndb.IntegerProperty()
+    excerpt_id = ndb.IntegerProperty()
+    created_at = ndb.DateTimeProperty(auto_now_add)
+    updated_at = ndb.DateTimeProperty(auto_now)
+
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
 
