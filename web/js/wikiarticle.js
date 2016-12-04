@@ -9,20 +9,22 @@ $(document).ready(function(){
         async: false,
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
-            console.log(data);
             var markup = data.parse.text["*"];
             var blurb = $('<div></div>').html(markup);
-
             // remove links as they will not work
             blurb.find('a').each(function() { $(this).replaceWith($(this).html()); });
-
            // remove any references
             blurb.find('sup').remove();
-
             // remove cite error
             blurb.find('.mw-ext-cite-error').remove();
+            var blurb = $(blurb).find('p');
+            var finalText = "";
 
-            $('#div1').html($(blurb).find('p'));
+            for  (i = 0; i < blurb.length; i++) {
+                finalText += blurb[i].innerHTML;
+            }
+            console.log(finalText);
+            return finalText;
         },
         error: function (errorMessage) {
         }
