@@ -37,7 +37,7 @@ class New(webapp2.RequestHandler):
     	quotes = [];
 
     	for i in range(1, 100):
-    		htmltree = lxml.html.parse('http://www.seanwrona.com/typeracer/text.php?id=' + i)
+    		htmltree = lxml.html.parse('http://www.seanwrona.com/typeracer/text.php?id=' + str(i))
 
     		p_tags = htmltree.xpath('//p')
     		p_content = [p.text_content() for p in p_tags]
