@@ -1,22 +1,8 @@
 // Asynchronous request to get the data
 $.getJSON("data/data.json", function(json) {
   //generate text and input
-  var myParagraph = document.createElement('p')
-  myParagraph.id = "myText" 
+  var myParagraph = document.getElementById("myText")
   myParagraph.innerHTML = json.text
-
-  var myInput = document.createElement('input')
-  myInput.type = "text"
-  myInput.id = "myInput"
-
-  var mainDiv = document.createElement('div')
-  mainDiv.className="mainDiv"
-  mainDiv.appendChild(myParagraph)
-  mainDiv.appendChild(myInput)
-
-  var myImage = document.getElementById("img")
-
-  $("#img").after(mainDiv)
 
   // get the value of the paragraph and split it
   var myText = document.getElementById("myText").innerHTML
