@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8" />
+    <title>test</title>
+    <link rel="stylesheet" type="text/css" href="css/test.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  </head>
+
+  <body>
+
+    <img id="img" src="img/warrior2.png" height="100px" width="70px" style="position:absolute;"/>
+
+    <script src="js/slide.js"></script>
+    <script>
+
+        /**
+         * Image Slider
+         * para1: Player's challenge
+         * para2: Canvas Maximum width
+         */
+        var slider = new Slider("One Two Three", $(window).width()-70);
+
+        //Call function 
+        $( document ).keypress(null, slider.shift);
+
+    </script>
+    <script type="text/javascript" src="js/test.js"></script>
+  </body>
+
+</html>

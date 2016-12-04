@@ -4,8 +4,8 @@
  * para2: Canvas Maximum width
  */
 function Slider(string, max_width){
-
   this.shift = function(){
+    alert("hello");
     if(($('#img').position().left -70)< max_width-max_width/string.split(' ').length){
 
         $('#img').animate({left:'+='+(max_width/string.split(' ').length/4)}, 75, function(){
