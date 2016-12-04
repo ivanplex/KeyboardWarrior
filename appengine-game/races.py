@@ -18,6 +18,7 @@
 import os
 import urllib2
 
+from google.appengine.api import urlfetch
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
@@ -37,14 +38,13 @@ class New(webapp2.RequestHandler):
     	quotes = [];
 
     	for i in range(1, 100):
-    		htmltree = lxml.html.parse('http://www.seanwrona.com/typeracer/text.php?id=' + str(i))
+    		result = urlfetch.fetch('http://www.seanwrona.com/typeracer/text.php?id=' + str(i))
+    		htmltree = lxml.html.fromstring(result.content)
 
     		p_tags = htmltree.xpath('//p')
     		p_content = [p.text_content() for p in p_tags]
 
     		quotes.append(p_content)
-
-		print(quotes)
 
         self.response.write(p_content[0])
 # [END new]
