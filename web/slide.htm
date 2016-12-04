@@ -1,0 +1,29 @@
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="js/slide.js"></script>
+    <style>
+        body{
+            margin: 0;
+        }
+    </style>
+
+    <script>
+
+        /**
+         * Image Slider
+         * para1: Player's challenge
+         * para2: Canvas Maximum width
+         */
+        var slider = new Slider("One Two Three", $(window).width()-$('#img').width());
+
+        //Call function 
+        $( document ).keypress(null, slider.shift);
+
+    </script>
+</head>
+
+<body>
+    <img id="img" src="img/warrior2.png" height="100px" width="70px" style="position:absolute;"/>
+</body>
+
+
