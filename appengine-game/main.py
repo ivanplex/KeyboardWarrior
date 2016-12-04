@@ -21,6 +21,8 @@ import urllib
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
+from races import *
+
 import jinja2
 import webapp2
 
@@ -33,8 +35,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 class Excerpt(ndb.Model):
     id = ndb.IntegerProperty()
     passage = ndb.TextProperty()
-    created_at = ndb.DateTimeProperty(auto_now_add)
-    updated_at = ndb.DateTimeProperty(auto_now)
+    created_at = ndb.DateTimeProperty(auto_now_add=True)
+    updated_at = ndb.DateTimeProperty(auto_now=True)
     source = ndb.StringProperty()
 
 class RacerStats(ndb.Model):
@@ -43,20 +45,38 @@ class RacerStats(ndb.Model):
     user_id = ndb.IntegerProperty()
     wpm = ndb.FloatProperty()
     wpm_percentile = ndb.FloatProperty()
-    created_at = ndb.DateTimeProperty(auto_now_add)
-    updated_at = ndb.DateTimeProperty(auto_now)
+    created_at = ndb.DateTimeProperty(auto_now_add=True)
+    updated_at = ndb.DateTimeProperty(auto_now=True)
 
 class Race(ndb.Model):
     id = ndb.IntegerProperty()
     excerpt_id = ndb.IntegerProperty()
-    created_at = ndb.DateTimeProperty(auto_now_add)
-    updated_at = ndb.DateTimeProperty(auto_now)
+    created_at = ndb.DateTimeProperty(auto_now_add=True)
+    updated_at = ndb.DateTimeProperty(auto_now=True)
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
 
     def post(self):
         self.response.write('LOL')
+
+    def get(self):
+        user = users.get_current_user()
+        if user:
+            nickname = user.nickname()
+            logout_url = users.create_logout_url('/')
+            greeting = 'Welcome, {}! (<a href="{}">sign out</a>)'.format(
+                nickname, logout_url)
+        else:
+            login_url = users.create_login_url('/')
+            greeting = '<a href="{}">Sign in</a>'.format(login_url)
+
+        self.response.write(
+            '<html><body>{}</body></html>'.format(greeting))
+# [END main_page]
+
+# [START play]
+class Play(webapp2.RequestHandler):
 
     def get(self):
         user = users.get_current_user()
@@ -71,10 +91,11 @@ class MainPage(webapp2.RequestHandler):
 
         self.response.write(
             '<html><body>{}</body></html>'.format(greeting))
-# [END main_page]
+# [END play]
 
 # [START app]
 app = webapp2.WSGIApplication([
     ('/', MainPage),
+    ('/races/new', 'races.New'),
 ], debug=True)
 # [END app]
