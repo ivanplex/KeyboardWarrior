@@ -20,10 +20,10 @@ $(document).ready(function(){
             var blurb = $(blurb).find('p');
             var finalText = "";
 
+            // Join together paragraphs
             for  (i = 0; i < blurb.length; i++) {
                 finalText += blurb[i].innerHTML;
             }
-            console.log(finalText);
             return finalText;
         },
         error: function (errorMessage) {
