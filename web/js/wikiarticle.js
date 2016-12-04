@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    $("button").click(function() {
     // var wikipage = encodeURIComponent($('#wikitextbox').val());
     // console.log(wikipage);
     $.ajax({
@@ -28,5 +27,4 @@ $(document).ready(function(){
         error: function (errorMessage) {
         }
     });
-});
 });
