@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="js/slide.js"></script>
+         <script type="text/javascript" src="js/wikiarticle.js"></script>
+        <style>
+            body{
+                margin: 0;
+            }
+        </style>
+        <script>
+
+            /**
+             * Image Slider
+             * para1: Player's challenge
+             * para2: Canvas Maximum width
+             */
+            var slider = new Slider("One Two Three", $(window).width()-70);
+
+            //Call function 
+            $( document ).ready(null, slider.shift);
+
+        </script>
+
+        <script type="text/javascript" src="js/test.js"></script>
+
+    </head>
+
+    <body>
+        
+        <img id="img" src="img/warrior2.png" height="100px" width="70px" style="position:absolute;"/>
+
+        
+
+        <div id="div1"></div>
+    </body>
+</html>
+
