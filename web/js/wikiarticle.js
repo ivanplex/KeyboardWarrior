@@ -1,10 +1,7 @@
 $(document).ready(function(){
-    // var wikipage = encodeURIComponent($('#wikitextbox').val());
-    // console.log(wikipage);
     $.ajax({
         type: "GET",
         url: "http://en.wikipedia.org/w/api.php?action=parse&format=json&prop=text&section=0&page=Stack_Overflow&callback=?",
-        // url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&page=Stack%20Overflow"
         contentType: "application/json; charset=utf-8",
         async: false,
         dataType: "json",

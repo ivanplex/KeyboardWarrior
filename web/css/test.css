@@ -1,5 +1,9 @@
 body {
   margin: 0;
+  background-color: black;
+  color: white;
+  display: block;
+  font-family: 'Raleway', sans-serif;
 }
 
 span {
@@ -7,8 +11,40 @@ span {
   text-decoration: underline;
 }
 
-.mainDiv {
+/*.mainDiv {
   position: absolute;
   margin-top: 100px;
   margin-left: 10px
+}*/
+
+.whiteText {
+  color: white;
+}
+
+.center {
+  left: 40%;
+  position: relative;
+  margin: 0 auto;
+}
+
+@keyframes animatedBackground {
+  from { background-position: 0 0; }
+  to { background-position: 100% 0; }
+}
+
+#animate-area	{
+  width: 800px;
+	height: 600px;
+	background-image: url(../img/backgroundtree.jpg);
+	background-position: 0px 0px;
+	background-repeat: repeat-x;
+
+	animation: animatedBackground 30s linear infinite;
+}
+
+#WarriorImage {
+  height: 100px;
+  width: 70px;
+  position:absolute;
+  top:65%;
 }

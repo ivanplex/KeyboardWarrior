@@ -1,41 +1,69 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
     <meta charset="utf-8" />
     <title>test</title>
     <link rel="stylesheet" type="text/css" href="css/test.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/wikiarticle.js"></script>
     <script src="js/slide.js"></script>
-  </head>
+</head>
 
-  <body>
 
-    <img id="img" src="img/warrior2.png" height="100px" width="70px" style="position:absolute;"/>
 
-    <div class="mainDiv">
-      <p id="myText"></p>
-      <input type="text" id="myInput">
+
+<body>
+    <!-- Splash screen-->
+    <div id="SplashScreen" class="center">
+        <img src="img/logo.jpg" height="400px" width="400px" />
+        <div>
+            <input id="PlayerName" type="text" placeholder="Username" />
+            <input id="StartButton" type="button" value="Start Game" />
+        </div>
     </div>
 
-    <script>
+    <!-- Game canvas -->
+    <div id="GameCanvas" width="800" height="600" style="display: none;" class="center">
+        <div id="animate-area">
+            <img id="WarriorImage" src="img/warrior2.png" />
+        </div>
+        <!-- Warrior image -->
 
-        /**
-         * Image Slider
-         * para1: Player's challenge
-         * para2: Canvas Maximum width
-         */
-        var slider = new Slider("One Two Three", $(window).width()-70);
 
-        //Call function
-        $( document ).keypress(null, slider.shift);
+        <div class="mainDiv">
+            <p id="myText"></p>
+            <input type="text" id="myInput">
+        </div>
 
-    </script>
+        <!-- Sliding Code -->
+        <script>
+            /**
+             * Image Slider
+             * para1: Player's challenge
+             * para2: Canvas Maximum width
+             */
+            var slider = new Slider("One Two Three", $(window).width() - 70);
 
-    <script type="text/javascript" src="js/test.js"></script>
+            //Call function
+            $(document).keypress(null, slider.shift);
+        </script>
 
-    <div id="div1"></div>
-  </body>
+        <script type="text/javascript" src="js/test.js"></script>
+
+        <div id="div1">
+
+        </div>
+
+        <script>
+            $("#StartButton").click(function() {
+                $("#SplashScreen").hide();
+                $("#GameCanvas").show();
+            });
+        </script>
+    </div>
+
+
+</body>
 
 </html>
