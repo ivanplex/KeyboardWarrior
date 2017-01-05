@@ -20,6 +20,7 @@ import sys
 import urllib
 import json
 import random
+import time
 
 from google.appengine.api import urlfetch
 from google.appengine.api import users
@@ -84,6 +85,10 @@ class Play(webapp2.RequestHandler):
             self.redirect('/')
             return
 
+        # player id and current time
+        current_time = int(time.time())
+        player_id = user.user_id()
+
         # initialise variables if they do not exist and persist in registry
         app = webapp2.get_app()
 
@@ -142,26 +147,28 @@ class Play(webapp2.RequestHandler):
                     room = rooms.get(current_room)
 
                     # room doesn't exist, we create new
-                    if not room:
+                    if room is None:
                         room = {}
                         room['players'] = []
                         room['start_time'] = -1
                         room['text'] = "Lorem Ipsum Shreya Agarawal"
 
-                        rooms[current_room] = room;
+                        rooms[current_room] = room
+                    
+                    # check if room is full or start time has passed current time (fix/optimise)
+                    if len(room['players']) == 5 or (room['start_time'] < current_time and room['start_time'] != -1):
+                        # generate a random room ID, we have to check if this exists in memory or not
+                        current_room = random.randrange(sys.maxint)
+
+                        # set the room to None
+                        room = None
                     else:
-                        # check if room is full
-                        if len(room['players']) == 5:
-                            # generate a random room ID, we have to check if this exists in memory or not
-                            current_room = random.randrange(sys.maxint)
+                        # add the player to the current room
+                        room['players'].append(player_id)
 
-                            # set the room to None
-                            room = None
-                        else:
-                            # add the player to the current room
-                            room['players'].append(user.user_id())
-
-                            if (len(room['players'])) >= 3
+                        # tell update the start_time to 15 seconds from now
+                        if (len(room['players'])) >= 3:
+                            room['start_time'] = current_time + 15
 
 
             else:
@@ -175,8 +182,9 @@ class Play(webapp2.RequestHandler):
 
         # build the response json
         res = {}
-        res['player_id'] = user.user_id()
+        res['player_id'] = player_id
         res['room_id'] = current_room
+        res['room'] = room
 
         self.response.write(json.dumps(res))
 
