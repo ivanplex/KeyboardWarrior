@@ -1,5 +1,15 @@
 from google.appengine.ext import ndb
 
+class Player(ndb.Model):
+    user_id = ndb.StringProperty()
+    nickname = ndb.StringProperty()
+    wpm = ndb.IntegerProperty()
+    games_played = ndb.IntegerProperty()
+
+    @classmethod
+    def get_by_user(cls, user):
+        return cls.query().filter(cls.user_id == user.user_id()).get()
+
 class Excerpt(ndb.Model):
     id = ndb.IntegerProperty()
     passage = ndb.TextProperty()
@@ -8,7 +18,6 @@ class Excerpt(ndb.Model):
     source = ndb.StringProperty()
 
 class RacerStats(ndb.Model):
-    id = ndb.IntegerProperty()
     race_id = ndb.IntegerProperty()
     user_id = ndb.StringProperty()
     wpm = ndb.FloatProperty()
@@ -17,7 +26,6 @@ class RacerStats(ndb.Model):
     updated_at = ndb.DateTimeProperty(auto_now=True)
 
 class Race(ndb.Model):
-    id = ndb.IntegerProperty()
     excerpt_id = ndb.IntegerProperty()
-    created_at = ndb.DateTimeProperty(auto_now_add=True)
-    updated_at = ndb.DateTimeProperty(auto_now=True)
+    start_time = ndb.IntegerProperty()
+    players = ndb.IntegerProperty(repeated=True)
