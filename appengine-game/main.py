@@ -20,6 +20,7 @@ import sys
 import urllib
 import json
 import random
+import time
 
 from google.appengine.api import urlfetch
 from google.appengine.api import users
@@ -107,12 +108,14 @@ class Play(webapp2.RequestHandler):
         # check if user is authenticated
         user = users.get_current_user()
 
-        """
         # redirect user to login if not authenticated
         if user is None:
             self.redirect('/')
             return
-        """
+
+        # player id and current time
+        current_time = int(time.time())
+        player_id = user.user_id()
 
         # initialise variables if they do not exist and persist in registry
         app = webapp2.get_app()
@@ -120,13 +123,22 @@ class Play(webapp2.RequestHandler):
         current_room = app.registry.get('current_room')
         player_room = app.registry.get('player_room')
 
+        rooms = app.registry.get('rooms')
+
+        # what is the current room we are filling up
         if not current_room:
-            current_room = -1
+            current_room = random.randrange(sys.maxint)
             app.registry['current_room'] = current_room
 
+        # create an association between player and room
         if not player_room:
-            player_room = dict()
+            player_room = {}
             app.registry['player_room'] = player_room
+
+        # rooms existing in memory
+        if not rooms:
+            rooms = {}
+            app.registry['rooms'] = rooms
 
         # performs input santitation on content type -- we only accept JSON
         if self.request.headers.get('content_type') != 'application/json':
@@ -135,7 +147,6 @@ class Play(webapp2.RequestHandler):
 
         # initialise empty object
         obj = None
-        res = {}
 
         try:
             obj = json.loads(self.request.body)
@@ -144,7 +155,7 @@ class Play(webapp2.RequestHandler):
             return
 
         # if we are here, the JSON is valid and we can proceed with checks
-        if 'room_id' not in obj or 'player_id' not in obj or 'timestamp' not in obj:
+        if 'room_id' not in obj or 'timestamp' not in obj:
             self.response.set_status(400, 'Invalid Request Parameters')
             return
 
@@ -152,23 +163,58 @@ class Play(webapp2.RequestHandler):
         room_id = obj.get('room_id')
 
         if isinstance(room_id, int):
-            # allocate a room
+
+            # user isn't in a room, allocate user to a room
+            # user quit previous game allocate to new room
             if room_id == -1:
-                self.response.write('not in game')
 
-                # there is no current room, let's generate a random room_id
-                if app.registry['current_room'] == -1:
-                    app.registry['current_room'] = random.randrange(sys.maxint)
+                room = None
 
-                    print('no room exists, creating random room with id ' + str(app.registry['current_room']));
+                while room == None:
+                    # test the current room for whether it is full or not
+                    room = rooms.get(current_room)
+
+                    # room doesn't exist, we create new
+                    if room is None:
+                        room = {}
+                        room['players'] = []
+                        room['start_time'] = -1
+                        room['text'] = "Lorem Ipsum Shreya Agarawal"
+
+                        rooms[current_room] = room
+                    
+                    # check if room is full or start time has passed current time (fix/optimise)
+                    if len(room['players']) == 5 or (room['start_time'] < current_time and room['start_time'] != -1):
+                        # generate a random room ID, we have to check if this exists in memory or not
+                        current_room = random.randrange(sys.maxint)
+
+                        # set the room to None
+                        room = None
+                    else:
+                        # add the player to the current room
+                        room['players'].append(player_id)
+
+                        # tell update the start_time to 15 seconds from now
+                        if (len(room['players'])) >= 3:
+                            room['start_time'] = current_time + 15
+
 
             else:
                 self.response.write('check if room is valid')
                 # check that the user is in the room and that the room is not full
 
-#        racerstat = RacerStats()
+        else:
+            self.response.set_status(400, 'Room_ID Must Be A Number')
+            return
 
-    self.response.write(json.dumps(res))
+
+        # build the response json
+        res = {}
+        res['player_id'] = player_id
+        res['room_id'] = current_room
+        res['room'] = room
+
+        self.response.write(json.dumps(res))
 
 
     def get(self):
