@@ -187,8 +187,10 @@ class Play(webapp2.RequestHandler):
             else:
                 room = rooms.get(room_id)
 
+                # the room is gone, game is over?
                 if room is None:
-                    
+                    pass
+
                 self.response.write('check if room is valid')
                 # check that the user is in the room and that the room is not full
 
