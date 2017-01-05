@@ -16,8 +16,10 @@
 
 # [START imports]
 import os
+import sys
 import urllib
 import json
+import random
 
 from google.appengine.api import urlfetch
 from google.appengine.api import users
@@ -74,23 +76,72 @@ class Play(webapp2.RequestHandler):
 
     # game logic handled by POSTs
     def post(self):
+        # check if user is authenticated
+        user = users.get_current_user()
+
+        """
+        # redirect user to login if not authenticated
+        if user is None:
+            self.redirect('/')
+            return
+        """
+
+        # initialise variables if they do not exist and persist in registry
+        app = webapp2.get_app()
+
+        current_room = app.registry.get('current_room')
+        player_room = app.registry.get('player_room')
+
+        if not current_room:
+            current_room = -1
+            app.registry['current_room'] = current_room
+
+        if not player_room:
+            player_room = dict()
+            app.registry['player_room'] = player_room
+
         # performs input santitation on content type -- we only accept JSON
         if self.request.headers.get('content_type') != 'application/json':
-            self.response.set_status(400)
+            self.response.set_status(400, 'Unrecognised Media Type')
             return
 
         # initialise empty object
         obj = None
+        res = {}
 
         try:
             obj = json.loads(self.request.body)
         except ValueError, e:
-            self.response.set_status(400)
+            self.response.set_status(400, 'Invalid JSON')
             return
 
-        print('we are here')
+        # if we are here, the JSON is valid and we can proceed with checks
+        if 'room_id' not in obj or 'player_id' not in obj or 'timestamp' not in obj:
+            self.response.set_status(400, 'Invalid Request Parameters')
+            return
 
-        self.response.write(json.dumps(obj))
+        # if the room_id is properly typed...
+        room_id = obj.get('room_id')
+
+        if isinstance(room_id, int):
+            # allocate a room
+            if room_id == -1:
+                self.response.write('not in game')
+
+                # there is no current room, let's generate a random room_id
+                if app.registry['current_room'] == -1:
+                    app.registry['current_room'] = random.randrange(sys.maxint)
+
+                    print('no room exists, creating random room with id ' + str(app.registry['current_room']));
+
+            else:
+                self.response.write('check if room is valid')
+                # check that the user is in the room and that the room is not full
+
+#        racerstat = RacerStats()
+
+    self.response.write(json.dumps(res))
+
 
     def get(self):
         user = users.get_current_user()
@@ -113,6 +164,5 @@ app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/play', Play),
     ('/generate', Generate),
-    ('/races/new', 'races.New'),
 ], debug=True)
 # [END app]
