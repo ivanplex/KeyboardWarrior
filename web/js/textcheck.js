@@ -1,14 +1,17 @@
 // Asynchronous request to get the data
-$.getJSON("data/data.json", function(json) {
+// $.getJSON("data/data.json", function(json) {
+function textCheck(receivedText) {
   //generate text and input
   var myParagraph = document.getElementById("myText")
-  myParagraph.innerHTML = json.text
+
+  // myParagraph.innerHTML = json.text
+  myParagraph.innerHTML = receivedText;
 
   // get the value of the paragraph and split it
   var myText = document.getElementById("myText").innerHTML
   var myArray = myText.split(" ")
 
-  // input 
+  // input
   var myInput = document.getElementById("myInput")
 
   var re1 = new RegExp(myArray[0],"g")
@@ -49,6 +52,5 @@ $.getJSON("data/data.json", function(json) {
       }
     }
   }
-})
-
-
+}
+// })

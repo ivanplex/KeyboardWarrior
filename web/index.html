@@ -3,19 +3,17 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>test</title>
+    <title>Keyboard Warrior</title>
     <link rel="stylesheet" type="text/css" href="css/test.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="js/wikiarticle.js"></script>
-    <script src="js/slide.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/slide.js"></script>
+    <script type="text/javascript" src="js/connection.js"></script>
 </head>
-
-
-
 
 <body>
     <!-- Splash screen-->
     <div id="SplashScreen" class="center">
+
         <img src="img/logo.jpg" height="400px" width="400px" />
         <div>
             <input id="PlayerName" type="text" placeholder="Username" />
@@ -28,9 +26,8 @@
         <div id="animate-area">
             <img id="WarriorImage" src="img/warrior2.png" />
         </div>
+
         <!-- Warrior image -->
-
-
         <div class="mainDiv">
             <p id="myText"></p>
             <input type="text" id="myInput">
@@ -49,20 +46,38 @@
             $(document).keypress(null, slider.shift);
         </script>
 
-        <script type="text/javascript" src="js/test.js"></script>
-
-        <div id="div1">
-
-        </div>
+        <!-- Benoit text checking  -->
+        <script type="text/javascript" src="js/textcheck.js"></script>
 
         <script>
+            // Click start button
             $("#StartButton").click(function() {
+                // Temporary JSON to reflect incoming JSON
+                var json = '{"player_id": 1,"start_time": "1483654609","room": [{"id": 1,"text": "Good morning, how are you?"}],"players": [{"player_id": 2,"words_done" : 30}, {"player_id" : 3,"words_done" : 40}]}';
+
+                jsonObject = $.parseJSON(json);
+                console.log(jsonObject.room[0].text);
+
+                // init connection to server, and receive json reply which contains room id and start time
+                try {
+                    var jsonReply = JSON.parse(initConn());
+                } catch (err) {
+                    document.getElementById("SplashScreen").innerHTML = err.message;
+                }
+
+                // Message received go towards benoit text checking
+                textCheck(jsonObject.room[0].text);
+                // TODO: need to find a way to send words done
+
+                // Send (words done) with time in unix timestamp to server with reply from server
+                sendInfo();
+
                 $("#SplashScreen").hide();
                 $("#GameCanvas").show();
             });
         </script>
-    </div>
 
+    </div>
 
 </body>
 
