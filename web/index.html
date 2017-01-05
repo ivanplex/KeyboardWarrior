@@ -2,82 +2,144 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <title>Keyboard Warrior</title>
-    <link rel="stylesheet" type="text/css" href="css/test.css">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="js/slide.js"></script>
-    <script type="text/javascript" src="js/connection.js"></script>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+	<title>Keyboard Warrior</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/test.css">
+
+
+	<script type="text/javascript" src="js/wikiarticle.js"></script>
+	<script src="js/slide.js"></script>
+	<script type="text/javascript" src="js/connection.js"></script>
+
+
+	<script src="js/battle.js"></script>
 </head>
 
 <body>
-    <!-- Splash screen-->
-    <div id="SplashScreen" class="center">
+	<!-- Splash screen-->
 
+	<div id="SplashScreen" class="container" style="max-width: 330px">
+
+		<form class="form-signin">
+			<img src="img/logo.jpg" height="330px" width="330px" />
+			<h2 class="form-signin-heading">Please sign in</h2>
+			<label for="PlayerName" class="sr-only">Username</label>
+			<input type="email" id="PlayerName" class="form-control" placeholder="Username" required="" autofocus="">
+			<br>
+			<button id="StartButton" class="btn btn-lg btn-primary btn-block" type="submit">Start Game</button>
+		</form>
+
+	</div>
+
+	<!--<div id="SplashScreen" class="center">
         <img src="img/logo.jpg" height="400px" width="400px" />
         <div>
             <input id="PlayerName" type="text" placeholder="Username" />
             <input id="StartButton" type="button" value="Start Game" />
         </div>
-    </div>
+    </div>-->
 
-    <!-- Game canvas -->
-    <div id="GameCanvas" width="800" height="600" style="display: none;" class="center">
-        <div id="animate-area">
-            <img id="WarriorImage" src="img/warrior2.png" />
-        </div>
+	<!-- Game canvas -->
+	<div id="SplashScreen" class="container" role="main">
+		<div class="row">
+			<div class="col-sm-12">
+				<div id="GameCanvas" style="display: none; max-width: 1100px; max-height: 624px;">
+					<div id="animate-area" width="100%" style="position: relative;">
 
-        <!-- Warrior image -->
-        <div class="mainDiv">
-            <p id="myText"></p>
-            <input type="text" id="myInput">
-        </div>
+						<div class="half-canvas">
 
-        <!-- Sliding Code -->
-        <script>
-            /**
-             * Image Slider
-             * para1: Player's challenge
-             * para2: Canvas Maximum width
-             */
-            var slider = new Slider("One Two Three", $(window).width() - 70);
+							<div id="shade-area" class="col-sm-10 col-md-offset-1">
+								<div id="countdown-panel">
+									<p>Battle begins in</p>
+									<div id="number-countdown"></div>
+								</div>
+								<p id="paragraph-input"></p>
+							</div>
+							<div id="fight-sign"><img src="img/fight.png" style="width: 100%;" /></div>
 
-            //Call function
-            $(document).keypress(null, slider.shift);
-        </script>
 
-        <!-- Benoit text checking  -->
-        <script type="text/javascript" src="js/textcheck.js"></script>
 
-        <script>
-            // Click start button
-            $("#StartButton").click(function() {
-                // Temporary JSON to reflect incoming JSON
-                var json = '{"player_id": 1,"start_time": "1483654609","room": [{"id": 1,"text": "Good morning, how are you?"}],"players": [{"player_id": 2,"words_done" : 30}, {"player_id" : 3,"words_done" : 40}]}';
+							<div id="user-input-block" class="col-sm-6 col-md-offset-3">
+								<div class="form-group">
+									<label for="user-input">Start typing:</label>
+									<input type="text" class="form-control" id="user-input" />
+								</div>
+							</div>
 
-                jsonObject = $.parseJSON(json);
-                console.log(jsonObject.room[0].text);
 
-                // init connection to server, and receive json reply which contains room id and start time
-                try {
-                    var jsonReply = JSON.parse(initConn());
-                } catch (err) {
-                    document.getElementById("SplashScreen").innerHTML = err.message;
-                }
+						</div>
 
-                // Message received go towards benoit text checking
-                textCheck(jsonObject.room[0].text);
-                // TODO: need to find a way to send words done
+						<div id="fighting-ground" class="half-canvas">
+							<img id="WarriorImage" src="img/warrior2.png" />
+						</div>
+					</div>
 
-                // Send (words done) with time in unix timestamp to server with reply from server
-                sendInfo();
+					<!-- Warrior image -->
 
-                $("#SplashScreen").hide();
-                $("#GameCanvas").show();
-            });
-        </script>
 
-    </div>
+					<!-- Sliding Code -->
+					<script>
+							/**
+							 * Image Slider
+							 * para1: Player's challenge
+							 * para2: Canvas Maximum width
+							 */
+
+							var slider = new Slider("a a a a a a a a", 800);
+							//Call function
+							$(document).keypress(null, slider.shift);
+					</script>
+
+					<!-- Benoit text checking  -->
+					<script type="text/javascript" src="js/textcheck.js"></script>
+
+					<script>
+						// Click start button
+						$("#StartButton").click(function() {
+							// Temporary JSON to reflect incoming JSON
+							var json = '{"player_id": 1,"start_time": "1483654609","room": [{"id": 1,"text": "Good morning, how are you?"}],"players": [{"player_id": 2,"words_done" : 30}, {"player_id" : 3,"words_done" : 40}]}';
+
+							jsonObject = $.parseJSON(json);
+							console.log(jsonObject.room[0].text);
+
+							// init connection to server, and receive json reply which contains room id and start time
+							try {
+								var jsonReply = JSON.parse(initConn());
+							} catch (err) {
+								document.getElementById("SplashScreen").innerHTML = err.message;
+							}
+
+							// Message received go towards benoit text checking
+							textCheck(jsonObject.room[0].text);
+							// TODO: need to find a way to send words done
+
+							// Send (words done) with time in unix timestamp to server with reply from server
+							sendInfo();
+
+							$("#SplashScreen").hide();
+							$("#GameCanvas").show();
+							beginCountdown();
+						});
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
 
 </body>
 

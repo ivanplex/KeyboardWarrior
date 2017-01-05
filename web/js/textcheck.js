@@ -2,17 +2,17 @@
 // $.getJSON("data/data.json", function(json) {
 function textCheck(receivedText) {
   //generate text and input
-  var myParagraph = document.getElementById("myText")
-
+  var myParagraph = document.getElementById("paragraph-input")
   // myParagraph.innerHTML = json.text
   myParagraph.innerHTML = receivedText;
 
   // get the value of the paragraph and split it
-  var myText = document.getElementById("myText").innerHTML
+  var myText = document.getElementById("paragraph-input").innerHTML
   var myArray = myText.split(" ")
 
   // input
-  var myInput = document.getElementById("myInput")
+  var myInput = document.getElementById("user-input")
+
 
   var re1 = new RegExp(myArray[0],"g")
 
@@ -32,7 +32,7 @@ function textCheck(receivedText) {
       if (myWord == myArray[count]) {
         myInput.style.backgroundColor = "white";
         // change color of words
-        var myText2 = document.getElementById("myText")
+        var myText2 = document.getElementById("paragraph-input")
         myText2.innerHTML = myText2.innerHTML.replace(/<\/?span[^>]*>/g,"")
         var re3 = new RegExp(myArray[count+1],"g")
         $("p:contains(" + myArray[count+1] + ")").html(function(_, html) {
