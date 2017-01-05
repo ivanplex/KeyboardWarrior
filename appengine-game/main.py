@@ -20,6 +20,7 @@ import urllib
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
+from django.utils import simplejson as json
 
 from races import *
 
@@ -73,6 +74,7 @@ class MainPage(webapp2.RequestHandler):
 
         self.response.write(
             '<html><body>{}</body></html>'.format(greeting))
+
 # [END main_page]
 
 # [START play]
@@ -91,6 +93,19 @@ class Play(webapp2.RequestHandler):
 
         self.response.write(
             '<html><body>{}</body></html>'.format(greeting))
+
+    def save(self):
+        raceStats.put()
+    def getRoomKey(self):
+        race_key = race.put()
+    def postRoom(self):
+        var options = {
+        "race_id" : race_key,
+        "startTime" : race.created_at,
+        "text" : race.text
+        
+        }
+
 # [END play]
 
 # [START app]
