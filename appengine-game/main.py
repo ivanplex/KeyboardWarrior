@@ -95,6 +95,7 @@ class Play(webapp2.RequestHandler):
         current_room = app.registry.get('current_room')
         player_room = app.registry.get('player_room')
 
+        players = app.registry.get('players')
         rooms = app.registry.get('rooms')
 
         # what is the current room we are filling up
@@ -111,6 +112,11 @@ class Play(webapp2.RequestHandler):
         if not rooms:
             rooms = {}
             app.registry['rooms'] = rooms
+
+        # players existing in memory
+        if not players:
+            players = {}
+            app.registry['players'] = players
 
         # performs input santitation on content type -- we only accept JSON
         if self.request.headers.get('content_type') != 'application/json':
@@ -140,6 +146,11 @@ class Play(webapp2.RequestHandler):
             # user quit previous game allocate to new room
             if room_id == -1:
 
+                # if the player is already allocated to a room
+                if player_id in player_room:
+                    self.response.set_status(403, 'Player Already In Room')
+                    return
+
                 room = None
 
                 while room == None:
@@ -155,7 +166,7 @@ class Play(webapp2.RequestHandler):
 
                         rooms[current_room] = room
                     
-                    # check if room is full or start time has passed current time (fix/optimise)
+                    # check if room is full or start time has passed current time (TODO: fix/optimise)
                     if len(room['players']) == 5 or (room['start_time'] < current_time and room['start_time'] != -1):
                         # generate a random room ID, we have to check if this exists in memory or not
                         current_room = random.randrange(sys.maxint)
@@ -165,17 +176,24 @@ class Play(webapp2.RequestHandler):
                     else:
                         # add the player to the current room
                         room['players'].append(player_id)
+                        player_room[player_id] = room_id
 
                         # tell update the start_time to 15 seconds from now
                         if (len(room['players'])) >= 3:
                             room['start_time'] = current_time + 15
 
 
+            # user is in a game, we do game stuff
             else:
+                room = rooms.get(room_id)
+
+                if room is None:
+                    
                 self.response.write('check if room is valid')
                 # check that the user is in the room and that the room is not full
 
         else:
+
             self.response.set_status(400, 'Room_ID Must Be A Number')
             return
 
