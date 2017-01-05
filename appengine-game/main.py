@@ -71,6 +71,34 @@ class MainPage(webapp2.RequestHandler):
             '<html><body>{}</body></html>'.format(greeting))
 # [END main_page]
 
+# [START change_player_name]
+class Player(webapp2.RequestHandler):
+    def post(self):
+        user = users.get_current_user()
+
+        if !user:
+            self.redirect('/')
+            return
+
+        p = models.Player.get_by_user(models.Player, user)
+
+        if !u:
+            p = models.Player(nickname=user.nickname(), id=user.user_id())
+
+        new_nickname = self.request.get("new_nickname", default_value="null")
+
+        if new_nickname == "null" || len(new_nickname) <= 50:
+            self.response.set_status(400, 'Unrecognised Media Type')
+            self.response.out.write('{"status":"error"}')
+            return
+
+        p.nickname = new_nickname
+        p.put()
+
+        self.response.out.write('{"status":"success"}')
+
+# [END main_page]
+
 # [START play]
 class Play(webapp2.RequestHandler):
 
@@ -161,8 +189,9 @@ class Play(webapp2.RequestHandler):
 
 # [START app]
 app = webapp2.WSGIApplication([
-    ('/', MainPage),
+    ('/', MaisssnPage),
     ('/play', Play),
     ('/generate', Generate),
+    ('/player', Player),
 ], debug=True)
 # [END app]
