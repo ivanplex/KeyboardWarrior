@@ -25,6 +25,7 @@ import time
 from google.appengine.api import urlfetch
 from google.appengine.api import users
 from google.appengine.ext import ndb
+#from django.utils import simplejson as json
 
 import races
 import models
@@ -43,7 +44,7 @@ class Generate(webapp2.RequestHandler):
 
     def get(self):
 
-        for i in range(1, 100):
+        for i in range(30, 130):
             result = urlfetch.fetch('http://www.seanwrona.com/typeracer/text.php?id=' + str(i))
             htmltree = lxml.html.fromstring(result.content)
 
@@ -53,7 +54,35 @@ class Generate(webapp2.RequestHandler):
             quote = p_content[0]
             source = p_content[1]
 
-            print(str(i) + ' "' + quote + '" "' + source + '"');
+            print(str(i) + ' "' + quote + '" "' + source + '"')
+            print(i);
+
+            tempEx = models.Excerpt(passage = quote, source = source)
+            tempEx.key = ndb.Key(models.Excerpt, i-30);
+            tempEx.put()
+
+class Load(webapp2.RequestHandler):
+    def get(self):
+        for i in range(0,100):
+            tempEx = ndb.Key(models.Excerpt, i).get()
+            print(str(i) + ' "' + tempEx.passage + '" "' + tempEx.source + '"');
+
+# [START Leaderboard]
+class Leaderboard(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        responseDict = dict()
+        if user:
+            query = Player.query(Player.user_id == user.user_id())
+            player = query.fetch(1);
+            responseDict["u"] = json.dumps(player[0].to_dict())
+        else:
+
+        PLAYERS_PER_PAGE = 10
+        query = Player.query().order(-Player.wpm)
+        leaders = query.fetch(PLAYERS_PER_PAGE)
+        responseDict["lb"] = json.dumps(leaders.to_dict())
+        self.response.write(responseDict)
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
@@ -70,6 +99,35 @@ class MainPage(webapp2.RequestHandler):
 
         self.response.write(
             '<html><body>{}</body></html>'.format(greeting))
+
+# [END main_page]
+
+# [START change_player_name]
+class Player(webapp2.RequestHandler):
+    def post(self):
+        user = users.get_current_user()
+
+        if !user:
+            self.redirect('/')
+            return
+
+        p = models.Player.get_by_user(models.Player, user)
+
+        if !u:
+            p = models.Player(nickname=user.nickname(), id=user.user_id())
+
+        new_nickname = self.request.get("new_nickname", default_value="null")
+
+        if new_nickname == "null" || len(new_nickname) <= 50:
+            self.response.set_status(400, 'Unrecognised Media Type')
+            self.response.out.write('{"status":"error"}')
+            return
+
+        p.nickname = new_nickname
+        p.put()
+
+        self.response.out.write('{"status":"success"}')
+
 # [END main_page]
 
 # [START play]
@@ -223,12 +281,38 @@ class Play(webapp2.RequestHandler):
 
         self.response.write(
             '<html><body>{}</body></html>'.format(greeting))
+
+    def save(self):
+        raceStats.put()
+        CUR_PLAYER_WPM = 10; #TODO: get from game
+        query = Player.query(Player.user_id == user.user_id())
+        qPlayers = query.fetch(1)
+        player = qPlayers[0]
+        oldWPM = player.wpm
+        newWPM = ((oldWPM*player.games_played)+CUR_PLAYER_WPM)/(player.games_played+1)
+        player.wpm = newWPM
+        player.put()
+
+    def getRoomKey(self):
+        race_key = race.put()
+    def postRoom(self):
+        var options = {
+        "race_id" : race_key,
+        "startTime" : race.created_at,
+        "text" : race.text
+
+        }
+
 # [END play]
 
 # [START app]
 app = webapp2.WSGIApplication([
-    ('/', MainPage),
+    ('/', MaisssnPage),
     ('/play', Play),
     ('/generate', Generate),
+    ('/load', Load),
+    ('/races/new', 'races.New'),
+    ('/leaderboard', Leaderboard)
+    ('/player', Player),
 ], debug=True)
 # [END app]
