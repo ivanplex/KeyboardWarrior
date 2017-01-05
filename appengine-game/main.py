@@ -17,14 +17,18 @@
 # [START imports]
 import os
 import urllib
+import json
 
+from google.appengine.api import urlfetch
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
-from races import *
+import races
+import models
 
 import jinja2
 import webapp2
+import lxml.html
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -32,34 +36,24 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 # [END imports]
 
-class Excerpt(ndb.Model):
-    id = ndb.IntegerProperty()
-    passage = ndb.TextProperty()
-    created_at = ndb.DateTimeProperty(auto_now_add=True)
-    updated_at = ndb.DateTimeProperty(auto_now=True)
-    source = ndb.StringProperty()
+class Generate(webapp2.RequestHandler):
 
-class RacerStats(ndb.Model):
-    id = ndb.IntegerProperty()
-    race_id = ndb.IntegerProperty()
-    user_id = ndb.IntegerProperty()
-    wpm = ndb.FloatProperty()
-    wpm_percentile = ndb.FloatProperty()
-    created_at = ndb.DateTimeProperty(auto_now_add=True)
-    updated_at = ndb.DateTimeProperty(auto_now=True)
+    def get(self):
 
-class Race(ndb.Model):
-    id = ndb.IntegerProperty()
-    excerpt_id = ndb.IntegerProperty()
-    created_at = ndb.DateTimeProperty(auto_now_add=True)
-    updated_at = ndb.DateTimeProperty(auto_now=True)
+        for i in range(1, 100):
+            result = urlfetch.fetch('http://www.seanwrona.com/typeracer/text.php?id=' + str(i))
+            htmltree = lxml.html.fromstring(result.content)
+
+            p_tags = htmltree.xpath('//p')
+            p_content = [p.text_content() for p in p_tags]
+
+            quote = p_content[0]
+            source = p_content[1]
+
+            print(str(i) + ' "' + quote + '" "' + source + '"');
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
-
-    def post(self):
-        self.response.write('LOL')
-
     def get(self):
         user = users.get_current_user()
         if user:
@@ -78,8 +72,29 @@ class MainPage(webapp2.RequestHandler):
 # [START play]
 class Play(webapp2.RequestHandler):
 
+    # game logic handled by POSTs
+    def post(self):
+        # performs input santitation on content type -- we only accept JSON
+        if self.request.headers.get('content_type') != 'application/json':
+            self.response.set_status(400)
+            return
+
+        # initialise empty object
+        obj = None
+
+        try:
+            obj = json.loads(self.request.body)
+        except ValueError, e:
+            self.response.set_status(400)
+            return
+
+        print('we are here')
+
+        self.response.write(json.dumps(obj))
+
     def get(self):
         user = users.get_current_user()
+
         if user:
             nickname = user.user_id()
             logout_url = users.create_logout_url('/')
@@ -96,6 +111,8 @@ class Play(webapp2.RequestHandler):
 # [START app]
 app = webapp2.WSGIApplication([
     ('/', MainPage),
+    ('/play', Play),
+    ('/generate', Generate),
     ('/races/new', 'races.New'),
 ], debug=True)
 # [END app]

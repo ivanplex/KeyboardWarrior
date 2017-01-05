@@ -26,6 +26,8 @@ import jinja2
 import webapp2
 import lxml.html
 
+import models
+
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
@@ -34,18 +36,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 # [START new]
 class New(webapp2.RequestHandler):
+
     def get(self):
-    	quotes = [];
-
-    	for i in range(1, 100):
-    		result = urlfetch.fetch('http://www.seanwrona.com/typeracer/text.php?id=' + str(i))
-    		htmltree = lxml.html.fromstring(result.content)
-
-    		p_tags = htmltree.xpath('//p')
-    		p_content = [p.text_content() for p in p_tags]
-
-    		quotes.append(p_content)
-
-        self.response.write(p_content[0])
+        self.response.write('hi')
 # [END new]
 
