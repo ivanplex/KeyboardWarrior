@@ -1,0 +1,101 @@
+body {
+  margin: 0;
+  background-color: black;
+  color: white;
+  display: block;
+  font-family: 'Raleway', sans-serif;
+}
+
+span {
+  color: #00cc00;
+  text-decoration: underline;
+}
+
+/*.mainDiv {
+  position: absolute;
+  margin-top: 100px;
+  margin-left: 10px
+}*/
+
+.whiteText {
+  color: white;
+}
+
+.center {
+  left: 40%;
+  position: relative;
+  margin: 0 auto;
+}
+
+@keyframes animatedBackground {
+  from { background-position: 0 0; }
+  to { background-position: 100% 0; }
+}
+
+#animate-area	{
+  width: 100%;
+  max-width: 1280px;
+	height: 100vh;;
+  max-height: 1200px;
+	background-image: url(../img/backgroundtree.png);
+	background-position: 0px 0px;
+	background-repeat: repeat-x;
+
+	animation: animatedBackground 30s linear infinite;
+}
+
+#half-canvas {
+  width: 100%;
+  height: 50%;
+  margin-top: 50%;
+
+  position: relative;
+}
+
+#shade-area {
+
+  margin-top: 5%;
+  padding: 2% 5% 2% 5%;
+  border-radius: 10px;
+  bottom: 0;
+
+  font-size: 26px;
+  background-color:rgba(0, 0, 0, 0.5);
+}
+#countdown-panel{
+  text-align: center;
+}
+
+#number-countdown{
+  font-size: 160px;
+  color: red;
+}
+
+#fight-sign {
+
+  width: 200%;
+  padding-top: 10%;
+
+  opacity: 0;
+
+  position: absolute;
+  z-index: 99;
+
+  display: none;
+}
+
+#paragraph-input {
+  display: none;
+}
+
+#user-input-block {
+  display: none;
+}
+
+#WarriorImage {
+  height: 100px;
+  width: 70px;
+  position:absolute;
+  top:65%;
+  left: 0;
+}
