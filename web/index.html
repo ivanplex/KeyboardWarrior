@@ -94,18 +94,9 @@
 
 			        
 
-			        <!-- Sliding Code -->
+			        
 			        <script>
-			            /**
-			             * Image Slider
-			             * para1: Player's challenge
-			             * para2: Canvas Maximum width
-			             */
 			            
-			            var slider = new Slider("a a a a a a a a", 800);
-
-			            //Call function
-			            $(document).keypress(null, slider.shift);
 			        </script>
 
 			        <script type="text/javascript" src="js/test.js"></script>
@@ -116,6 +107,17 @@
 			                $("#SplashScreen").hide();
 			                $("#GameCanvas").show();
 			                beginCountdown();
+
+				            // Sliding Code
+				            /***
+				             * Image Slider
+				             * para1: Player's challenge
+				             * para2: Canvas Maximum width
+				             */
+				            var slider = new Slider("a a a a a a a a", $("#animate-area").width());
+
+				            //Call function
+				            $(document).keypress(null, slider.shift);
 			            });
 			        </script>
 			    </div>
