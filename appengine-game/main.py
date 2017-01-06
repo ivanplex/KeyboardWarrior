@@ -124,9 +124,6 @@ class Player(webapp2.RequestHandler):
 
         new_nickname = self.request.get("new_nickname", default_value="null")
 
-        print "request received:"
-        print new_nickname
-
         exists_in_db = not models.Player.get_by_nickname(models.Player, new_nickname) == None
 
         if new_nickname == "null" or len(new_nickname) >= 50 or len(new_nickname) == 0 or exists_in_db:
