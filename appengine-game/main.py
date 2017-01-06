@@ -77,12 +77,11 @@ class Leaderboard(webapp2.RequestHandler):
             player = query.fetch(1);
             responseDict["u"] = json.dumps(player[0].to_dict())
         else:
-
-        PLAYERS_PER_PAGE = 10
-        query = Player.query().order(-Player.wpm)
-        leaders = query.fetch(PLAYERS_PER_PAGE)
-        responseDict["lb"] = json.dumps(leaders.to_dict())
-        self.response.write(responseDict)
+            PLAYERS_PER_PAGE = 10
+            query = Player.query().order(-Player.wpm)
+            leaders = query.fetch(PLAYERS_PER_PAGE)
+            responseDict["lb"] = json.dumps(leaders.to_dict())
+            self.response.write(responseDict)
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
@@ -107,18 +106,18 @@ class Player(webapp2.RequestHandler):
     def post(self):
         user = users.get_current_user()
 
-        if !user:
+        if not user:
             self.redirect('/')
             return
 
         p = models.Player.get_by_user(models.Player, user)
 
-        if !u:
+        if not u:
             p = models.Player(nickname=user.nickname(), id=user.user_id())
 
         new_nickname = self.request.get("new_nickname", default_value="null")
 
-        if new_nickname == "null" || len(new_nickname) <= 50:
+        if new_nickname == "null" or len(new_nickname) <= 50:
             self.response.set_status(400, 'Unrecognised Media Type')
             self.response.out.write('{"status":"error"}')
             return
@@ -224,7 +223,7 @@ class Play(webapp2.RequestHandler):
                         room['source'] = "Boon Pek"
 
                         rooms[current_room] = room
-                    
+
                     # check if room is full or start time has passed current time (TODO: fix/optimise)
                     if len(room['players']) == 5 or (room['start_time'] < current_time and room['start_time'] != -1):
                         # generate a random room ID, this will (very rarely) collide with a valid room or create a new room
@@ -306,24 +305,18 @@ class Play(webapp2.RequestHandler):
 
     def getRoomKey(self):
         race_key = race.put()
-    def postRoom(self):
-        var options = {
-        "race_id" : race_key,
-        "startTime" : race.created_at,
-        "text" : race.text
 
-        }
 
 # [END play]
 
 # [START app]
 app = webapp2.WSGIApplication([
-    ('/', MaisssnPage),
+    ('/', MainPage),
     ('/play', Play),
     ('/generate', Generate),
     ('/load', Load),
     ('/races/new', 'races.New'),
-    ('/leaderboard', Leaderboard)
+    ('/leaderboard', Leaderboard),
     ('/player', Player),
 ], debug=True)
 # [END app]
