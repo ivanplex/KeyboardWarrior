@@ -53,8 +53,8 @@ class Generate(webapp2.RequestHandler):
             p_tags = htmltree.xpath('//p')
             p_content = [p.text_content() for p in p_tags]
 
-            quote = p_content[0].strip()
-            source = p_content[1].strip()
+            quote = p_content[0].strip().replace('\n', ' ').replace('\r', '')
+            source = p_content[1].strip().replace('\n', ' ').replace('\r', '')
 
             print(str(i) + ' "' + quote + '" "' + source + '"')
             print(i);
@@ -257,9 +257,9 @@ class Play(webapp2.RequestHandler):
                             player = {}
 
                             player['id'] = player_id
-                            player['name'] = user.nickname()
+                            player['name'] = models.Player.get_by_user_id(models.Player, player_id).nickname
                             player['words_done'] = 0
-                            players['updated_at'] = current_time
+                            player['updated_at'] = current_time
 
                             # add the player to the current room
                             room['players'].append(player)
@@ -313,7 +313,7 @@ class Play(webapp2.RequestHandler):
                     
                     # create and persist a race (for you to handle Sid, we have)
                     # we need to create the race first to get the unique key
-                    race = models.Race(excerpt_id=room['text_id'], start_time=room['start_time'])
+                    race = models.Race(excerpt_id = room['text_id'], start_time = datetime.fromtimestamp(room['start_time']))
                     race.put()
 
                     # iterate over players in room -- the wpm is calculated here
@@ -327,10 +327,9 @@ class Play(webapp2.RequestHandler):
                         raceStats.put()
 
                         ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
-                        newWPM = ((ndb_player.wpm*ndb_player.games_played)+wpm)/(ndb_player.games_played+1)
 
                         ndb_player.games_played = ndb_player.games_played + 1
-                        ndb_player.wpm = newWPM
+                        ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
 
                         ndb_player.put()
                     # update player stats, wpm as a recalculated average
@@ -354,7 +353,6 @@ class Play(webapp2.RequestHandler):
             self.response.set_status(400, 'Room_ID Must Be A Number')
             self.response.write('Room ID Not A Number??')
             return
-
 
         # build the response json
         res = {}
