@@ -51,13 +51,13 @@ class Generate(webapp2.RequestHandler):
             p_tags = htmltree.xpath('//p')
             p_content = [p.text_content() for p in p_tags]
 
-            quote = p_content[0]
-            source = p_content[1]
+            quote = p_content[0].strip()
+            source = p_content[1].strip()
 
             print(str(i) + ' "' + quote + '" "' + source + '"')
             print(i);
 
-            tempEx = models.Excerpt(passage = quote, source = source)
+            tempEx = models.Excerpt(id = i-30, passage = quote, source = source)
             tempEx.key = ndb.Key(models.Excerpt, i-30);
             tempEx.put()
 
@@ -220,12 +220,18 @@ class Play(webapp2.RequestHandler):
 
                     # room doesn't exist, we create new
                     if not room:
+
+                        # assign a random excerpt
+                        excerpt = models.Excerpt.get_random_Excerpt()
+
+                        print(excerpt.passage)
+
                         room = {}
                         room['players'] = []
                         room['start_time'] = -1
-                        room['text_id'] = -1
-                        room['text'] = "Lorem Ipsum Shreya Agarawal"
-                        room['source'] = "Boon Pek"
+                        room['text_id'] = excerpt.id
+                        room['text'] = excerpt.passage
+                        room['source'] = excerpt.source
                         room['room_id'] = current_room
 
                         rooms[current_room] = room
@@ -300,6 +306,8 @@ class Play(webapp2.RequestHandler):
                 # game over, save status for ALL players
                 # GAME OVER GAME OVER GAME OVER
                 if room['start_time'] + 90 > current_time:
+                    d_t = player['updated_at'] - room['start_time']
+                    wpm = float(player['words_done']) / float(d_t) * 60
                     #SIDHARTThhhhHH!!!!
                     pass
                 else:
@@ -308,10 +316,9 @@ class Play(webapp2.RequestHandler):
                     player['updated_at'] = current_time
 
                 self.response.write('check if room is valid')
-                # check that the user is in the room and that the room is not full
-
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
+            self.response.write('Room ID Not A Number??')
             return
 
 

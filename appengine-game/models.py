@@ -1,3 +1,5 @@
+from random import randint
+
 from google.appengine.ext import ndb
 
 class Player(ndb.Model):
