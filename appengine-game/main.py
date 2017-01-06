@@ -194,10 +194,10 @@ class Play(webapp2.RequestHandler):
             self.response.set_status(400, 'Invalid Request Parameters')
             self.response.write('Invalid Request Parameters')
             return
- 
+
         # check if the time is properly typed
         user_time = obj.get('timestamp')
- 
+
         if not isinstance(user_time, int):
             self.response.set_status(400, 'Timestamp must be a number')
             self.response.write('Timestamp must be a number')
@@ -259,7 +259,7 @@ class Play(webapp2.RequestHandler):
                             player['id'] = player_id
                             player['name'] = user.nickname()
                             player['words_done'] = 0
-                            players['updated_at'] = current_time
+                            player['updated_at'] = current_time
 
                             # add the player to the current room
                             room['players'].append(player)
@@ -310,7 +310,7 @@ class Play(webapp2.RequestHandler):
                 if room['start_time'] + 90 > current_time:
                     # remove the reference from the game
                     del rooms[room['room_id']]
-                    
+
                     # create and persist a race (for you to handle Sid, we have)
                     # we need to create the race first to get the unique key
                     race = models.Race(excerpt_id=room['text_id'], start_time=room['start_time'])

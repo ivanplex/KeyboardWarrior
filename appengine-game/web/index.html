@@ -6,7 +6,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-
 	<title>Keyboard Warrior {} {} </title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
@@ -128,7 +127,7 @@
 						 */
 						var slider = new Slider("a a a a a a a a", $("#animate-area").width());
 
-						//Call function
+						// Call function
 						$(document).keypress(null, slider.shift);
 					</script>
 
@@ -138,35 +137,17 @@
 					<script>
 						// Click start button
 						$("#StartButton").click(function() {
-							// Temporary JSON to reflect incoming JSON
-							// var json = '{"player_id": 1,"start_time": "1483654609","room": [{"id": 1,"text": "Good morning, how are you?"}],"players": [{"player_id": 2,"words_done" : 30}, {"player_id" : 3,"words_done" : 40}]}';
-							// jsonObject = $.parseJSON(json);
-							// console.log(jsonObject.room[0].text);
-
 							// init conn to server, receive room id and start time
 							try {
-								var initReply = initConn();
+								initConn();
 							} catch (err) {
 								document.getElementById("SplashScreen").innerHTML = err.message;
 							}
-
-							var typeWords = initReply.room[0].text;
-							var playerId = initReply.player_id;
-							var roomId = initReply.room[0].id;
-
-							// Towards benoit text checking, TODO: need to return words done
-							// var wordsDone = textCheck(typeWords);
 
 							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
 							beginCountdown();
-
-							// Send (words_done), with timestamp to server every 2 seconds
-							// gameid -1 means game has ended
-							// setInterval(sendInfo(playerId, unixTimeStamp(), wordsDone, roomId), (2 * 1000));
-
-
 						});
 					</script>
 				</div>
