@@ -51,13 +51,13 @@ class Generate(webapp2.RequestHandler):
             p_tags = htmltree.xpath('//p')
             p_content = [p.text_content() for p in p_tags]
 
-            quote = p_content[0]
-            source = p_content[1]
+            quote = p_content[0].strip()
+            source = p_content[1].strip()
 
             print(str(i) + ' "' + quote + '" "' + source + '"')
             print(i);
 
-            tempEx = models.Excerpt(passage = quote, source = source)
+            tempEx = models.Excerpt(id = i-30, passage = quote, source = source)
             tempEx.key = ndb.Key(models.Excerpt, i-30);
             tempEx.put()
 
@@ -224,12 +224,21 @@ class Play(webapp2.RequestHandler):
                     room = rooms.get(current_room)
 
                     # room doesn't exist, we create new
-                    if room is None:
+                    if not room:
+
+                        # assign a random excerpt
+                        excerpt = models.Excerpt.get_random_Excerpt()
+
+                        print(excerpt.passage)
+
                         room = {}
                         room['players'] = []
                         room['start_time'] = -1
-                        room['text'] = "Lorem Ipsum Shreya Agarawal"
-                        room['source'] = "Boon Pek"
+                        room['text_id'] = excerpt.id
+                        room['text'] = excerpt.passage
+                        room['source'] = excerpt.source
+                        room['room_id'] = current_room
+
 
                         rooms[current_room] = room
 
@@ -264,16 +273,51 @@ class Play(webapp2.RequestHandler):
             else:
                 room = rooms.get(room_id)
 
-                # the room is gone, game is over?
-                if room is None:
+                # room doesn't exist anymore, game over or invalid room?
+                if not room:
+                    self.response.set_status(404, 'Room Invalid')
+                    self.response.write('Room Not Found!')
+                    return
+
+                player = None
+
+                # check for matching player in room using ID
+                for _player in room['players']:
+                    if _player['id'] == player_id:
+                        player = _player
+                        break
+
+                if not player:
+                    self.response.set_status(403, 'Not In Room')
+                    self.response.write('User Not In Room')
+                    return
+
+                words_done = obj.get('words_done')
+
+                # we don't have words done in this request...
+                if not words_done:
+                    self.response.set_status(400, 'Words Done Not In Request')
+                    self.response.write('Unable to find Words Done')
+                    return
+
+                if words_done < 0 or words_done > len(room['text']):
+                    self.response.set_status(400, 'Invalid Words Done Do Not Cheat')
+                    self.response.write('Words Done Is Not Valid')
+                    return
+
+                # game over, save status for ALL players
+                # GAME OVER GAME OVER GAME OVER
+                if room['start_time'] + 90 > current_time:
+                    d_t = player['updated_at'] - room['start_time']
+                    wpm = float(player['words_done']) / float(d_t) * 60
+                    #SIDHARTThhhhHH!!!!
                     pass
 
                 self.response.write('check if room is valid')
-                # check that the user is in the room and that the room is not full
-
         else:
 
             self.response.set_status(400, 'Room_ID Must Be A Number')
+            self.response.write('Room ID Not A Number??')
             return
 
 
