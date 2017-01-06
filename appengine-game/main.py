@@ -73,7 +73,7 @@ class Leaderboard(webapp2.RequestHandler):
         user = users.get_current_user()
         responseDict = dict()
         if user:
-            query = Player.query(Player.user_id == user.user_id())
+            query = models.Player.query(Player.user_id == user.user_id())
             player = query.fetch(1);
             responseDict["u"] = json.dumps(player[0].to_dict())
         else:
@@ -112,12 +112,14 @@ class Player(webapp2.RequestHandler):
 
         p = models.Player.get_by_user(models.Player, user)
 
-        if not u:
+        if not p:
             p = models.Player(nickname=user.nickname(), id=user.user_id())
 
         new_nickname = self.request.get("new_nickname", default_value="null")
 
-        if new_nickname == "null" or len(new_nickname) <= 50:
+        exists_in_db = not models.Player.get_by_nickname(models.Player, new_nickname) == None
+
+        if new_nickname == "null" or len(new_nickname) >= 50 or len(new_nickname) == 0 or exists_in_db:
             self.response.set_status(400, 'Unrecognised Media Type')
             self.response.out.write('{"status":"error"}')
             return
