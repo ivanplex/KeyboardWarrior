@@ -1,32 +1,25 @@
+//Unix timestamp in seconds
 function unixTimeStamp() {
-    // get unix time in seconds
     return Math.round(new Date().getTime() / 1000)
 }
 
 // Initalise connection with server
 function initConn() {
-    // TODO: get from server??? generate user id
-    var playerId = Math.random().toString(36).substr(2, 16);
-
-    console.log(unixTimeStamp());
-
-    console.log(uniqueId);
-
-    // Send playerid, timestamp and roomid waiting for server response
+    // Send timestamp and roomid waiting for server response
     $.ajax({
         type: "POST",
         url: '/play',
         contentType: 'application/json',
         crossDomain: true,
         data: JSON.stringify({
-            player_id: playerId,
+            player_id: 1,
             time_stamp: unixTimeStamp(),
             room_id: -1
         }),
         dataType: 'json',
         success: function (response) {
             // Create cookie upon successful response
-            new setCookie(playerId);
+            // new setCookie(playerId);
             console.log(response);
             return $.parseJSON(response);
         }
