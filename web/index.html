@@ -122,7 +122,7 @@
 
 							// init connection to server, and receive json reply which contains room id and start time
 							try {
-								var jsonReply = JSON.parse(initConn());
+								var initialReply = JSON.parse(initConn());
 							} catch (err) {
 								document.getElementById("SplashScreen").innerHTML = err.message;
 							}

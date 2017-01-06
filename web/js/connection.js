@@ -17,7 +17,6 @@ function initConn() {
         type: "POST",
         url: 'http://10.14.37.110:8080/play',
         contentType: 'application/json',
-        crossDomain: true,
         data: JSON.stringify({
             player_id: playerId,
             time_stamp: unixTimeStamp(),
@@ -39,10 +38,9 @@ function sendInfo(playerid, timestamp, wordsdone, roomid) {
         url: 'http://10.14.37.110:8080/play',
         type: 'POST',
         contentType: 'application/json',
-        crossDomain: true,
         data: JSON.stringify({
             player_id: playerid,
-            current_time: timestamp,
+            time_stamp: timestamp,
             room_id: roomid,
             words_done: wordsdone
         }),
