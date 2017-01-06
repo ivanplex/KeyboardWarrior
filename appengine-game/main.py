@@ -256,8 +256,10 @@ class Play(webapp2.RequestHandler):
                             # user is allowed to participate in the current room
                             player = {}
 
-                            player['id'] = player_id
-                            player['name'] = models.Player.get_by_user_id(models.Player, player_id).nickname
+                            ndb_player = models.Player.get_by_user(models.Player, user)
+
+                            player['id'] = ndb_player.user_id
+                            player['name'] = ndb_player.nickname
                             player['words_done'] = 0
                             player['updated_at'] = current_time
 
