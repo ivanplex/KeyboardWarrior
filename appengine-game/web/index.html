@@ -6,7 +6,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-
 	<title>Keyboard Warrior {} {} </title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
@@ -25,20 +24,15 @@
 
 	<link rel="stylesheet" type="text/css" href="css/test.css">
 
-
-	<script type="text/javascript" src="js/wikiarticle.js"></script>
-	<script src="js/slide.js"></script>
+	<!-- Javascript dependent files -->
+	<script type="text/javascript" src="js/slide.js"></script>
 	<script type="text/javascript" src="js/connection.js"></script>
-
-
-	<script src="js/battle.js"></script>
+	<script type="text/javascript" src="js/battle.js"></script>
 </head>
 
 <body>
 	<!-- Splash screen-->
-
 	<div id="SplashScreen" class="container" style="max-width: 330px">
-
 		<form class="form-signin">
 			<img src="img/logo.png" height="330px" width="330px" />
 			<h2 class="form-signin-heading">Please sign in</h2>
@@ -47,10 +41,9 @@
 			<br>
 			<button id="StartButton" class="btn btn-lg btn-primary btn-block" type="submit">Start Game</button>
 		</form>
-
 	</div>
 
-  <div id="cog" class="settingsCog" role="main">
+	<div id="cog" class="settingsCog" role="main">
 		<img src="img/cog.png" height="50px" width="50px" />
 	</div>
 	<div id="myModal" class="modal">
@@ -62,32 +55,32 @@
 	</div>
 
 	<script>
-// Get the modal
-var modal = document.getElementById('myModal');
+		// Get the modal
+		var modal = document.getElementById('myModal');
 
-// Get the button that opens the modal
-var btn = document.getElementById("cog");
+		// Get the button that opens the modal
+		var btn = document.getElementById("cog");
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+		// Get the <span> element that closes the modal
+		var span = document.getElementsByClassName("close")[0];
 
-// When the user clicks the button, open the modal
-btn.onclick = function() {
-    modal.style.display = "block";
-}
+		// When the user clicks the button, open the modal
+		btn.onclick = function() {
+			modal.style.display = "block";
+		}
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-    modal.style.display = "none";
-}
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function() {
+			modal.style.display = "none";
+		}
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-</script>
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+			if (event.target == modal) {
+				modal.style.display = "none";
+			}
+		}
+	</script>
 	<!--<div id="SplashScreen" class="center">
         <img src="img/logo.jpg" height="400px" width="400px" />
         <div>
@@ -102,7 +95,6 @@ window.onclick = function(event) {
 			<div class="col-sm-12">
 				<div id="GameCanvas" style="display: none; max-width: 1100px; max-height: 624px;">
 					<div id="animate-area" width="100%" style="position: relative;">
-
 						<div class="half-canvas">
 							<div id="shade-area" class="col-sm-10 col-md-offset-1">
 								<div id="countdown-panel">
@@ -112,19 +104,13 @@ window.onclick = function(event) {
 								<p id="paragraph-input"></p>
 							</div>
 							<div id="fight-sign"><img src="img/fight.png" style="width: 100%;" /></div>
-
-
-
 							<div id="user-input-block" class="col-sm-6 col-md-offset-3">
 								<div class="form-group">
 									<label for="user-input">Start typing:</label>
 									<input type="text" class="form-control" id="user-input" />
 								</div>
 							</div>
-
-
 						</div>
-
 						<div id="fighting-ground" class="half-canvas">
 							<img id="WarriorImage" src="img/warrior2.png" />
 						</div>
@@ -132,50 +118,36 @@ window.onclick = function(event) {
 
 					<!-- Warrior image -->
 
-
 					<!-- Sliding Code -->
 					<script>
-								/***
-								 * Image Slider
-								 * para1: Player's challenge
-								 * para2: Canvas Maximum width
-								 */
-								var slider = new Slider("a a a a a a a a", $("#animate-area").width());
+						/***
+						 * Image Slider
+						 * para1: Player's challenge
+						 * para2: Canvas Maximum width
+						 */
+						var slider = new Slider("a a a a a a a a", $("#animate-area").width());
 
-								//Call function
-								$(document).keypress(null, slider.shift);
+						// Call function
+						$(document).keypress(null, slider.shift);
 					</script>
 
-					<!-- Benoit text checking  -->
+					<!-- benoit text check needs to return words done  -->
 					<script type="text/javascript" src="js/textcheck.js"></script>
 
 					<script>
 						// Click start button
 						$("#StartButton").click(function() {
-							// Temporary JSON to reflect incoming JSON
-							var json = '{"player_id": 1,"start_time": "1483654609","room": [{"id": 1,"text": "Good morning, how are you?"}],"players": [{"player_id": 2,"words_done" : 30}, {"player_id" : 3,"words_done" : 40}]}';
-
-							jsonObject = $.parseJSON(json);
-							console.log(jsonObject.room[0].text);
-
-							// init connection to server, and receive json reply which contains room id and start time
+							// init conn to server, receive room id and start time
 							try {
-								var jsonReply = JSON.parse(initConn());
+								initConn();
 							} catch (err) {
 								document.getElementById("SplashScreen").innerHTML = err.message;
 							}
 
-							// Message received go towards benoit text checking
-							textCheck(jsonObject.room[0].text);
-							// TODO: need to find a way to send words done
-
-							// Send (words done) with time in unix timestamp to server with reply from server
-							sendInfo();
-
+							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
 							beginCountdown();
-
 						});
 					</script>
 				</div>
