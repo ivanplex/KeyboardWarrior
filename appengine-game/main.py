@@ -201,11 +201,11 @@ class Play(webapp2.RequestHandler):
         if isinstance(room_id, int):
 
             # user isn't in a room, allocate user to a room
-            # user quit previous game allocate to new room
             if room_id == -1:
 
                 # if the player is already allocated to a room
-                if player_id in player_room:
+                # we will not let the user quit the current game, stats will be affected :(
+                if player_id in players:
                     self.response.set_status(403, 'Player Already In Room')
                     return
 
@@ -221,20 +221,31 @@ class Play(webapp2.RequestHandler):
                         room['players'] = []
                         room['start_time'] = -1
                         room['text'] = "Lorem Ipsum Shreya Agarawal"
+                        room['source'] = "Boon Pek"
 
                         rooms[current_room] = room
                     
                     # check if room is full or start time has passed current time (TODO: fix/optimise)
                     if len(room['players']) == 5 or (room['start_time'] < current_time and room['start_time'] != -1):
-                        # generate a random room ID, we have to check if this exists in memory or not
+                        # generate a random room ID, this will (very rarely) collide with a valid room or create a new room
                         current_room = random.randrange(sys.maxint)
 
                         # set the room to None
                         room = None
                     else:
+                        # user is allowed to participate in the current room
+                        player = {}
+
+                        player['id'] = player_id
+                        player['name'] = user.nickname()
+                        player['words'] = 0
+                        player['room'] = room_id
+
+                        # add player to players
+                        players[player_id] = player
+
                         # add the player to the current room
-                        room['players'].append(player_id)
-                        player_room[player_id] = room_id
+                        room['players'].append(player)
 
                         # tell update the start_time to 15 seconds from now
                         if (len(room['players'])) >= 3:
