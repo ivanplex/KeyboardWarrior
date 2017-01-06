@@ -15,7 +15,7 @@ function initConn() {
     // Send playerid, timestamp and roomid waiting for server response
     $.ajax({
         type: "POST",
-        url: 'http://10.14.37.110:8080/play',
+        url: '/play',
         contentType: 'application/json',
         crossDomain: true,
         data: JSON.stringify({
@@ -36,7 +36,7 @@ function initConn() {
 // Sends information to server periodically
 function sendInfo(playerid, timestamp, wordsdone, roomid) {
     $.ajax({
-        url: 'http://10.14.37.110:8080/play',
+        url: '/play',
         type: 'POST',
         contentType: 'application/json',
         crossDomain: true,

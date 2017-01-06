@@ -127,16 +127,18 @@
 								document.getElementById("SplashScreen").innerHTML = err.message;
 							}
 
-							// Message received go towards benoit text checking
-							textCheck(jsonObject.room[0].text);
+							// Go towards benoit text checking
+							var words_done = textCheck(jsonObject.room[0].text);
 							// TODO: need to find a way to send words done
 
-							// Send (words done) with time in unix timestamp to server with reply from server
-							sendInfo();
-
+							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
 							beginCountdown();
+
+							// Send (words done) with time in unix timestamp to server with reply from server
+							// gameid -1 means game has ended
+							setInterval(sendInfo(), (2 * 1000));
 
 						});
 					</script>
