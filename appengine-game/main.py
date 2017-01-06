@@ -306,8 +306,20 @@ class Play(webapp2.RequestHandler):
                 # game over, save status for ALL players
                 # GAME OVER GAME OVER GAME OVER
                 if room['start_time'] + 90 > current_time:
-                    d_t = player['updated_at'] - room['start_time']
-                    wpm = float(player['words_done']) / float(d_t) * 60
+                    # create and persist a race (for you to handle Sid, we have)
+                    # we need to create the race first to get the unique key
+                    room['text_id']
+                    room['start_time']
+
+                    # iterate over players in room -- the wpm is calculated here
+                    # we can create the racerstats here this way
+                    for _player in room['players']:
+                        d_t = _player['updated_at'] - room['start_time']
+                        wpm = float(_player['words_done']) / float(d_t) * 60
+
+                    # update player stats, wpm as a recalculated average
+                    # :D
+
                     #SIDHARTThhhhHH!!!!
                     pass
                 else:
