@@ -67,7 +67,6 @@ class Load(webapp2.RequestHandler):
             tempEx = ndb.Key(models.Excerpt, i).get()
             print(str(i) + ' "' + tempEx.passage + '" "' + tempEx.source + '"');
 
-
 # [START Leaderboard]
 class Leaderboard(webapp2.RequestHandler):
     def get(self):
@@ -86,23 +85,26 @@ class Leaderboard(webapp2.RequestHandler):
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
-    def options(self):
-        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers.add_header("Access-Control-Allow-Headers", "Content-Type")
-
     def get(self):
         user = users.get_current_user()
         if user:
             nickname = user.nickname()
+
             logout_url = users.create_logout_url('/')
-            greeting = 'Welcome, {}! (<a href="{}">sign out</a>)'.format(
-                nickname, logout_url)
+
+            template = JINJA_ENVIRONMENT.get_template('web/index.html')
+
+            greeting = template.render(
+                nick=nickname, logouturl=logout_url)
+            self.response.write(greeting)
+            return
         else:
             login_url = users.create_login_url('/')
             greeting = '<a href="{}">Sign in</a>'.format(login_url)
+            self.response.write(
+                '<html><body>{}</body></html>'.format(greeting))
+            return
 
-        self.response.write(
-            '<html><body>{}</body></html>'.format(greeting))
 
 # [END main_page]
 
@@ -138,16 +140,9 @@ class Player(webapp2.RequestHandler):
 
 # [START play]
 class Play(webapp2.RequestHandler):
-    def options(self):
-        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers.add_header("Access-Control-Allow-Headers", "Content-Type")
-
 
     # game logic handled by POSTs
     def post(self):
-        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers.add_header("Access-Control-Allow-Headers", "Content-Type")
-
         # check if user is authenticated
         user = users.get_current_user()
 
@@ -164,6 +159,9 @@ class Play(webapp2.RequestHandler):
         app = webapp2.get_app()
 
         current_room = app.registry.get('current_room')
+        player_room = app.registry.get('player_room')
+
+        players = app.registry.get('players')
         rooms = app.registry.get('rooms')
 
         # what is the current room we are filling up
@@ -171,15 +169,24 @@ class Play(webapp2.RequestHandler):
             current_room = random.randrange(sys.maxint)
             app.registry['current_room'] = current_room
 
+        # create an association between player and room
+        if not player_room:
+            player_room = {}
+            app.registry['player_room'] = player_room
+
         # rooms existing in memory
         if not rooms:
             rooms = {}
             app.registry['rooms'] = rooms
 
+        # players existing in memory
+        if not players:
+            players = {}
+            app.registry['players'] = players
+
         # performs input santitation on content type -- we only accept JSON
         if self.request.headers.get('content_type') != 'application/json':
             self.response.set_status(400, 'Unrecognised Media Type')
-            self.response.write('Unrecognised Media Type')
             return
 
         # initialise empty object
@@ -189,44 +196,40 @@ class Play(webapp2.RequestHandler):
             obj = json.loads(self.request.body)
         except ValueError, e:
             self.response.set_status(400, 'Invalid JSON')
-            self.response.write('Invalid JSON')
             return
 
         # if we are here, the JSON is valid and we can proceed with checks
         if 'room_id' not in obj or 'timestamp' not in obj:
             self.response.set_status(400, 'Invalid Request Parameters')
-            self.response.write('Invalid Request Parameters')
-            return
-
-        # check if the time is properly typed
-        user_time = obj.get('timestamp')
-
-        if not isinstance(user_time, int):
-            self.response.set_status(400, 'Timestamp must be a number')
-            self.response.write('Timestamp must be a number')
             return
 
         # if the room_id is properly typed...
         room_id = obj.get('room_id')
-        room = None
 
         if isinstance(room_id, int):
+
             # user isn't in a room, allocate user to a room
             if room_id == -1:
+
+                # if the player is already allocated to a room
+                # we will not let the user quit the current game, stats will be affected :(
+                if player_id in players:
+                    self.response.set_status(403, 'Player Already In Room')
+                    return
+
+                room = None
 
                 while room == None:
                     # test the current room for whether it is full or not
                     room = rooms.get(current_room)
 
                     # room doesn't exist, we create new
-                    if not room:
+                    if room is None:
                         room = {}
                         room['players'] = []
                         room['start_time'] = -1
-                        room['text_id'] = -1
                         room['text'] = "Lorem Ipsum Shreya Agarawal"
                         room['source'] = "Boon Pek"
-                        room['room_id'] = current_room
 
                         rooms[current_room] = room
 
@@ -238,79 +241,38 @@ class Play(webapp2.RequestHandler):
                         # set the room to None
                         room = None
                     else:
-                        userInRoom = False
+                        # user is allowed to participate in the current room
+                        player = {}
 
-                        # if the user is in the current room then we tell them to buzz off
-                        for player in room['players']:
-                            if player['id'] == player_id:
-                                userInRoom = True
+                        player['id'] = player_id
+                        player['name'] = user.nickname()
+                        player['words'] = 0
+                        player['room'] = room_id
 
-                        if not userInRoom:
-                            # user is allowed to participate in the current room
-                            player = {}
+                        # add player to players
+                        players[player_id] = player
 
-                            player['id'] = player_id
-                            player['name'] = user.nickname()
-                            player['words_done'] = 0
-                            player['updated_at'] = current_time
+                        # add the player to the current room
+                        room['players'].append(player)
 
-                            # add the player to the current room
-                            room['players'].append(player)
+                        # tell update the start_time to 15 seconds from now
+                        if (len(room['players'])) >= 3:
+                            room['start_time'] = current_time + 15
 
-                            # tell update the start_time to 15 seconds from now
-                            if (len(room['players'])) >= 3:
-                                room['start_time'] = current_time + 15
 
             # user is in a game, we do game stuff
             else:
                 room = rooms.get(room_id)
 
-                # room doesn't exist anymore, game over or invalid room?
-                if not room:
-                    self.response.set_status(404, 'Room Invalid')
-                    self.response.write('Room Not Found!')
-                    return
-
-                player = None
-
-                # check for matching player in room using ID
-                for _player in room['players']:
-                    if _player['id'] == player_id:
-                        player = _player
-                        break
-
-                if not player:
-                    self.response.set_status(403, 'Not In Room')
-                    self.response.write('User Not In Room')
-                    return
-
-                words_done = obj.get('words_done')
-
-                # we don't have words done in this request...
-                if not words_done:
-                    self.response.set_status(400, 'Words Done Not In Request')
-                    self.response.write('Unable to find Words Done')
-                    return
-
-                if words_done < 0 or words_done > len(room['text']):
-                    self.response.set_status(400, 'Invalid Words Done Do Not Cheat')
-                    self.response.write('Words Done Is Not Valid')
-                    return
-
-                # game over, save status for ALL players
-                # GAME OVER GAME OVER GAME OVER
-                if room['start_time'] + 90 > current_time:
-                    #SIDHARTThhhhHH!!!!
+                # the room is gone, game is over?
+                if room is None:
                     pass
-                else:
-                    # update the users :D
-                    player['words_done'] = words_done
-                    player['updated_at'] = current_time
 
                 self.response.write('check if room is valid')
                 # check that the user is in the room and that the room is not full
 
         else:
+
             self.response.set_status(400, 'Room_ID Must Be A Number')
             return
 
@@ -318,7 +280,7 @@ class Play(webapp2.RequestHandler):
         # build the response json
         res = {}
         res['player_id'] = player_id
-        res['timestamp'] = current_time
+        res['room_id'] = current_room
         res['room'] = room
 
         self.response.write(json.dumps(res))
@@ -352,6 +314,8 @@ class Play(webapp2.RequestHandler):
 
     def getRoomKey(self):
         race_key = race.put()
+
+
 # [END play]
 
 # [START app]

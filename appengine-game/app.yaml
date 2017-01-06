@@ -8,8 +8,17 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
 
-- url: /bootstrap
-  static_dir: bootstrap
+- url: /css
+  static_dir: web/css
+
+- url: /js
+  static_dir: web/js
+
+- url: /img
+  static_dir: web/img
+
+- url: /data
+  static_dir: web/data
 
 - url: /.*
   script: main.app
