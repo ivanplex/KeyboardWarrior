@@ -89,24 +89,24 @@ class Leaderboard(webapp2.RequestHandler):
 class MainPage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
+        logout = users.create_logout_url('/')
+        login = users.create_login_url('/')
+
+        template_values = {
+            'nickname': None,
+            'logouturl': logout,
+            'loginurl': login,
+            'loggedin': False,
+        }
+
         if user:
-            nickname = user.nickname()
+            player = models.Player.get_by_user(models.Player, user)
 
-            logout_url = users.create_logout_url('/')
+            template_values['nickname'] = player.nickname,
+            template_values['loggedin'] = True
 
-            template = JINJA_ENVIRONMENT.get_template('web/index.html')
-
-            greeting = template.render(
-                nick=nickname, logouturl=logout_url)
-            self.response.write(greeting)
-            return
-        else:
-            login_url = users.create_login_url('/')
-            greeting = '<a href="{}">Sign in</a>'.format(login_url)
-            self.response.write(
-                '<html><body>{}</body></html>'.format(greeting))
-            return
-
+        template = JINJA_ENVIRONMENT.get_template('web/index.html')
+        self.response.write(template.render(template_values))
 
 # [END main_page]
 
