@@ -312,13 +312,22 @@ class Play(webapp2.RequestHandler):
                     # we need to create the race first to get the unique key
                     room['text_id']
                     room['start_time']
+                    race = models.Race(excerpt_id=room['text_id'], start_time=room['start_time'], players=room['players'])
+                    race.put()
 
                     # iterate over players in room -- the wpm is calculated here
                     # we can create the racerstats here this way
                     for _player in room['players']:
                         d_t = _player['updated_at'] - room['start_time']
                         wpm = float(_player['words_done']) / float(d_t) * 60
+                        _player['id']
+                        raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm)
+                        raceStats.put()
 
+                        ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
+                        newWPM = ((ndb_player.wpm*ndb_player.games_played)+wpm)/(ndb_player.games_played+1)
+                        player.wpm = newWPM
+                        player.put()
                     # update player stats, wpm as a recalculated average
                     # :D
 
@@ -360,17 +369,6 @@ class Play(webapp2.RequestHandler):
 
         self.response.write(
             '<html><body>{}</body></html>'.format(greeting))
-
-    def save(self):
-        raceStats.put()
-        CUR_PLAYER_WPM = 10; #TODO: get from game
-        query = Player.query(Player.user_id == user.user_id())
-        qPlayers = query.fetch(1)
-        player = qPlayers[0]
-        oldWPM = player.wpm
-        newWPM = ((oldWPM*player.games_played)+CUR_PLAYER_WPM)/(player.games_played+1)
-        player.wpm = newWPM
-        player.put()
 
     def getRoomKey(self):
         race_key = race.put()
