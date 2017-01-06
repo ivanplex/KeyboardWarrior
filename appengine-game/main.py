@@ -323,7 +323,11 @@ class Play(webapp2.RequestHandler):
                     # :D
 
                     #SIDHARTThhhhHH!!!!
-                    pass
+
+                    # kill the room and tell users they need to search for a new game
+                    room = None
+                    current_room = -1
+
 
                 self.response.write('check if room is valid')
         else:
