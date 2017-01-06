@@ -22,6 +22,8 @@ import json
 import random
 import time
 
+from datetime import datetime
+
 from google.appengine.api import urlfetch
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -311,24 +313,26 @@ class Play(webapp2.RequestHandler):
                     
                     # create and persist a race (for you to handle Sid, we have)
                     # we need to create the race first to get the unique key
-                    room['text_id']
-                    room['start_time']
-                    race = models.Race(excerpt_id=room['text_id'], start_time=room['start_time'], players=room['players'])
+                    race = models.Race(excerpt_id=room['text_id'], start_time=room['start_time'])
                     race.put()
 
                     # iterate over players in room -- the wpm is calculated here
                     # we can create the racerstats here this way
                     for _player in room['players']:
-                        d_t = _player['updated_at'] - room['start_time']
-                        wpm = float(_player['words_done']) / float(d_t) * 60
-                        _player['id']
+                        wpm = float(_player['words_done']) / float(_player['updated_at'] - room['start_time']) * 60
+
                         raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm)
+                        raceStats.created_at = datetime.fromtimestamp(room['start_time'])
+                        raceStats.updated_at = datetime.fromtimestamp(_player['updated_at'])
                         raceStats.put()
 
                         ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
                         newWPM = ((ndb_player.wpm*ndb_player.games_played)+wpm)/(ndb_player.games_played+1)
-                        player.wpm = newWPM
-                        player.put()
+
+                        ndb_player.games_played = ndb_player.games_played + 1
+                        ndb_player.wpm = newWPM
+
+                        ndb_player.put()
                     # update player stats, wpm as a recalculated average
                     # :D
 
