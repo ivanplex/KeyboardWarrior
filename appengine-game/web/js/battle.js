@@ -2,7 +2,7 @@
 
 function beginCountdown() {
 	var countdownNumber = document.getElementById("number-countdown");
-	var countdownFrom = 10;
+	var countdownFrom = 5;
 	countdownNumber.innerHTML = countdownFrom;
 
 	//LET THE COUNT DOWN BEGIN!!
@@ -12,7 +12,7 @@ function beginCountdown() {
 	    if(countdownFrom<0){
 		    clearInterval(timeinterval);
 
-		    //Hide Countdown 
+		    //Hide Countdown
 		    var countdownPanel = document.getElementById("countdown-panel");
 		    countdownPanel.style.display = "none";
 
@@ -31,7 +31,7 @@ function beginCountdown() {
 			  fightSign.style.display = "none";
 			  fight();
 			}, 1500);
-		   
+
 		}
 	},1000);
 

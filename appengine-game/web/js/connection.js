@@ -25,14 +25,43 @@ function initConn() {
     });
 }
 
-function handleInitialResponse(jsonInfo) {
+function handleInitialResponse(jsonReply) {
     // Temporary JSON to reflect incoming JSON
-    // var json = '{"player_id": 1,"start_time": "1483654609","room": [{"id": 1,"text": "Good morning, how are you?"}],"players": [{"player_id": 2,"words_done" : 30}, {"player_id" : 3,"words_done" : 40}]}';
-    typeWords = jsonInfo.room.text;
-    playerId = jsonInfo.player_id;
+    // {
+    //     "player_id": 5,
+    //     "room": [{
+    // 		"players": [{
+    // 			"id": 5,
+    // 			"name": "asdsada",
+    // 			"updated_at": 1483,
+    // 			"words_done": 0
+    // 		}],
+    // 		"room_id": 8,
+    // 		"source": "etc",
+    // 		"start_time": -1,
+    // 		"text":"asdasdasd",
+    // 		"text_id": "21",
+    //     }],
+    // 	"timestamp": 1483
+    // }
+    console.log(jsonReply);
+    var typeWords = jsonReply.room.text;
+    var roomId = jsonReply.room.id;
+    var playerId = jsonReply.player_id;
 
-    // Towards benoit text checking, TODO: need to return words done
+    /***
+     * Image Slider
+     * para1: Player's challenge
+     * para2: Canvas Maximum width
+     */
+    var slider = new Slider(typeWords, $("#animate-area").width());
+    // Call function
+    $(document).keypress(null, slider.shift);
+
+    // Towards Benoit text checking, TODO: need to return words done
     textCheck(typeWords);
+
+    // sendInfo(playerId, unixTimeStamp(), wordsDone, )
 }
 
 // Sends information to server periodically
