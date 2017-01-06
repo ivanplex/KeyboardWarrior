@@ -7,8 +7,19 @@ class Player(ndb.Model):
     games_played = ndb.IntegerProperty()
 
     @classmethod
-    def get_by_user(cls, user):
-        return cls.query().filter(cls.user_id == user.user_id()).get()
+    def get_by_user(self, cls, user):
+        tempUser = cls.query().filter(cls.user_id == user.user_id()).get()
+        if tempUser:
+            return tempUser
+
+        tempUser = Player(user_id = user.user_id(), nickname = user.nickname())
+        tempUser.put()
+        return tempUser
+
+    @classmethod
+    def get_by_nickname(self, cls, nickname):
+        tempUser = cls.query().filter(cls.nickname == nickname).get()
+        return tempUser
 
 class Excerpt(ndb.Model):
     id = ndb.IntegerProperty()
@@ -16,6 +27,10 @@ class Excerpt(ndb.Model):
     created_at = ndb.DateTimeProperty(auto_now_add=True)
     updated_at = ndb.DateTimeProperty(auto_now=True)
     source = ndb.StringProperty()
+
+    @classmethod
+    def get_random_Excerpt(self) :
+        return ndb.Key(Excerpt, randint(0,69)).get()
 
 class RacerStats(ndb.Model):
     race_id = ndb.IntegerProperty()
