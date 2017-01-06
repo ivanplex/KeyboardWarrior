@@ -8,11 +8,20 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
 
-- url: /bootstrap
-  static_dir: bootstrap
+- url: /css
+  static_dir: web/css
+
+- url: /js
+  static_dir: web/js
+
+- url: /img
+  static_dir: web/img
+
+- url: /data
+  static_dir: web/data
 
 - url: /.*
-  script: guestbook.app
+  script: main.app
 # [END handlers]
 
 # [START libraries]
@@ -20,5 +29,7 @@ libraries:
 - name: webapp2
   version: latest
 - name: jinja2
+  version: latest
+- name: lxml
   version: latest
 # [END libraries]
