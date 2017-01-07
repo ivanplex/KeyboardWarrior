@@ -74,18 +74,25 @@ class Leaderboard(webapp2.RequestHandler):
     @classmethod
     def Global_Leaders(self,PLAYERS_PER_PAGE):
         user = users.get_current_user()
-        responseDict = dict()
         if user:
             query = models.Player.query(models.Player.user_id == user.user_id())
             player = query.fetch(1);
-            responseDict["u"] = json.dumps(player[0].to_dict())
-        else:
-            query = models.Player.query().order(-Player.wpm)
-            leaders = query.fetch(PLAYERS_PER_PAGE)
-            responseDict["lb"] = json.dumps(leaders.to_dict())
-        return(responseDict)
+            #Return this as well if the current user stats is required
+        query = models.Player.query().order(-models.Player.wpm)
+        leaders = query.fetch(PLAYERS_PER_PAGE)
+        return leaders
     def getByExcerpt(excerpt_id, PLAYERS_PER_PAGE):
+        user = users.get_current_user()
+        if user:
+            races = models.Race.query(models.Race.excerpt_id == excerpt_id)
+            racerStats = models.RacerStats.query(models.RacerStats.id in races, models.RacerStats.user_id == user.user_id()).order(models.RacerStats.wpm)
+            racerStats.fetch(1);
+            #Return this as well if the current user stats is required
         races = models.Race.query(models.Race.excerpt_id == excerpt_id)
+        racerStats = models.RacerStats.query(models.RacerStats.id in races).order(models.RacerStats.wpm)
+        leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
+        return leaderStats
+
 
 
 
@@ -105,7 +112,6 @@ class MainPage(webapp2.RequestHandler):
 
         if user:
             player = models.Player.get_by_user(models.Player, user)
-            print(player.nickname)
 
             template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
@@ -372,7 +378,6 @@ class Play(webapp2.RequestHandler):
         res['room'] = room
 
         self.response.write(json.dumps(res))
-
 
 # [END play]
 

@@ -1,12 +1,12 @@
 initConn();
 
-var words_done = 1;
-var roomId;
-var playerId;
-var playersInfo;
-var typeWords;
-var gameEnd = false;
-var startTime = 0;
+var correctWords = 0,
+roomId,
+playerId,
+playersInfo,
+typeWords,
+gameEnd = false,
+startTime = 0;
 
 //Unix timestamp in seconds
 function unixTimeStamp() {
@@ -25,6 +25,7 @@ function initConn() {
         data: JSON.stringify({timestamp: unixTimeStamp(), room_id: -1}),
         dataType: 'json',
         success: function (response) {
+            console.log(response);
             handleInitialResponse(response);
         },
         error: function (e) {
@@ -40,21 +41,22 @@ function handleInitialResponse(jsonReply) {
     this.roomId = jsonReply.room.room_id;
     this.playerId = jsonReply.player_id;
 
+    textCheck(getWordPassage());
     // start sending info at 2 seconds interval
-    var gameTicker = setInterval(function(){
-        sendInfo();
-    }, 2000);
+    gameTicker = setInterval(sendInfo, 2000);
 }
 
 
 // Sends information to server periodically
 function sendInfo() {
     console.log("sendinfo");
+    var correctWords = getCorrectWord();
+    var mistakes = getMistakes();
     $.ajax({
         type: 'POST',
         url: '/play',
         contentType: 'application/json',
-        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: words_done}),
+        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: correctWords, mistakes:mistakes}),
         dataType: 'json',
         success: function (response) {
             console.log(response);
@@ -63,6 +65,9 @@ function sendInfo() {
         error: function (e) {
             console.log(e);
             alert('Lost connection, try again');
+            $("#GameCanvas").hide();
+            $("#SplashScreen").show();
+            clearInterval(gameTicker);
         }
     });
 }
