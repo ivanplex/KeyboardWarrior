@@ -25,6 +25,7 @@ function initConn() {
         data: JSON.stringify({timestamp: unixTimeStamp(), room_id: -1}),
         dataType: 'json',
         success: function (response) {
+            console.log(response);
             handleInitialResponse(response);
         },
         error: function (e) {
