@@ -23,6 +23,10 @@ class Player(ndb.Model):
         tempUser = cls.query().filter(cls.nickname == nickname).get()
         return tempUser
 
+    @classmethod
+    def get_by_user_id(self, cls, user_id):
+        return cls.query().filter(cls.user_id == user_id).get()
+
 class Excerpt(ndb.Model):
     id = ndb.IntegerProperty()
     passage = ndb.TextProperty()
@@ -38,11 +42,9 @@ class RacerStats(ndb.Model):
     race_id = ndb.IntegerProperty()
     user_id = ndb.StringProperty()
     wpm = ndb.FloatProperty()
-    wpm_percentile = ndb.FloatProperty()
-    created_at = ndb.DateTimeProperty(auto_now_add=True)
-    updated_at = ndb.DateTimeProperty(auto_now=True)
+    created_at = ndb.DateTimeProperty()
+    updated_at = ndb.DateTimeProperty()
 
 class Race(ndb.Model):
     excerpt_id = ndb.IntegerProperty()
-    start_time = ndb.IntegerProperty()
-    players = ndb.IntegerProperty(repeated=True)
+    start_time = ndb.DateTimeProperty()
