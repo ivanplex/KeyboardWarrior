@@ -195,7 +195,7 @@ class Play(webapp2.RequestHandler):
         HOUSEKEEPING SECTION, I SUGGEST WE PROCESS/SAVE HERE INSTEAD OF WHEN THE GAME 'ENDS'
         """
 
-        for _id in rooms:
+        for _id in rooms.keys():
             _room = rooms[_id]
 
             # room has expired -- save logic and etc
@@ -398,9 +398,10 @@ class Play(webapp2.RequestHandler):
                             return
 
                         # update the users :D
-                        player['words_done'] = words_done
-                        player['updated_at'] = current_time
-                        player['mistakes'] = mistakes
+                        if player['words_done'] < words_length:
+                            player['words_done'] = words_done
+                            player['updated_at'] = current_time
+                            player['mistakes'] = mistakes
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
             return
