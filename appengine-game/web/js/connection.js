@@ -1,9 +1,19 @@
 initConn();
 
+var words_done = 1;
+var roomId;
+var playerId;
+var playersInfo;
+var typeWords;
+var gameEnd = false;
+var startTime = 0;
+
 //Unix timestamp in seconds
 function unixTimeStamp() {
     return Math.round(new Date().getTime() / 1000)
 }
+
+var gameTicker;
 
 // Initalise connection with server
 function initConn() {
@@ -12,93 +22,113 @@ function initConn() {
         type: 'POST',
         url: '/play',
         contentType: 'application/json',
-        data: JSON.stringify({
-            timestamp: unixTimeStamp(),
-            room_id: -1
-        }),
+        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: -1}),
         dataType: 'json',
         success: function (response) {
             handleInitialResponse(response);
-            return response;
         },
-        error: function() {
+        error: function (e) {
+            console.log(e);
             alert('No response from server');
         }
     });
 }
 
 function handleInitialResponse(jsonReply) {
-    console.log(jsonReply);
+    console.log("handleInitialResponse");
     this.typeWords = jsonReply.room.text;
-    this.roomId = jsonReply.room.id;
+    this.roomId = jsonReply.room.room_id;
     this.playerId = jsonReply.player_id;
-    // send info until valid start_time is given
-    sendInfo(playerId, unixTimeStamp(), -1, roomId, 0);
+
+    // start sending info at 2 seconds interval
+    var gameTicker = setInterval(function(){
+        sendInfo();
+    }, 2000);
 }
 
-function getWordPassage(){
-    return typeWords;
-}
 
 // Sends information to server periodically
-function sendInfo(playerid, timestamp, starttime, roomid, wordsdone) {
+function sendInfo() {
+    console.log("sendinfo");
     $.ajax({
         type: 'POST',
         url: '/play',
         contentType: 'application/json',
-        data: JSON.stringify({
-            // TODO: check with boon
-            player_id: playerid,
-            timestamp: timestamp,
-            start_time: starttime,
-            room_id: roomid,
-            words_done: wordsdone
-        }),
+        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: words_done}),
         dataType: 'json',
         success: function (response) {
-            handleResponses(response);
-            return response;
+            handleResponse(response);
+        },
+        error: function (e) {
+            console.log(e);
+            alert('Lost connection, try again');
         }
     });
 }
 
-function handleResponses(jsonReply) {
+function handleResponse(jsonReply) {
     // Send (words_done), with timestamp to server every 2 seconds
     // startTime -1 means game has not started
-    // gameid -1 means game has ended
-
-    var roomId = jsonReply.room.id;
+    // roomid -1 means game has ended
+    var roomId = jsonReply.room.room_id;
     var playerId = jsonReply.player_id;
-    var startTime = jsonReply.room.start_time;
+    this.startTime = jsonReply.room.start_time;
+    var endTime = jsonReply.room.end_time;
+
+    var currentTime = unixTimeStamp();
 
     // have to utilise other players information
     this.playersInfo = jsonReply.room.players;
 
-    if (startTime == -1) {
-        // Keep sending every two seconds until game starts
-        setInterval(sendInfo(playerId, unixTimeStamp(), startTime, 0, roomId), (2 * 1000));
-    } else {
-        if (roomId == -1) { // game has ended
-            // exit screen
+    if (jsonReply.room === null || endTime < currentTime) {
+        console.log("clearInterval");
+        // game ended or invalid room
+        room_id = -1;
+        clearInterval(gameTicker)
+        // exit screen
 
-        } else {
-            // Game has started if current time is bigger than startTime
-            if (unixTimeStamp() > startTime) {
-                setInterval(sendInfo(playerId, unixTimeStamp(), startTime, 20, roomId), (2 * 1000));
-            } else {
+        // give benoit a reset request
+        this.gameEnd = true;
+    } else {
+        this.gameEnd = false;
+        // game is ongoing
+        if (startTime !== -1) {
+            // game has started
+            if (startTime < currentTime) {
                 // Start counting down to start game
-                var countdownDifference = startTime - unixTimeStamp();
+                var countdownDifference = startTime - currentTime;
                 beginCountdown(countdownDifference);
-                setInterval(sendInfo(playerId, unixTimeStamp(), startTime, 20, roomId), (2 * 1000));
             }
+        } else {
+            // wait for startTime, show waiting screen at #gamecanvas
+            // document.getElementById("countdown-panel").style.display = "none";
         }
     }
+}
 
-    // need a function to return words done
+function getGameStatus() {
+    // returns true when game has ended, false when ongoing
+    return gameEnd;
 }
 
 function getPlayersInfo() {
+    // returns players information in the room
     return playersInfo;
+}
+
+function getWordPassage() {
+    // return words to be typed
+    return typeWords;
+}
+
+function getPlayerId(){
+    // return current player's id
+    return playerId;
+}
+
+function getStartTime(){
+    // return -1 when game has not started, return valid when started
+    return startTime;
 }
 
 // Set cookie with player id set, time expiry and path
