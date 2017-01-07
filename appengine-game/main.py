@@ -195,7 +195,7 @@ class Play(webapp2.RequestHandler):
         HOUSEKEEPING SECTION, I SUGGEST WE PROCESS/SAVE HERE INSTEAD OF WHEN THE GAME 'ENDS'
         """
 
-        for _id in rooms:
+        for _id in rooms.keys():
             _room = rooms[_id]
 
             # room has expired -- save logic and etc
