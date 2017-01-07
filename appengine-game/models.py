@@ -5,7 +5,8 @@ from google.appengine.ext import ndb
 class Player(ndb.Model):
     user_id = ndb.StringProperty()
     nickname = ndb.StringProperty()
-    wpm = ndb.IntegerProperty()
+    wpm = ndb.FloatProperty()
+    accuracy = ndb.FloatProperty()
     games_played = ndb.IntegerProperty()
 
     @classmethod
@@ -42,6 +43,7 @@ class RacerStats(ndb.Model):
     race_id = ndb.IntegerProperty()
     user_id = ndb.StringProperty()
     wpm = ndb.FloatProperty()
+    accuracy = ndb.FloatProperty()
     created_at = ndb.DateTimeProperty()
     updated_at = ndb.DateTimeProperty()
 
