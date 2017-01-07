@@ -1,46 +1,59 @@
-var 
-correctWords = 0,
-mistakes = 0
+var myParagraph = document.getElementById("paragraph-input")
+var myInput = document.getElementById("user-input")
+var myText = ""
+
+var correctWords = 0
+var mistakes = 0
+var myArray = []
+
 /**
  * check matching between user input and text
  * @param string   text to be typed
  */
 function textCheck(receivedText) {
+  // paragraph
+  myParagraph = document.getElementById("paragraph-input")
+
+  // input
+  myInput = document.getElementById("user-input")
+
+  // split the incoming text with spaces
+  myArray = receivedText.split(" ")
+  myText = receivedText
 
   // display text
   displayParagraph(receivedText)
 
-  var myParagraph = document.getElementById("paragraph-input")
-  var myArray = myParagraph.innerHTML.split(" ")
-  // input
-  var myInput = document.getElementById("user-input")
-
+  // highlight the first word as green
   handleWordColor(0, true)
 
-  // handle events
-  var count = 0
+  // reset correct words and mistakes
+  correctWords = 0
+  mistakes = 0
+
   myInput.onkeypress = function(evt) {
     evt = evt || window.event
+
+    // if space is pressed
     if (evt.keyCode == 32) {
-      if(count >= myArray.length-1) {
-        myParagraph.innerHTML = myParagraph.innerHTML.replace(/<\/?span[^>]*>/g,"")
-        correctWords ++
+
+      // if we exceed the boundary
+      if (correctWords === myArray.length - 1) {
+        myParagraph.innerHTML = myText
         myInput.value = ""
-        disableInput()
         return false
       }
+
       var myWord = myInput.value
-      if (myWord == myArray[count]) {
+      if (myWord === myArray[correctWords]) {
         changeInputColor("white")
-        handleWordColor(count+1, true)
-        count ++
-        correctWords ++
+        handleWordColor(++correctWords, true)
         myInput.value = ""
         return false
       } else {
         changeInputColor("red")
-        handleWordColor(count, false)
-        mistakes ++
+        handleWordColor(correctWords, false)
+        mistakes++
         return false
       }
     }
@@ -52,10 +65,7 @@ function textCheck(receivedText) {
  * @param string   text to be typed
  */
  function displayParagraph(receivedText) {
-  
-  var myParagraph = document.getElementById("paragraph-input")
   myParagraph.innerHTML = receivedText
-
 }
 
 /**
@@ -64,20 +74,12 @@ function textCheck(receivedText) {
  * @param boolean   span if the word is correct, class='wrong' otherwise 
  */
 function handleWordColor(index, isCorrect) {
+  // clone the global array
+  var localArray = myArray.slice(0)
 
-  var myParagraph = document.getElementById("paragraph-input")
-  myParagraph.innerHTML = myParagraph.innerHTML.replace(/<\/?span[^>]*>/g,"")
-
-  var myArray = myParagraph.innerHTML.split(" ")
-
-  if(isCorrect === true) {
-    myArray[index] = "<span>" + myArray[index] + "</span>"  
-  } else if(isCorrect === false) {
-    myArray[index] = "<span class='wrong'>" + myArray[index] + "</span>"
-  }
+  localArray[index] = "<span" + (isCorrect ? ">" : " class='wrong'>") + localArray[index] + "</span>"
   
-  myParagraph.innerHTML = myArray.join(" ")
-
+  myParagraph.innerHTML = localArray.join(" ")
 }
 
 /**
@@ -85,10 +87,7 @@ function handleWordColor(index, isCorrect) {
  * @param string   background color
  */
 function changeInputColor(color) {
-
-  var myInput = document.getElementById("user-input")
   myInput.style.backgroundColor = color
-
 }
 
 /**
@@ -96,36 +95,26 @@ function changeInputColor(color) {
  * @param string   new text to display
  */
 function resetText(newText) {
-
-  var myParagraph = document.getElementById("paragraph-input")
   myParagraph.innerHTML = newText
-
 }
 
 /**
  * disable the user input box
  */
 function disableInput() {
-
-  var myInput = document.getElementById("user-input")
   myInput.disabled = true
-
 }
 
 /**
  * get the number of correct word typed so far
  */
 function getCorrectWord() {
-
   return correctWords
-  
 }
 
 /**
  * get the number of mistakes typed so far
  */
 function getMistakes() {
-
   return mistakes
-
 }
