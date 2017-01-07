@@ -206,14 +206,15 @@ class Play(webapp2.RequestHandler):
                     wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
                     accuracy = float(_player['words_done']) / float(_player['words_done'] + _player['mistakes'])
 
-                    raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm)
+                    raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm, accuracy = accuracy)
                     raceStats.created_at = datetime.fromtimestamp(_room['start_time'])
                     raceStats.updated_at = datetime.fromtimestamp(_player['updated_at'])
                     raceStats.put()
 
                     ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
                     ndb_player.games_played = ndb_player.games_played + 1
-                    ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
+                    ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / ndb_player.games_played
+                    ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / ndb_player.games_played
                     ndb_player.put()
 
         """
