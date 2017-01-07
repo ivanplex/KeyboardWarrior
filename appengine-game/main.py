@@ -59,7 +59,7 @@ class Generate(webapp2.RequestHandler):
             print(str(i) + ' "' + quote + '" "' + source + '"')
             print(i);
 
-            tempEx = models.Excerpt(id = i-30, passage = quote, source = source)
+            tempEx = models.Excerpt(passage = quote, source = source)
             tempEx.key = ndb.Key(models.Excerpt, i-30);
             tempEx.put()
 
@@ -71,19 +71,23 @@ class Load(webapp2.RequestHandler):
 
 # [START Leaderboard]
 class Leaderboard(webapp2.RequestHandler):
-    def get(self):
+    @classmethod
+    def Global_Leaders(self,PLAYERS_PER_PAGE):
         user = users.get_current_user()
         responseDict = dict()
         if user:
-            query = models.Player.query(Player.user_id == user.user_id())
+            query = models.Player.query(models.Player.user_id == user.user_id())
             player = query.fetch(1);
             responseDict["u"] = json.dumps(player[0].to_dict())
         else:
-            PLAYERS_PER_PAGE = 10
-            query = Player.query().order(-Player.wpm)
+            query = models.Player.query().order(-Player.wpm)
             leaders = query.fetch(PLAYERS_PER_PAGE)
             responseDict["lb"] = json.dumps(leaders.to_dict())
-            self.response.write(responseDict)
+        return(responseDict)
+    def getByExcerpt(excerpt_id, PLAYERS_PER_PAGE):
+        races = models.Race.query(models.Race.excerpt_id == excerpt_id)
+
+
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
@@ -101,9 +105,11 @@ class MainPage(webapp2.RequestHandler):
 
         if user:
             player = models.Player.get_by_user(models.Player, user)
+            print(player.nickname)
 
-            template_values['nickname'] = player.nickname,
+            template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
+            template_values['leaders'] = Leaderboard.Global_Leaders(15)
 
         template = JINJA_ENVIRONMENT.get_template('web/index.html')
         self.response.write(template.render(template_values))
@@ -142,9 +148,71 @@ class Player(webapp2.RequestHandler):
 
 # [START play]
 class Play(webapp2.RequestHandler):
+    GAME_INTERVAL = 90
+    WAIT_INTERVAL = 15
+
+    MIN_PLAYERS = 3
+    MAX_PLAYERS = 5
 
     # game logic handled by POSTs
     def post(self):
+        # initialise variables if they do not exist and persist in registry
+        app = webapp2.get_app()
+
+        # current unix timestamp
+        current_time = int(time.time())
+
+        current_room = app.registry.get('current_room')
+        rooms = app.registry.get('rooms')
+
+        # what is the current room we are filling up
+        if current_room is None:
+            current_room = random.randrange(sys.maxint)
+            app.registry['current_room'] = current_room
+
+        # rooms existing in memory
+        if rooms is None:
+            rooms = {}
+            app.registry['rooms'] = rooms
+
+        """
+        HOUSEKEEPING SECTION, I SUGGEST WE PROCESS/SAVE HERE INSTEAD OF WHEN THE GAME 'ENDS'
+        """
+
+        for _id in rooms:
+            _room = rooms[_id]
+
+            # room has expired -- save logic and etc
+            if current_time > _room['end_time'] and _room['end_time'] != -1:
+                # remove the reference from the game
+                del rooms[_id]
+
+                # create and persist a race (for you to handle Sid, we have)
+                # we need to create the race first to get the unique key
+                race = models.Race(excerpt_id = _room['text_id'])
+                race.start_time = datetime.fromtimestamp(_room['start_time'])
+                race.end_time = datetime.fromtimestamp(_room['end_time'])
+                race.put()
+
+                # iterate over players in room -- the wpm is calculated here
+                # we can create the racerstats here this way
+                for _player in _room['players']:
+                    wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
+
+                    raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm)
+                    raceStats.created_at = datetime.fromtimestamp(_room['start_time'])
+                    raceStats.updated_at = datetime.fromtimestamp(_player['updated_at'])
+                    raceStats.put()
+
+                    ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
+                    ndb_player.games_played = ndb_player.games_played + 1
+                    ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
+                    ndb_player.put()
+
+        """
+        END HOUSEKEEPING SECTION
+        """
+
         # check if user is authenticated
         user = users.get_current_user()
 
@@ -153,25 +221,8 @@ class Play(webapp2.RequestHandler):
             self.redirect('/')
             return
 
-        # player id and current time
-        current_time = int(time.time())
+        # player id
         player_id = user.user_id()
-
-        # initialise variables if they do not exist and persist in registry
-        app = webapp2.get_app()
-
-        current_room = app.registry.get('current_room')
-        rooms = app.registry.get('rooms')
-
-        # what is the current room we are filling up
-        if not current_room:
-            current_room = random.randrange(sys.maxint)
-            app.registry['current_room'] = current_room
-
-        # rooms existing in memory
-        if not rooms:
-            rooms = {}
-            app.registry['rooms'] = rooms
 
         # performs input santitation on content type -- we only accept JSON
         if self.request.headers.get('content_type') != 'application/json':
@@ -185,7 +236,6 @@ class Play(webapp2.RequestHandler):
         try:
             obj = json.loads(self.request.body)
         except ValueError, e:
-            self.response.set_status(400, 'Invalid JSON')
             self.response.write('Invalid JSON')
             return
 
@@ -212,22 +262,20 @@ class Play(webapp2.RequestHandler):
             # user isn't in a room, allocate user to a room
             if room_id == -1:
 
-
                 while room == None:
                     # test the current room for whether it is full or not
                     room = rooms.get(current_room)
 
                     # room doesn't exist, we create new
-                    if not room:
+                    if room is None:
 
                         # assign a random excerpt
                         excerpt = models.Excerpt.get_random_Excerpt()
 
-                        print(excerpt.passage)
-
                         room = {}
                         room['players'] = []
                         room['start_time'] = -1
+                        room['end_time'] = -1
                         room['text_id'] = excerpt.id
                         room['text'] = excerpt.passage
                         room['source'] = excerpt.source
@@ -236,7 +284,7 @@ class Play(webapp2.RequestHandler):
                         rooms[current_room] = room
 
                     # check if room is full or start time has passed current time (TODO: fix/optimise)
-                    if len(room['players']) == 5 or (room['start_time'] < current_time and room['start_time'] != -1):
+                    if len(room['players']) == self.MAX_PLAYERS or (room['start_time'] < current_time and room['start_time'] != -1):
                         # generate a random room ID, this will (very rarely) collide with a valid room or create a new room
                         current_room = random.randrange(sys.maxint)
 
@@ -267,93 +315,54 @@ class Play(webapp2.RequestHandler):
                             room['players'].append(player)
 
                             # tell update the start_time to 15 seconds from now
-                            if (len(room['players'])) >= 3:
-                                room['start_time'] = current_time + 15
-
+                            if (len(room['players'])) >= self.MIN_PLAYERS:
+                                room['start_time'] = current_time + self.WAIT_INTERVAL
+                                room['end_time'] = room['start_time'] + self.GAME_INTERVAL
 
             # user is in a game, we do game stuff
             else:
                 room = rooms.get(room_id)
 
                 # room doesn't exist anymore, game over or invalid room?
-                if not room:
-                    self.response.set_status(404, 'Room Invalid')
-                    self.response.write('Room Not Found!')
-                    return
+                if room:
+                    player = None
 
-                player = None
-
-                # check for matching player in room using ID
-                for _player in room['players']:
-                    if _player['id'] == player_id:
-                        player = _player
-                        break
-
-                if not player:
-                    self.response.set_status(403, 'Not In Room')
-                    self.response.write('User Not In Room')
-                    return
-
-                words_done = obj.get('words_done')
-
-                # we don't have words done in this request...
-                if not words_done:
-                    self.response.set_status(400, 'Words Done Not In Request')
-                    self.response.write('Unable to find Words Done')
-                    return
-
-                if words_done < 0 or words_done > len(room['text']):
-                    self.response.set_status(400, 'Invalid Words Done Do Not Cheat')
-                    self.response.write('Words Done Is Not Valid')
-                    return
-
-                # game over, save status for ALL players
-                # GAME OVER GAME OVER GAME OVER
-                if room['start_time'] + 90 > current_time:
-                    # remove the reference from the game
-                    del rooms[room['room_id']]
-
-                    # create and persist a race (for you to handle Sid, we have)
-                    # we need to create the race first to get the unique key
-                    race = models.Race(excerpt_id = room['text_id'], start_time = datetime.fromtimestamp(room['start_time']))
-                    race.put()
-
-                    # iterate over players in room -- the wpm is calculated here
-                    # we can create the racerstats here this way
+                    # check for matching player in room using ID
                     for _player in room['players']:
-                        wpm = float(_player['words_done']) / float(_player['updated_at'] - room['start_time']) * 60
+                        if _player['id'] == player_id:
+                            player = _player
+                            break
 
-                        raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm)
-                        raceStats.created_at = datetime.fromtimestamp(room['start_time'])
-                        raceStats.updated_at = datetime.fromtimestamp(_player['updated_at'])
-                        raceStats.put()
+                    if player is None:
+                        self.response.set_status(403, 'Not In Room')
+                        self.response.write('User Not In Room')
+                        return
 
-                        ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
+                    # game is going on
+                    if current_time > room['start_time'] and current_time < room['end_time']:
+                        words_done = obj.get('words_done')
+                        words_length = len(room['text'])
 
-                        ndb_player.games_played = ndb_player.games_played + 1
-                        ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
+                        # we don't have words done in this request...
+                        if words_done is None:
+                            self.response.set_status(400, 'Words Done Not In Request')
+                            self.response.write('Unable to find Words Done')
+                            return
 
-                        ndb_player.put()
-                    # update player stats, wpm as a recalculated average
-                    # :D
+                        if words_done < 0 or words_done > words_length:
+                            self.response.set_status(400, 'Invalid Words Done Do Not Cheat')
+                            self.response.write('Words Done Is Not Valid')
+                            return
 
-                    #SIDHARTThhhhHH!!!!
+                        # update the users :D
+                        player['words_done'] = words_done
+                        player['updated_at'] = current_time
 
-                    # kill the room and tell users they need to search for a new game
-                    room = None
-                    current_room = -1
-                else:
-                    # update the users :D
-                    player['words_done'] = words_done
-                    player['updated_at'] = current_time
-
-                    # player finished game early
-                    if words_done == len(room['text']):
-                        room = None
-                        current_room = -1
+                        # player finished game early
+                        if words_done == words_length:
+                            room = None
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
-            self.response.write('Room ID Not A Number??')
             return
 
         # build the response json
@@ -365,25 +374,6 @@ class Play(webapp2.RequestHandler):
         self.response.write(json.dumps(res))
 
 
-    def get(self):
-        user = users.get_current_user()
-
-        if user:
-            nickname = user.user_id()
-            logout_url = users.create_logout_url('/')
-            greeting = 'Welcome, {}! (<a href="{}">sign out</a>)'.format(
-                nickname, logout_url)
-        else:
-            login_url = users.create_login_url('/')
-            greeting = '<a href="{}">Sign in</a>'.format(login_url)
-
-        self.response.write(
-            '<html><body>{}</body></html>'.format(greeting))
-
-    def getRoomKey(self):
-        race_key = race.put()
-
-
 # [END play]
 
 # [START app]
@@ -393,7 +383,6 @@ app = webapp2.WSGIApplication([
     ('/generate', Generate),
     ('/load', Load),
     ('/races/new', 'races.New'),
-    ('/leaderboard', Leaderboard),
     ('/player', Player),
 ], debug=True)
 # [END app]
