@@ -1,7 +1,14 @@
+function waitingScreen(){
+
+}
+
+
 /**
  * 
  */
 function initBattleGround() {
+
+	alert(getPlayersInfo());
 	var numOfPlayer = 5;
 
 	//Add player in fighting ground
@@ -16,13 +23,20 @@ function initBattleGround() {
 		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
 		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
 	}
-	
 
-	//Insert player icon
-	var newPlayerIcon = document.getElementById("undefinedPlayer");
 }
 
 function beginCountdown() {
+
+	var waitingPanel = document.getElementById("waiting-panel");
+	waitingPanel.style.display = "none";
+
+	var countdownPanel = document.getElementById("countdown-panel");
+	countdownPanel.style.display = "block";
+
+	//Add players
+	initBattleGround();
+
 	var countdownNumber = document.getElementById("number-countdown");
 	var countdownFrom = 5;
 	countdownNumber.innerHTML = countdownFrom;
@@ -35,7 +49,6 @@ function beginCountdown() {
 		    clearInterval(timeinterval);
 
 		    //Hide Countdown
-		    var countdownPanel = document.getElementById("countdown-panel");
 		    countdownPanel.style.display = "none";
 
 		    //Show fight sign
