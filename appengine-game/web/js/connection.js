@@ -1,6 +1,7 @@
 initConn();
 
 var correctWords = 0,
+timestamp,
 roomId,
 playerId,
 playersInfo,
@@ -46,7 +47,6 @@ function handleInitialResponse(jsonReply) {
     gameTicker = setInterval(sendInfo, 2000);
 }
 
-
 // Sends information to server periodically
 function sendInfo() {
     console.log("sendinfo");
@@ -77,6 +77,7 @@ function handleResponse(jsonReply) {
     // roomid -1 means game has ended
     var roomId = jsonReply.room.room_id;
     var playerId = jsonReply.player_id;
+    this.timestamp = jsonReply.timestamp;
     this.startTime = jsonReply.room.start_time;
     var endTime = jsonReply.room.end_time;
 
@@ -134,6 +135,11 @@ function getPlayerId(){
 function getStartTime(){
     // return -1 when game has not started, return valid when started
     return startTime;
+}
+
+// add delta to take into consideration of drift timestamp
+function getDeltaTimestamp() {
+
 }
 
 // Set cookie with player id set, time expiry and path

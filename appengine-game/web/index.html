@@ -137,13 +137,15 @@
 
 					<script>
 						$("#StartButton").click(function() {
-							$.getScript("js/connection.js");
+							// $.getScript("js/connection.js");
 							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
 							beginCountdown();
+							console.log(getPlayersInfo());
 						});
 					</script>
+					<script src="js/connection.js"></script>
 				</div>
 			</div>
 		</div>
