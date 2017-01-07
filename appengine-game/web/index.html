@@ -112,6 +112,7 @@
 									<button onclick="beginCountdown();">continue</button>
 								</div>
 								<div id="countdown-panel">
+									<audio id="cound-down-audio" src="sound/count-down.mp3" preload="auto" autobuffer></audio>
 									<p>Battle begins in</p>
 									<div id="number-countdown"></div>
 								</div>
@@ -133,17 +134,6 @@
 						</div>
 					</div>
 
-					<!-- Warrior image -->
-
-					<!-- Sliding Code -->
-					<script>
-					/***
-					 * Image Slider
-					 * para1: Player's challenge
-					 * para2: Canvas Maximum width
-					 */
-
-					</script>
 					<script src="js/connection.js"></script>
 					<script>
 						$("#StartButton").click(function() {
@@ -156,10 +146,8 @@
 							// Call function
 							$(document).keypress(null, slider.shift);
 
-							initBattleGround();
 							console.log(getPlayersInfo());
 
-							//beginCountdown();
 
 						});
 					</script>

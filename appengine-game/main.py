@@ -81,7 +81,8 @@ class Leaderboard(webapp2.RequestHandler):
         query = models.Player.query().order(-models.Player.wpm)
         leaders = query.fetch(PLAYERS_PER_PAGE)
         return leaders
-    def getByExcerpt(excerpt_id, PLAYERS_PER_PAGE):
+    @classmethod
+    def Excerpt_Leaders(self, excerpt_id, PLAYERS_PER_PAGE):
         user = users.get_current_user()
         if user:
             races = models.Race.query(models.Race.excerpt_id == excerpt_id)
@@ -92,8 +93,11 @@ class Leaderboard(webapp2.RequestHandler):
         racerStats = models.RacerStats.query(models.RacerStats.id in races).order(models.RacerStats.wpm)
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return leaderStats
-
-
+    @classmethod
+    def Users_Top(self, user_id, PLAYERS_PER_PAGE):
+        racerStats = models.RacerStats.query(models.RacerStats.user_id==user_id).order(models.RacerStats.wpm)
+        topStats = racerStats.fetch(PLAYERS_PER_PAGE)
+        return topStats
 
 
 # [START main_page]
