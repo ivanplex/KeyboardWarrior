@@ -50,12 +50,19 @@
 		<!-- Modal content -->
 		<div class="modal-content">
 			<span class="close">&times;</span>
-			<p>Some text in the Modal..</p>
+			<form id="username_form">
+				<div class="form-group">
+					<label class="unamelabel" for="inputUsername">Username</label>
+					<input type="text" class="form-control" id="new_nickname" name="new_nickname" aria-describedby="usernameHelp" value="{{nickname}}" required>
+					<small id="usernameHelp" class="form-text text-muted">Please dont be rude.</small>
+				</div>
+				<button type="submit" class="submit btn btn-primary">Submit</button>
+			</form>
 		</div>
 	</div>
 
 	<script src="js/settings.js"></script>
-	
+
 	<!--<div id="SplashScreen" class="center">
         <img src="img/logo.jpg" height="400px" width="400px" />
         <div>
