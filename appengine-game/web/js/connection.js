@@ -43,9 +43,7 @@ function handleInitialResponse(jsonReply) {
 
     textCheck(getWordPassage());
     // start sending info at 2 seconds interval
-    var gameTicker = setInterval(function(){
-        sendInfo();
-    }, 2000);
+    gameTicker = setInterval(sendInfo, 2000);
 }
 
 
@@ -64,6 +62,9 @@ function sendInfo() {
         error: function (e) {
             console.log(e);
             alert('Lost connection, try again');
+            $("#GameCanvas").hide();
+            $("#SplashScreen").show();
+            clearInterval(gameTicker);
         }
     });
 }
