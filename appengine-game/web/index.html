@@ -29,6 +29,7 @@
 
 	<script src="js/battle.js"></script>
 	<script src="js/textcheck.js"></script>
+	<script src="js/connection.js"></script>
 </head>
 
 <body>
@@ -118,7 +119,7 @@
 							</div>
 						</div>
 						<div id="fighting-ground" class="half-canvas">
-							
+
 						</div>
 					</div>
 
@@ -131,7 +132,7 @@
 					 * para1: Player's challenge
 					 * para2: Canvas Maximum width
 					 */
-					
+
 					</script>
 
 					<script>
@@ -140,17 +141,16 @@
 							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
-
+							console.log(getPlayersInfo());
 							var slider = new Slider('player1','warrior-image-1',8, $("#animate-area").width());
 							// Call function
 							$(document).keypress(null, slider.shift);
 
 							initBattleGround();
 							beginCountdown();
-							console.log(getPlayersInfo());
+
 						});
 					</script>
-					<script src="js/connection.js"></script>
 				</div>
 			</div>
 		</div>
