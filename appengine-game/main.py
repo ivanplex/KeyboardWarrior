@@ -214,8 +214,17 @@ class Play(webapp2.RequestHandler):
                 # iterate over players in room -- the wpm is calculated here
                 # we can create the racerstats here this way
                 for _player in _room['players']:
-                    wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
-                    accuracy = float(_player['words_done']) / float(_player['words_done'] + _player['mistakes'])
+                    wpm = 0
+
+                    if _player['updated_at'] > _room['start_time']:
+                        wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
+
+                    words_typed = _player['words_done'] + _player['mistakes']
+
+                    accuracy = 0
+
+                    if words_typed != 0
+                        accuracy = float(_player['words_done']) / float(words_typed)
 
                     raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm, accuracy = accuracy)
                     raceStats.created_at = datetime.fromtimestamp(_room['start_time'])
@@ -342,6 +351,8 @@ class Play(webapp2.RequestHandler):
             # user is in a game, we do game stuff
             else:
                 room = rooms.get(room_id)
+                print(room)
+                print(room_id)
 
                 # room doesn't exist anymore, game over or invalid room?
                 if room:
@@ -390,10 +401,6 @@ class Play(webapp2.RequestHandler):
                         player['words_done'] = words_done
                         player['updated_at'] = current_time
                         player['mistakes'] = mistakes
-
-                        # player finished game early
-                        if words_done == words_length:
-                            room = None
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
             return
