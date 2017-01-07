@@ -398,9 +398,10 @@ class Play(webapp2.RequestHandler):
                             return
 
                         # update the users :D
-                        player['words_done'] = words_done
-                        player['updated_at'] = current_time
-                        player['mistakes'] = mistakes
+                        if player['words_done'] < words_length:
+                            player['words_done'] = words_done
+                            player['updated_at'] = current_time
+                            player['mistakes'] = mistakes
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
             return
