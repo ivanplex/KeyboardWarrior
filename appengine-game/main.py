@@ -105,6 +105,7 @@ class MainPage(webapp2.RequestHandler):
 
             template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
+            template_values['leaders'] = Leaderboard.global_leaders(15)
 
         template = JINJA_ENVIRONMENT.get_template('web/index.html')
         self.response.write(template.render(template_values))

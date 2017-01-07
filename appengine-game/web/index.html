@@ -44,6 +44,25 @@
 		<div id="cog" class="settingsCog" role="main">
 			<img src="img/cog.png" height="50px" width="50px" />
 		</div>
+
+		{% if leaders %}
+		<div class="table-condensed">
+			<table>
+				<th>Pos</th>
+				<th>Username</th>
+				<th>Words Per Minute (WPM)</th>
+				{% for _leader in leaders %}
+				<tr>
+				   <td>{{loop.index+1}}</th>
+				   <td>{{_leader.username}}</th>
+				   <td>{{_leader.wpm}}</th>
+				</th>
+				{% endfor %}
+			</table>
+
+		</div>
+		{% endif %}
+
 	</div>
 
 	<div id="myModal" class="modal">
