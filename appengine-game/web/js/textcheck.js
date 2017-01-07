@@ -1,10 +1,13 @@
+var 
+correctWords = 0,
+mistakes = 0
 /**
  * check matching between user input and text
  * @param string   text to be typed
  */
 function textCheck(receivedText) {
 
-  // plot text
+  // display text
   displayParagraph(receivedText)
 
   var myParagraph = document.getElementById("paragraph-input")
@@ -21,20 +24,23 @@ function textCheck(receivedText) {
     if (evt.keyCode == 32) {
       if(count >= myArray.length-1) {
         myParagraph.innerHTML = myParagraph.innerHTML.replace(/<\/?span[^>]*>/g,"")
+        correctWords ++
         myInput.value = ""
+        disableInput()
         return false
       }
       var myWord = myInput.value
       if (myWord == myArray[count]) {
         changeInputColor("white")
         handleWordColor(count+1, true)
-        count += 1
-        // reset value of the input
+        count ++
+        correctWords ++
         myInput.value = ""
         return false
       } else {
         changeInputColor("red")
         handleWordColor(count, false)
+        mistakes ++
         return false
       }
     }
@@ -103,5 +109,23 @@ function disableInput() {
 
   var myInput = document.getElementById("user-input")
   myInput.disabled = true
+
+}
+
+/**
+ * get the number of correct word typed so far
+ */
+function getCorrectWord() {
+
+  return correctWords
+  
+}
+
+/**
+ * get the number of mistakes typed so far
+ */
+function getMistakes() {
+
+  return mistakes
 
 }
