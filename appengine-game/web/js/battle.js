@@ -41,8 +41,7 @@ function beginCountdown() {
 	var countdownFrom = 5;
 	countdownNumber.innerHTML = countdownFrom;
 
-	var countdownAudio = new Audio('sound/count-down.mp3');
-	alert(window.location.pathname);
+	var countdownAudio = document.getElementById("cound-down-audio");
 
 	//LET THE COUNT DOWN BEGIN!!
 	var timeinterval = setInterval(function(){
