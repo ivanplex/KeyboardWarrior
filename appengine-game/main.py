@@ -74,7 +74,6 @@ class Leaderboard(webapp2.RequestHandler):
     @classmethod
     def Global_Leaders(self,PLAYERS_PER_PAGE):
         user = users.get_current_user()
-        responseDict = dict()
         if user:
             query = models.Player.query(models.Player.user_id == user.user_id())
             player = query.fetch(1);
