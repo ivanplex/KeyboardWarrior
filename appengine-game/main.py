@@ -275,7 +275,7 @@ class Play(webapp2.RequestHandler):
                         rooms[current_room] = room
 
                     # check if room is full or start time has passed current time (TODO: fix/optimise)
-                    if len(room['players']) == MAX_PLAYERS or (room['start_time'] < current_time and room['start_time'] != -1):
+                    if len(room['players']) == self.MAX_PLAYERS or (room['start_time'] < current_time and room['start_time'] != -1):
                         # generate a random room ID, this will (very rarely) collide with a valid room or create a new room
                         current_room = random.randrange(sys.maxint)
 
@@ -306,9 +306,9 @@ class Play(webapp2.RequestHandler):
                             room['players'].append(player)
 
                             # tell update the start_time to 15 seconds from now
-                            if (len(room['players'])) >= MIN_PLAYERS:
-                                room['start_time'] = current_time + WAIT_INTERVAL
-                                room['end_time'] = room['start_time'] + GAME_INTERVAL
+                            if (len(room['players'])) >= self.MIN_PLAYERS:
+                                room['start_time'] = current_time + self.WAIT_INTERVAL
+                                room['end_time'] = room['start_time'] + self.GAME_INTERVAL
 
             # user is in a game, we do game stuff
             else:
@@ -332,6 +332,7 @@ class Play(webapp2.RequestHandler):
                     # game is going on
                     if current_time > room['start_time'] and current_time < room['end_time']:
                         words_done = obj.get('words_done')
+                        words_length = len(room['text'])
 
                         # we don't have words done in this request...
                         if words_done is None:
@@ -339,7 +340,7 @@ class Play(webapp2.RequestHandler):
                             self.response.write('Unable to find Words Done')
                             return
 
-                        if words_done < 0 or words_done > len(room['text']):
+                        if words_done < 0 or words_done > words_length:
                             self.response.set_status(400, 'Invalid Words Done Do Not Cheat')
                             self.response.write('Words Done Is Not Valid')
                             return
@@ -349,7 +350,7 @@ class Play(webapp2.RequestHandler):
                         player['updated_at'] = current_time
 
                         # player finished game early
-                        if words_done == len(room['text']):
+                        if words_done == words_length:
                             room = None
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
