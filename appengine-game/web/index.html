@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Keyboard Warrior {} {} </title>
+	<title>Keyboard Warrior</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 	<!-- Favicon -->
@@ -85,6 +85,17 @@
 
 	<script src="js/settings.js"></script>
 
+	<div id="leaderboardModal" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<div class="container" id="completedbox">
+			</div>
+		</div>
+	</div>
+
+	<script src="js/leaderboard.js"></script>
+
 	<!--<div id="SplashScreen" class="center">
         <img src="img/logo.jpg" height="400px" width="400px" />
         <div>
@@ -134,17 +145,6 @@
 						</div>
 					</div>
 
-					<!-- Warrior image -->
-
-					<!-- Sliding Code -->
-					<script>
-					/***
-					 * Image Slider
-					 * para1: Player's challenge
-					 * para2: Canvas Maximum width
-					 */
-
-					</script>
 					<script src="js/connection.js"></script>
 					<script>
 						$("#StartButton").click(function() {
@@ -153,13 +153,7 @@
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
 
-							var slider = new Slider('player1','warrior-image-1',8, $("#animate-area").width());
-							// Call function
-							$(document).keypress(null, slider.shift);
-
 							console.log(getPlayersInfo());
-
-
 						});
 					</script>
 				</div>

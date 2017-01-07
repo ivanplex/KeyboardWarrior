@@ -81,19 +81,27 @@ class Leaderboard(webapp2.RequestHandler):
         query = models.Player.query().order(-models.Player.wpm)
         leaders = query.fetch(PLAYERS_PER_PAGE)
         return leaders
-    def getByExcerpt(excerpt_id, PLAYERS_PER_PAGE):
+    @classmethod
+    def Excerpt_Leaders(self, excerpt_id, PLAYERS_PER_PAGE):
         user = users.get_current_user()
         if user:
             races = models.Race.query(models.Race.excerpt_id == excerpt_id)
-            racerStats = models.RacerStats.query(models.RacerStats.id in races, models.RacerStats.user_id == user.user_id()).order(models.RacerStats.wpm)
+            if not races.get():
+                return None
+            racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(races.fetch()), models.RacerStats.user_id == user.user_id()).order(models.RacerStats.wpm)
             racerStats.fetch(1);
             #Return this as well if the current user stats is required
         races = models.Race.query(models.Race.excerpt_id == excerpt_id)
-        racerStats = models.RacerStats.query(models.RacerStats.id in races).order(models.RacerStats.wpm)
+        if not races.get():
+            return None
+        racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(races.fetch())).order(models.RacerStats.wpm)
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return leaderStats
-
-
+    @classmethod
+    def Users_Top(self, user_id, PLAYERS_PER_PAGE):
+        racerStats = models.RacerStats.query(models.RacerStats.user_id==user_id).order(models.RacerStats.wpm)
+        topStats = racerStats.fetch(PLAYERS_PER_PAGE)
+        return topStats
 
 
 # [START main_page]
@@ -150,7 +158,7 @@ class Player(webapp2.RequestHandler):
 
         self.response.out.write('{"status":"success"}')
 
-# [END main_page]
+# [END change_player_name]
 
 # [START play]
 class Play(webapp2.RequestHandler):
@@ -397,6 +405,27 @@ class Play(webapp2.RequestHandler):
 
 # [END play]
 
+# [START get_final_leaderboards]
+class Finished(webapp2.RequestHandler):
+    def post(self):
+        user = users.get_current_user()
+
+        # if not user:
+        #     self.redirect('/')
+        #     return
+
+        excerpt = self.request.get("excerpt", default_value="10")
+
+        template_values = {}
+
+        template_values['excerpt_leaders'] = Leaderboard.Excerpt_Leaders(int(excerpt),15)
+        template_values['users_top'] = Leaderboard.Users_Top(user.user_id(),15)
+
+        template = JINJA_ENVIRONMENT.get_template('templates/leaderboard.html')
+
+        self.response.write(template.render(template_values))
+# [END get_final_leaderboards]
+
 # [START app]
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -405,5 +434,6 @@ app = webapp2.WSGIApplication([
     ('/load', Load),
     ('/races/new', 'races.New'),
     ('/player', Player),
+    ('/finished', Finished),
 ], debug=True)
 # [END app]
