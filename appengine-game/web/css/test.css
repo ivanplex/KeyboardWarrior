@@ -116,6 +116,7 @@ span {
   background-color:rgba(0, 0, 0, 0.5);
 }
 #countdown-panel{
+  display: none;
   text-align: center;
 }
 
