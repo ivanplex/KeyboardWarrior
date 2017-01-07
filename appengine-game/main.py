@@ -86,11 +86,15 @@ class Leaderboard(webapp2.RequestHandler):
         user = users.get_current_user()
         if user:
             races = models.Race.query(models.Race.excerpt_id == excerpt_id)
-            racerStats = models.RacerStats.query(models.RacerStats.id in races, models.RacerStats.user_id == user.user_id()).order(models.RacerStats.wpm)
+            if not races.get():
+                return None
+            racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(races.fetch()), models.RacerStats.user_id == user.user_id()).order(models.RacerStats.wpm)
             racerStats.fetch(1);
             #Return this as well if the current user stats is required
         races = models.Race.query(models.Race.excerpt_id == excerpt_id)
-        racerStats = models.RacerStats.query(models.RacerStats.id in races).order(models.RacerStats.wpm)
+        if not races.get():
+            return None
+        racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(races.fetch())).order(models.RacerStats.wpm)
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return leaderStats
     @classmethod
@@ -396,8 +400,10 @@ class Finished(webapp2.RequestHandler):
 
         excerpt = self.request.get("excerpt", default_value="10")
 
-        template_values['excerpt_leaders'] = Leaderboard.Excerpt_Leaders(excerpt)
-        template_values['users_top'] = Leaderboard.Users_Top(user.user_id())
+        template_values = {}
+
+        template_values['excerpt_leaders'] = Leaderboard.Excerpt_Leaders(int(excerpt),15)
+        template_values['users_top'] = Leaderboard.Users_Top(user.user_id(),15)
 
         template = JINJA_ENVIRONMENT.get_template('templates/leaderboard.html')
 
