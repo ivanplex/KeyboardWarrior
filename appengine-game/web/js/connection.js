@@ -1,12 +1,12 @@
 initConn();
 
-var words_done = 0;
-var roomId;
-var playerId;
-var playersInfo;
-var typeWords;
-var gameEnd = false;
-var startTime = 0;
+var correctWords = 0,
+roomId,
+playerId,
+playersInfo,
+typeWords,
+gameEnd = false,
+startTime = 0;
 
 //Unix timestamp in seconds
 function unixTimeStamp() {
@@ -50,11 +50,13 @@ function handleInitialResponse(jsonReply) {
 // Sends information to server periodically
 function sendInfo() {
     console.log("sendinfo");
+    var correctWords = getCorrectWord();
+    var mistakes = getMistakes();
     $.ajax({
         type: 'POST',
         url: '/play',
         contentType: 'application/json',
-        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: words_done}),
+        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: correctWords, mistakes:mistakes}),
         dataType: 'json',
         success: function (response) {
             handleResponse(response);
