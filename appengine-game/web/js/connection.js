@@ -2,9 +2,9 @@ initConn();
 
 var correctWords = 0,
 timestamp,
-roomId,
+roomId = -1,
 playerId,
-playersInfo,
+playersInfo = [],
 typeWords,
 gameEnd = false,
 startTime = 0;
@@ -41,6 +41,7 @@ function handleInitialResponse(jsonReply) {
     this.typeWords = jsonReply.room.text;
     this.roomId = jsonReply.room.room_id;
     this.playerId = jsonReply.player_id;
+    this.playersInfo = jsonReply.room.players;
 
     textCheck(getWordPassage());
     // start sending info at 2 seconds interval
@@ -78,13 +79,12 @@ function handleResponse(jsonReply) {
     // roomid -1 means game has ended
     var roomId = jsonReply.room.room_id;
     var playerId = jsonReply.player_id;
-    this.timestamp = jsonReply.timestamp;
-    this.startTime = jsonReply.room.start_time;
     var endTime = jsonReply.room.end_time;
-
     var currentTime = unixTimeStamp();
 
     // have to utilise other players information
+    this.timestamp = jsonReply.timestamp;
+    this.startTime = jsonReply.room.start_time;
     this.playersInfo = jsonReply.room.players;
 
     if (jsonReply.room === null || (endTime < currentTime && endTime !== -1)) {
