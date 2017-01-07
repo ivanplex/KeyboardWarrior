@@ -101,8 +101,9 @@ class MainPage(webapp2.RequestHandler):
 
         if user:
             player = models.Player.get_by_user(models.Player, user)
+            print(player.nickname)
 
-            template_values['nickname'] = player.nickname # str removes unicode prefix
+            template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
 
         template = JINJA_ENVIRONMENT.get_template('web/index.html')
@@ -173,11 +174,13 @@ class Play(webapp2.RequestHandler):
         HOUSEKEEPING SECTION, I SUGGEST WE PROCESS/SAVE HERE INSTEAD OF WHEN THE GAME 'ENDS'
         """
 
-        for _room in rooms:
+        for _id in rooms:
+            _room = rooms[_id]
+
             # room has expired -- save logic and etc
-            if current_time > _room['end_time']:
+            if current_time > _room['end_time'] and _room['end_time'] != -1:
                 # remove the reference from the game
-                del rooms[_room['room_id']]
+                del rooms[_id]
 
                 # create and persist a race (for you to handle Sid, we have)
                 # we need to create the race first to get the unique key
@@ -364,25 +367,6 @@ class Play(webapp2.RequestHandler):
         res['room'] = room
 
         self.response.write(json.dumps(res))
-
-
-    def get(self):
-        user = users.get_current_user()
-
-        if user:
-            nickname = user.user_id()
-            logout_url = users.create_logout_url('/')
-            greeting = 'Welcome, {}! (<a href="{}">sign out</a>)'.format(
-                nickname, logout_url)
-        else:
-            login_url = users.create_login_url('/')
-            greeting = '<a href="{}">Sign in</a>'.format(login_url)
-
-        self.response.write(
-            '<html><body>{}</body></html>'.format(greeting))
-
-    def getRoomKey(self):
-        race_key = race.put()
 
 
 # [END play]
