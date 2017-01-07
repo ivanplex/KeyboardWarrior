@@ -214,7 +214,11 @@ class Play(webapp2.RequestHandler):
                 # iterate over players in room -- the wpm is calculated here
                 # we can create the racerstats here this way
                 for _player in _room['players']:
-                    wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
+                    wpm = 0
+
+                    if _player['updated_at'] > _room['start_time']:
+                        wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
+                        
                     words_typed = _player['words_done'] + _player['mistakes']
 
                     accuracy = 0
