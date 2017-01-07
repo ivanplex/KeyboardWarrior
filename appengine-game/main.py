@@ -150,7 +150,7 @@ class Player(webapp2.RequestHandler):
 
         self.response.out.write('{"status":"success"}')
 
-# [END main_page]
+# [END change_player_name]
 
 # [START play]
 class Play(webapp2.RequestHandler):
@@ -381,6 +381,25 @@ class Play(webapp2.RequestHandler):
 
 # [END play]
 
+# [START get_final_leaderboards]
+class Finished(webapp2.RequestHandler):
+    def post(self):
+        user = users.get_current_user()
+
+        # if not user:
+        #     self.redirect('/')
+        #     return
+
+        excerpt = self.request.get("excerpt", default_value="10")
+
+        template_values['excerpt_leaders'] = Leaderboard.Excerpt_Leaders(excerpt)
+        template_values['users_top'] = Leaderboard.Users_Top(user.user_id())
+
+        template = JINJA_ENVIRONMENT.get_template('templates/leaderboard.html')
+
+        self.response.write(template.render(template_values))
+# [END get_final_leaderboards]
+
 # [START app]
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -389,5 +408,6 @@ app = webapp2.WSGIApplication([
     ('/load', Load),
     ('/races/new', 'races.New'),
     ('/player', Player),
+    ('/finished', Finished),
 ], debug=True)
 # [END app]
