@@ -215,7 +215,12 @@ class Play(webapp2.RequestHandler):
                 # we can create the racerstats here this way
                 for _player in _room['players']:
                     wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
-                    accuracy = float(_player['words_done']) / float(_player['words_done'] + _player['mistakes'])
+                    words_typed = _player['words_done'] + _player['mistakes']
+
+                    accuracy = 0
+
+                    if words_typed != 0
+                        accuracy = float(_player['words_done']) / float(words_typed)
 
                     raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm, accuracy = accuracy)
                     raceStats.created_at = datetime.fromtimestamp(_room['start_time'])
@@ -342,6 +347,8 @@ class Play(webapp2.RequestHandler):
             # user is in a game, we do game stuff
             else:
                 room = rooms.get(room_id)
+                print(room)
+                print(room_id)
 
                 # room doesn't exist anymore, game over or invalid room?
                 if room:
