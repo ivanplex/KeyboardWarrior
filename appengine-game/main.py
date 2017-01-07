@@ -78,24 +78,24 @@ class Leaderboard(webapp2.RequestHandler):
         if user:
             query = models.Player.query(models.Player.user_id == user.user_id())
             player = query.fetch(1);
-            responseDict["u"] = json.dumps(player[0].to_dict())
+            #Return this as well if the current user stats is required
         query = models.Player.query().order(-models.Player.wpm)
         leaders = query.fetch(PLAYERS_PER_PAGE)
-        responseDict["lb"] = json.dumps(leaders.to_dict())
-        return(responseDict)
+        return leaders
     def getByExcerpt(excerpt_id, PLAYERS_PER_PAGE):
         user = users.get_current_user()
-        responseDict = dict()
         if user:
             races = models.Race.query(models.Race.excerpt_id == excerpt_id)
             racerStats = models.RacerStats.query(models.RacerStats.id in races, models.RacerStats.user_id == user.user_id()).order(models.RacerStats.wpm)
             racerStats.fetch(1);
-            responseDict["u"] = json.dumps(racerStats[0].to_dict())
+            #Return this as well if the current user stats is required
         races = models.Race.query(models.Race.excerpt_id == excerpt_id)
         racerStats = models.RacerStats.query(models.RacerStats.id in races).order(models.RacerStats.wpm)
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
-        responseDict["lb"] = json.dumps(leaderStats.to_dict())
         return leaderStats
+
+
+
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
