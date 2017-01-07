@@ -145,6 +145,22 @@
 							$("#GameCanvas").show();
 							beginCountdown();
 						});
+						$("#leaveBttn").click(function() {
+							$("#GameCanvas").hide();
+							$("#SplashScreen").show();
+						});
+					</script>
+					<script>
+						$("#StartButton").click(function() {
+							// Towards Benoit text checking, TODO: need a function to return words done
+						  textCheck(getWordPassage());
+							// console.log(getPlayersInfo());
+
+							// Game Starts
+							$("#SplashScreen").hide();
+							$("#GameCanvas").show();
+							beginCountdown();
+						});
 					</script>
 					<script src="js/connection.js"></script>
 				</div>

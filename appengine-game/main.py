@@ -59,7 +59,7 @@ class Generate(webapp2.RequestHandler):
             print(str(i) + ' "' + quote + '" "' + source + '"')
             print(i);
 
-            tempEx = models.Excerpt(id = i-30, passage = quote, source = source)
+            tempEx = models.Excerpt(passage = quote, source = source)
             tempEx.key = ndb.Key(models.Excerpt, i-30);
             tempEx.put()
 
@@ -263,6 +263,7 @@ class Play(webapp2.RequestHandler):
 
                     # room doesn't exist, we create new
                     if room is None:
+
                         # assign a random excerpt
                         excerpt = models.Excerpt.get_random_Excerpt()
 
@@ -357,7 +358,6 @@ class Play(webapp2.RequestHandler):
                             room = None
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
-            self.response.write('Room ID Not A Number??')
             return
 
         # build the response json
