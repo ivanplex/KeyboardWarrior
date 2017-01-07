@@ -8,18 +8,17 @@ function waitingScreen(){
  */
 function initBattleGround() {
 
-	alert(getPlayersInfo());
-	var numOfPlayer = 5;
-
 	//Add player in fighting ground
 	var fightingGround = document.getElementById("fighting-ground");
 
-	for(var i = 1; i<=numOfPlayer; i++){
-		fightingGround.innerHTML += '<div id="player'+i+'" playerID="" class="player_icon"> <img id="warrior-image-'+i+'" class="WarriorImage" src="img/warrior2.png" /><div class="player-name">'+"Ivan Chan"+'</div></div>';	
+	var players = getPlayersInfo();
+
+	for(var i = 0; i<players.length; i++){
+		fightingGround.innerHTML += '<div id="player'+(i+1)+'" playerID="'+players[i].id+'" class="player_icon"> <img id="warrior-image-'+(i+1)+'" class="WarriorImage" src="img/warrior2.png" /><div class="player-name">'+players[i].name+'</div></div>';	
 
 		//Add color filters to warrior image
-		var image = document.getElementById("warrior-image-"+i);
-		degreeRotation = 360/numOfPlayer*(i-1);
+		var image = document.getElementById("warrior-image-"+(i+1));
+		degreeRotation = 360/players.length*i;
 		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
 		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
 	}
@@ -47,7 +46,6 @@ function beginCountdown() {
 	var timeinterval = setInterval(function(){
 	    countdownFrom--;
 	    countdownNumber.innerHTML = countdownFrom;
-	    countdownAudio.play();
 
 	    if(countdownFrom<0){
 		    clearInterval(timeinterval);
@@ -71,6 +69,8 @@ function beginCountdown() {
 			  fight();
 			}, 1500);
 
+		}else{
+			countdownAudio.play();
 		}
 	},1000);
 
