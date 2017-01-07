@@ -23,6 +23,11 @@ span {
   right:10px;
 }
 
+.leaveButton {
+  border-top-left-radius: 2em;
+  position:absolute;
+}
+
 .whiteText {
   color: white;
 }
