@@ -1,7 +1,7 @@
 initConn();
 
 var correctWords = 0,
-timestamp,
+deltaTimestamp = 0,
 roomId = -1,
 playerId,
 playersInfo = [],
@@ -12,7 +12,7 @@ endTime;
 
 //Unix timestamp in seconds
 function unixTimeStamp() {
-    return Math.round(new Date().getTime() / 1000)
+    return Math.round(new Date().getTime() / 1000) + deltaTimestamp
 }
 
 var gameTicker;
@@ -44,6 +44,9 @@ function handleInitialResponse(jsonReply) {
     this.playerId = jsonReply.player_id;
     this.playersInfo = jsonReply.room.players;
 
+    deltaTimestamp = 0;
+    deltaTimestamp = jsonReply.timestamp - unixTimeStamp();
+
     textCheck(getWordPassage());
     // start sending info at 2 seconds interval
     gameTicker = setInterval(sendInfo, 2000);
@@ -58,7 +61,7 @@ function sendInfo() {
         type: 'POST',
         url: '/play',
         contentType: 'application/json',
-        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: correctWords, mistakes:mistakes}),
+        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: correctWords, mistakes: mistakes}),
         dataType: 'json',
         success: function (response) {
             console.log(response);
@@ -75,10 +78,10 @@ function sendInfo() {
 }
 
 function handleResponse(jsonReply) {
-    // Send (words_done), with timestamp to server every 2 seconds
     // startTime -1 means game has not started
-    // roomid -1 means game has ended
+    // room null means game has ended
     var room = jsonReply.room;
+    // if room returned is null, dont process it
     if (room !== null) {
         this.roomId = jsonReply.room.room_id;
         this.endTime = jsonReply.room.end_time;
@@ -86,10 +89,9 @@ function handleResponse(jsonReply) {
         this.playersInfo = jsonReply.room.players;
     }
 
-    // have to utilise other players information
     var playerId = jsonReply.player_id;
     var currentTime = unixTimeStamp();
-    this.timestamp = jsonReply.timestamp;
+    var serverTimestamp = jsonReply.timestamp;
 
     if (room === null || (endTime < currentTime && endTime !== -1)) {
         console.log("clearInterval");
@@ -98,13 +100,23 @@ function handleResponse(jsonReply) {
         $("#GameCanvas").hide();
         $("#SplashScreen").show();
         clearInterval(gameTicker)
+
+        // resetBoard()
         // exit screen
         // give benoit a reset request
         this.gameEnd = true;
     } else {
         this.gameEnd = false;
+        // updateBoard()
+        // tell Mr. Ivan to update the board.
+        // he can then ask for the startTime, and have state in the battle.js
+        // to determine whether or not to start the countdown-
+        // as well as to update the players movements by requesting it from you
+
         // game is ongoing
         if (startTime !== -1) {
+            //updateBoard()
+            // call this and have ivan
             // game has started
             if (startTime < currentTime) {
                 // Start counting down to start game
@@ -145,7 +157,7 @@ function getStartTime(){
 
 // add delta to take into consideration of drift timestamp
 function getDeltaTimestamp() {
-
+    return (deltaTimestamp + unixTimeStamp());
 }
 
 // Set cookie with player id set, time expiry and path
