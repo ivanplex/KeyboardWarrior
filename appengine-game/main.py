@@ -71,7 +71,7 @@ class Load(webapp2.RequestHandler):
 
 # [START Leaderboard]
 class Leaderboard(webapp2.RequestHandler):
-    def get(self):
+    def Global_Leaders(PLAYERS_PER_PAGE):
         user = users.get_current_user()
         responseDict = dict()
         if user:
@@ -79,11 +79,14 @@ class Leaderboard(webapp2.RequestHandler):
             player = query.fetch(1);
             responseDict["u"] = json.dumps(player[0].to_dict())
         else:
-            PLAYERS_PER_PAGE = 10
             query = Player.query().order(-Player.wpm)
             leaders = query.fetch(PLAYERS_PER_PAGE)
             responseDict["lb"] = json.dumps(leaders.to_dict())
-            self.response.write(responseDict)
+        return(responseDict)
+    def getByExcerpt(excerpt_id, PLAYERS_PER_PAGE):
+        races = models.Race.query(models.Race.excerpt_id == excerpt_id)
+
+
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
