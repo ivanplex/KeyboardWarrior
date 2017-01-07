@@ -21,6 +21,7 @@ import urllib
 import json
 import random
 import time
+import numpy
 
 from datetime import datetime
 
@@ -78,13 +79,30 @@ class Leaderboard(webapp2.RequestHandler):
             query = models.Player.query(Player.user_id == user.user_id())
             player = query.fetch(1);
             responseDict["u"] = json.dumps(player[0].to_dict())
-        else:
-            query = Player.query().order(-Player.wpm)
-            leaders = query.fetch(PLAYERS_PER_PAGE)
-            responseDict["lb"] = json.dumps(leaders.to_dict())
+        query = models.Player.query().order(-models.Player.wpm)
+        leaders = query.fetch(PLAYERS_PER_PAGE)
+        responseDict["lb"] = json.dumps(leaders.to_dict())
         return(responseDict)
     def getByExcerpt(excerpt_id, PLAYERS_PER_PAGE):
+        user = users.get_current_user()
+        responseDict = dict()
+        if user:
+            races = models.Race.query(models.Race.excerpt_id == excerpt_id)
+            racerStats = models.RacerStats.query(models.RacerStats.id in races, models.RacerStats.user_id == user.user_id()).order(models.RacerStats.wpm)
+            racerStats.fetch(1);
+            responseDict["u"] = json.dumps(racerStats[0].to_dict())
         races = models.Race.query(models.Race.excerpt_id == excerpt_id)
+        racerStats = models.RacerStats.query(models.RacerStats.id in races).order(models.RacerStats.wpm)
+        leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
+        responseDict["lb"] = json.dumps(leaderStats.to_dict())
+        return leaderStats
+
+        allRaceStats = []
+        for race in races.fetch()
+
+            allRaceStats.extend(racerStats)
+        allRaceStats.sort
+
 
 
 
@@ -104,9 +122,8 @@ class MainPage(webapp2.RequestHandler):
 
         if user:
             player = models.Player.get_by_user(models.Player, user)
-            print(player.nickname)
 
-            template_values['nickname'] = player.nickname
+            template_values['nickname'] = player.nickname,
             template_values['loggedin'] = True
 
         template = JINJA_ENVIRONMENT.get_template('web/index.html')
@@ -177,13 +194,11 @@ class Play(webapp2.RequestHandler):
         HOUSEKEEPING SECTION, I SUGGEST WE PROCESS/SAVE HERE INSTEAD OF WHEN THE GAME 'ENDS'
         """
 
-        for _id in rooms:
-            _room = rooms[_id]
-
+        for _room in rooms:
             # room has expired -- save logic and etc
-            if current_time > _room['end_time'] and _room['end_time'] != -1:
+            if current_time > _room['end_time']:
                 # remove the reference from the game
-                del rooms[_id]
+                del rooms[_room['room_id']]
 
                 # create and persist a race (for you to handle Sid, we have)
                 # we need to create the race first to get the unique key
@@ -370,6 +385,25 @@ class Play(webapp2.RequestHandler):
         res['room'] = room
 
         self.response.write(json.dumps(res))
+
+
+    def get(self):
+        user = users.get_current_user()
+
+        if user:
+            nickname = user.user_id()
+            logout_url = users.create_logout_url('/')
+            greeting = 'Welcome, {}! (<a href="{}">sign out</a>)'.format(
+                nickname, logout_url)
+        else:
+            login_url = users.create_login_url('/')
+            greeting = '<a href="{}">Sign in</a>'.format(login_url)
+
+        self.response.write(
+            '<html><body>{}</body></html>'.format(greeting))
+
+    def getRoomKey(self):
+        race_key = race.put()
 
 
 # [END play]
