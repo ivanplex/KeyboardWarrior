@@ -84,3 +84,24 @@ function changeInputColor(color) {
   myInput.style.backgroundColor = color
 
 }
+
+/**
+ * reset text when a game is finished
+ * @param string   new text to display
+ */
+function resetText(newText) {
+
+  var myParagraph = document.getElementById("paragraph-input")
+  myParagraph.innerHTML = newText
+
+}
+
+/**
+ * disable the user input box
+ */
+function disableInput() {
+
+  var myInput = document.getElementById("user-input")
+  myInput.disabled = true
+
+}
