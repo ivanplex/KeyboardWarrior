@@ -1,5 +1,3 @@
-initConn();
-
 var correctWords = 0,
 deltaTimestamp = 0,
 roomId = -1,
@@ -10,15 +8,18 @@ gameEnd = false,
 startTime = 0,
 endTime;
 
+initConn();
+
 //Unix timestamp in seconds
 function unixTimeStamp() {
-    return Math.round(new Date().getTime() / 1000) + deltaTimestamp
+    return Math.round(new Date().getTime() / 1000 + deltaTimestamp)
 }
 
 var gameTicker;
 
 // Initalise connection with server
 function initConn() {
+    console.log(unixTimeStamp());
     // Send timestamp and roomid waiting for server response
     $.ajax({
         type: 'POST',
