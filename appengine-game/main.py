@@ -175,7 +175,6 @@ class Play(webapp2.RequestHandler):
 
         # performs input santitation on content type -- we only accept JSON
         if self.request.headers.get('content_type') != 'application/json':
-            self.response.set_status(400, 'Unrecognised Media Type')
             self.response.write('Unrecognised Media Type')
             return
 
@@ -185,13 +184,11 @@ class Play(webapp2.RequestHandler):
         try:
             obj = json.loads(self.request.body)
         except ValueError, e:
-            self.response.set_status(400, 'Invalid JSON')
             self.response.write('Invalid JSON')
             return
 
         # if we are here, the JSON is valid and we can proceed with checks
         if 'room_id' not in obj or 'timestamp' not in obj:
-            self.response.set_status(400, 'Invalid Request Parameters')
             self.response.write('Invalid Request Parameters')
             return
 
@@ -199,7 +196,6 @@ class Play(webapp2.RequestHandler):
         user_time = obj.get('timestamp')
 
         if not isinstance(user_time, int):
-            self.response.set_status(400, 'Timestamp must be a number')
             self.response.write('Timestamp must be a number')
             return
 
@@ -276,83 +272,77 @@ class Play(webapp2.RequestHandler):
                 room = rooms.get(room_id)
 
                 # room doesn't exist anymore, game over or invalid room?
-                if not room:
-                    self.response.set_status(404, 'Room Invalid')
-                    self.response.write('Room Not Found!')
-                    return
+                if room:
+                    player = None
 
-                player = None
-
-                # check for matching player in room using ID
-                for _player in room['players']:
-                    if _player['id'] == player_id:
-                        player = _player
-                        break
-
-                if not player:
-                    self.response.set_status(403, 'Not In Room')
-                    self.response.write('User Not In Room')
-                    return
-
-                words_done = obj.get('words_done')
-
-                # we don't have words done in this request...
-                if not words_done:
-                    self.response.set_status(400, 'Words Done Not In Request')
-                    self.response.write('Unable to find Words Done')
-                    return
-
-                if words_done < 0 or words_done > len(room['text']):
-                    self.response.set_status(400, 'Invalid Words Done Do Not Cheat')
-                    self.response.write('Words Done Is Not Valid')
-                    return
-
-                # game over, save status for ALL players
-                # GAME OVER GAME OVER GAME OVER
-                if room['start_time'] + 90 > current_time:
-                    # remove the reference from the game
-                    del rooms[room['room_id']]
-
-                    # create and persist a race (for you to handle Sid, we have)
-                    # we need to create the race first to get the unique key
-                    race = models.Race(excerpt_id = room['text_id'], start_time = datetime.fromtimestamp(room['start_time']))
-                    race.put()
-
-                    # iterate over players in room -- the wpm is calculated here
-                    # we can create the racerstats here this way
+                    # check for matching player in room using ID
                     for _player in room['players']:
-                        wpm = float(_player['words_done']) / float(_player['updated_at'] - room['start_time']) * 60
+                        if _player['id'] == player_id:
+                            player = _player
+                            break
 
-                        raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm)
-                        raceStats.created_at = datetime.fromtimestamp(room['start_time'])
-                        raceStats.updated_at = datetime.fromtimestamp(_player['updated_at'])
-                        raceStats.put()
+                    if not player:
+                        self.response.write('User Not In Room')
+                        return
 
-                        ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
+                    words_done = obj.get('words_done')
 
-                        ndb_player.games_played = ndb_player.games_played + 1
-                        ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
+                    # we don't have words done in this request...
+                    if not words_done:
+                        self.response.write('Unable to find Words Done')
+                        return
 
-                        ndb_player.put()
-                    # update player stats, wpm as a recalculated average
-                    # :D
+                    if words_done < 0 or words_done > len(room['text']):
+                        self.response.write('Words Done Is Not Valid')
+                        return
 
-                    #SIDHARTThhhhHH!!!!
+                    # game over, save status for ALL players
+                    # GAME OVER GAME OVER GAME OVER
+                    if room['start_time'] + 90 > current_time:
+                        # remove the reference from the game
+                        del rooms[room['room_id']]
 
-                    # kill the room and tell users they need to search for a new game
-                    room = None
-                    current_room = -1
-                else:
-                    # update the users :D
-                    player['words_done'] = words_done
-                    player['updated_at'] = current_time
+                        # create and persist a race (for you to handle Sid, we have)
+                        # we need to create the race first to get the unique key
+                        race = models.Race(excerpt_id = room['text_id'], start_time = datetime.fromtimestamp(room['start_time']))
+                        race.put()
 
-                    # player finished game early
-                    if words_done == len(room['text']):
+                        # iterate over players in room -- the wpm is calculated here
+                        # we can create the racerstats here this way
+                        for _player in room['players']:
+                            wpm = float(_player['words_done']) / float(_player['updated_at'] - room['start_time']) * 60
+
+                            raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm)
+                            raceStats.created_at = datetime.fromtimestamp(room['start_time'])
+                            raceStats.updated_at = datetime.fromtimestamp(_player['updated_at'])
+                            raceStats.put()
+
+                            ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
+
+                            ndb_player.games_played = ndb_player.games_played + 1
+                            ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
+
+                            ndb_player.put()
+                        # update player stats, wpm as a recalculated average
+                        # :D
+
+                        #SIDHARTThhhhHH!!!!
+
+                        # kill the room and tell users they need to search for a new game
                         room = None
-                        current_room = -1
+                    else:
+                        if room['start_time'] < current_time:
+                            self.response.write('Game Not Yet Started')
+                            return
+                            
+                        # update the users :D
+                        player['words_done'] = words_done
+                        player['updated_at'] = current_time
+
+                        # player finished game early
+                        if words_done == len(room['text']):
+                            room = None
         else:
-            self.response.set_status(400, 'Room_ID Must Be A Number')
             self.response.write('Room ID Not A Number??')
             return
 
