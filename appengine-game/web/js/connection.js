@@ -80,7 +80,7 @@ function handleResponse(jsonReply) {
     // have to utilise other players information
     this.playersInfo = jsonReply.room.players;
 
-    if (jsonReply.room === null || endTime < currentTime) {
+    if (jsonReply.room === null || (endTime < currentTime && endTime !== -1)) {
         console.log("clearInterval");
         // game ended or invalid room
         room_id = -1;
