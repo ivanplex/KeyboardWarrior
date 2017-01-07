@@ -7,7 +7,8 @@ playerId,
 playersInfo = [],
 typeWords,
 gameEnd = false,
-startTime = 0;
+startTime = 0,
+endTime;
 
 //Unix timestamp in seconds
 function unixTimeStamp() {
@@ -31,7 +32,7 @@ function initConn() {
         },
         error: function (e) {
             console.log(e);
-            alert('No response from server');
+            // alert('No response from server');
         }
     });
 }
@@ -77,23 +78,27 @@ function handleResponse(jsonReply) {
     // Send (words_done), with timestamp to server every 2 seconds
     // startTime -1 means game has not started
     // roomid -1 means game has ended
-    var roomId = jsonReply.room.room_id;
-    var playerId = jsonReply.player_id;
-    var endTime = jsonReply.room.end_time;
-    var currentTime = unixTimeStamp();
+    var room = jsonReply.room;
+    if (room !== null) {
+        this.roomId = jsonReply.room.room_id;
+        this.endTime = jsonReply.room.end_time;
+        this.startTime = jsonReply.room.start_time;
+        this.playersInfo = jsonReply.room.players;
+    }
 
     // have to utilise other players information
+    var playerId = jsonReply.player_id;
+    var currentTime = unixTimeStamp();
     this.timestamp = jsonReply.timestamp;
-    this.startTime = jsonReply.room.start_time;
-    this.playersInfo = jsonReply.room.players;
 
-    if (jsonReply.room === null || (endTime < currentTime && endTime !== -1)) {
+    if (room === null || (endTime < currentTime && endTime !== -1)) {
         console.log("clearInterval");
         // game ended or invalid room
         room_id = -1;
+        $("#GameCanvas").hide();
+        $("#SplashScreen").show();
         clearInterval(gameTicker)
         // exit screen
-
         // give benoit a reset request
         this.gameEnd = true;
     } else {
