@@ -71,15 +71,16 @@ class Load(webapp2.RequestHandler):
 
 # [START Leaderboard]
 class Leaderboard(webapp2.RequestHandler):
-    def Global_Leaders(PLAYERS_PER_PAGE):
+    @classmethod
+    def Global_Leaders(self,PLAYERS_PER_PAGE):
         user = users.get_current_user()
         responseDict = dict()
         if user:
-            query = models.Player.query(Player.user_id == user.user_id())
+            query = models.Player.query(models.Player.user_id == user.user_id())
             player = query.fetch(1);
             responseDict["u"] = json.dumps(player[0].to_dict())
         else:
-            query = Player.query().order(-Player.wpm)
+            query = models.Player.query().order(-Player.wpm)
             leaders = query.fetch(PLAYERS_PER_PAGE)
             responseDict["lb"] = json.dumps(leaders.to_dict())
         return(responseDict)
@@ -108,7 +109,7 @@ class MainPage(webapp2.RequestHandler):
 
             template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
-            template_values['leaders'] = Leaderboard.global_leaders(15)
+            template_values['leaders'] = Leaderboard.Global_Leaders(15)
 
         template = JINJA_ENVIRONMENT.get_template('web/index.html')
         self.response.write(template.render(template_values))
@@ -382,7 +383,6 @@ app = webapp2.WSGIApplication([
     ('/generate', Generate),
     ('/load', Load),
     ('/races/new', 'races.New'),
-    ('/leaderboard', Leaderboard),
     ('/player', Player),
 ], debug=True)
 # [END app]

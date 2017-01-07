@@ -35,7 +35,7 @@
 	<div id="SplashScreen" class="container" style="max-width: 330px">
 		<img src="img/logo.png" height="330px" width="330px" />
 		{% if loggedin %}
-		<label>Hello {{ nickname }}</label>
+		<h4 style="text-align: center">Hello {{ nickname }}</h4>
 		<button id="StartButton" class="btn btn-lg btn-primary btn-block" type="submit">Start Game</button>
 		<a class="btn btn-sm btn-link btn-block" href="{{ logouturl }}">Log Out</a>
 		{% else %}
@@ -45,22 +45,23 @@
 			<img src="img/cog.png" height="50px" width="50px" />
 		</div>
 
-		{% if leaders %}
-		<div class="table-condensed">
-			<table>
-				<th>Pos</th>
-				<th>Username</th>
-				<th>Words Per Minute (WPM)</th>
-				{% for _leader in leaders %}
+		{% if leaders|length > 1 %}
+		<table class="table">
+			<thead>
 				<tr>
-				   <td>{{loop.index+1}}</th>
-				   <td>{{_leader.username}}</th>
-				   <td>{{_leader.wpm}}</th>
-				</th>
-				{% endfor %}
-			</table>
-
-		</div>
+					<th>Pos</th>
+					<th>Player</th>
+					<th>WPM</th>
+				</tr>
+			</thead>
+			{% for _leader in leaders %}
+			<tr>
+			   <td>{{loop.index}}</th>
+			   <td>{{_leader.username}}</th>
+			   <td>{{_leader.wpm}}</th>
+			</th>
+			{% endfor %}
+		</table>
 		{% endif %}
 
 	</div>
