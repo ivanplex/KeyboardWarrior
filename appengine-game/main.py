@@ -223,7 +223,7 @@ class Play(webapp2.RequestHandler):
 
                     accuracy = 0
 
-                    if words_typed != 0
+                    if words_typed != 0:
                         accuracy = float(_player['words_done']) / float(words_typed)
 
                     raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm, accuracy = accuracy)
