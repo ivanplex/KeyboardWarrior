@@ -1,3 +1,5 @@
+initConn();
+
 //Unix timestamp in seconds
 function unixTimeStamp() {
     return Math.round(new Date().getTime() / 1000)
@@ -11,84 +13,93 @@ function initConn() {
         url: '/play',
         contentType: 'application/json',
         data: JSON.stringify({
-            player_id: 1,
             timestamp: unixTimeStamp(),
             room_id: -1
         }),
         dataType: 'json',
         success: function (response) {
-            // Create cookie upon successful response
-            // new setCookie(playerId);
             handleInitialResponse(response);
             return response;
+        },
+        error: function() {
+            alert('No response from server');
         }
     });
 }
 
 function handleInitialResponse(jsonReply) {
-    // Temporary JSON to reflect incoming JSON
-    // {
-    //     "player_id": 5,
-    //     "room": [{
-    // 		"players": [{
-    // 			"id": 5,
-    // 			"name": "asdsada",
-    // 			"updated_at": 1483,
-    // 			"words_done": 0
-    // 		}],
-    // 		"room_id": 8,
-    // 		"source": "etc",
-    // 		"start_time": -1,
-    // 		"text":"asdasdasd",
-    // 		"text_id": "21",
-    //     }],
-    // 	"timestamp": 1483
-    // }
     console.log(jsonReply);
-    var typeWords = jsonReply.room.text;
-    var roomId = jsonReply.room.id;
-    var playerId = jsonReply.player_id;
+    this.typeWords = jsonReply.room.text;
+    this.roomId = jsonReply.room.id;
+    this.playerId = jsonReply.player_id;
+    // send info until valid start_time is given
+    sendInfo(playerId, unixTimeStamp(), -1, roomId, 0);
+}
 
-    /***
-     * Image Slider
-     * para1: Player's challenge
-     * para2: Canvas Maximum width
-     */
-    var slider = new Slider(typeWords, $("#animate-area").width());
-    // Call function
-    $(document).keypress(null, slider.shift);
-
-    // Towards Benoit text checking, TODO: need to return words done
-    textCheck(typeWords);
-
-    // sendInfo(playerId, unixTimeStamp(), wordsDone, )
+function getWordPassage(){
+    return typeWords;
 }
 
 // Sends information to server periodically
-function sendInfo(playerid, timestamp, wordsdone, roomid) {
+function sendInfo(playerid, timestamp, starttime, roomid, wordsdone) {
     $.ajax({
         type: 'POST',
         url: '/play',
         contentType: 'application/json',
         data: JSON.stringify({
+            // TODO: check with boon
             player_id: playerid,
             timestamp: timestamp,
+            start_time: starttime,
             room_id: roomid,
             words_done: wordsdone
         }),
         dataType: 'json',
         success: function (response) {
+            handleResponses(response);
             return response;
         }
     });
 }
 
-// function handleResponses(noWords, ) {
+function handleResponses(jsonReply) {
     // Send (words_done), with timestamp to server every 2 seconds
+    // startTime -1 means game has not started
     // gameid -1 means game has ended
-    // var intervalInfo = setInterval(sendInfo(playerId, unixTimeStamp(), wordsDone, roomId), (2 * 1000));
-    // var playersInfo = intervalInfo
-// }
+
+    var roomId = jsonReply.room.id;
+    var playerId = jsonReply.player_id;
+    var startTime = jsonReply.room.start_time;
+
+    // have to utilise other players information
+    this.playersInfo = jsonReply.room.players;
+
+    if (startTime == -1) {
+        // Keep sending every two seconds until game starts
+        setInterval(sendInfo(playerId, unixTimeStamp(), startTime, 0, roomId), (2 * 1000));
+    } else {
+        if (roomId == -1) { // game has ended
+            // exit screen
+
+        } else {
+            // Game has started if current time is bigger than startTime
+            if (unixTimeStamp() > startTime) {
+                setInterval(sendInfo(playerId, unixTimeStamp(), startTime, 20, roomId), (2 * 1000));
+            } else {
+                // Start counting down to start game
+                var countdownDifference = startTime - unixTimeStamp();
+                beginCountdown(countdownDifference);
+                setInterval(sendInfo(playerId, unixTimeStamp(), startTime, 20, roomId), (2 * 1000));
+            }
+        }
+    }
+
+    // need a function to return words done
+}
+
+function getPlayersInfo() {
+    return playersInfo;
+}
 
 // Set cookie with player id set, time expiry and path
 function setCookie(idValue) {

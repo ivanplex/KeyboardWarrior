@@ -25,10 +25,10 @@
 	<link rel="stylesheet" type="text/css" href="css/test.css">
 
 	<!-- Javascript dependent files -->
-	<script type="text/javascript" src="js/slide.js"></script>
-	<script type="text/javascript" src="js/connection.js"></script>
-	<script type="text/javascript" src="js/battle.js"></script>
-	<script type="text/javascript" src="js/textcheck.js"></script>
+	<script src="js/slide.js"></script>
+
+	<script src="js/battle.js"></script>
+	<script src="js/textcheck.js"></script>
 </head>
 
 <body>
@@ -119,22 +119,30 @@
 					<!-- Warrior image -->
 
 					<!-- Sliding Code -->
-					<!-- moved to connection.js -->
+					<script>
+					/***
+					 * Image Slider
+					 * para1: Player's challenge
+					 * para2: Canvas Maximum width
+					 */
+					var slider = new Slider("a a a a a a a", $("#animate-area").width());
+					// Call function
+					$(document).keypress(null, slider.shift);
+					</script>
 
 					<script>
 						$("#StartButton").click(function() {
-							try {
-								// init conn to server
-								initConn();
-							} catch (err) {
-								document.getElementById("SplashScreen").innerHTML = err.message;
-							}
+							// Towards Benoit text checking, TODO: need a function to return words done
+						  textCheck(getWordPassage());
+							// console.log(getPlayersInfo());
+
 							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
 							beginCountdown();
 						});
 					</script>
+					<script src="js/connection.js"></script>
 				</div>
 			</div>
 		</div>
