@@ -59,6 +59,7 @@ function sendInfo() {
         data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: correctWords, mistakes:mistakes}),
         dataType: 'json',
         success: function (response) {
+            console.log(response);
             handleResponse(response);
         },
         error: function (e) {

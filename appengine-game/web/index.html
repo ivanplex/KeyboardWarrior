@@ -22,6 +22,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 	<link rel="stylesheet" type="text/css" href="css/test.css">
+	<link rel="stylesheet" type="text/css" href="css/player-icon.css">
 
 	<!-- Javascript dependent files -->
 	<script src="js/slide.js"></script>
@@ -117,7 +118,7 @@
 							</div>
 						</div>
 						<div id="fighting-ground" class="half-canvas">
-							<img id="WarriorImage" src="img/warrior2.png" />
+							
 						</div>
 					</div>
 
@@ -130,9 +131,7 @@
 					 * para1: Player's challenge
 					 * para2: Canvas Maximum width
 					 */
-					var slider = new Slider("a a a a a a a", $("#animate-area").width());
-					// Call function
-					$(document).keypress(null, slider.shift);
+					
 					</script>
 
 					<script>
@@ -141,6 +140,12 @@
 							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
+
+							var slider = new Slider('player1','warrior-image-1',8, $("#animate-area").width());
+							// Call function
+							$(document).keypress(null, slider.shift);
+
+							initBattleGround();
 							beginCountdown();
 							console.log(getPlayersInfo());
 						});
