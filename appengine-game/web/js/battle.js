@@ -17,7 +17,7 @@ function initBattleGround() {
 	for(var i = 0; i<players.length; i++){
 		fightingGround.innerHTML += '<div id="player'+(i+1)+'" playerID="'+players[i].id+'" class="player_icon"> <img id="warrior-image-'+(i+1)+'" class="WarriorImage" src="img/warrior2.png" /><div class="player-name">'+players[i].name+'</div></div>';	
 
-		slider[players[i].id] = new Slider('player'+(i+1),'warrior-image-'+(i+1),8, $("#animate-area").width());
+		slider[players[i].id] = new Slider('player'+(i+1),'warrior-image-'+(i+1),myArray.length, $("#animate-area").width());
 
 		//Add color filters to warrior image
 		var image = document.getElementById("warrior-image-"+(i+1));
@@ -90,7 +90,7 @@ function fight() {
 	var userInput = document.getElementById("user-input");
 	userInput.focus();
 
-	update();
+	updateBattle();
 }
 
 function updateBattle(){
