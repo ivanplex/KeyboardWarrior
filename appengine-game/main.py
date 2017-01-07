@@ -168,6 +168,8 @@ class Play(webapp2.RequestHandler):
     MIN_PLAYERS = 3
     MAX_PLAYERS = 5
 
+    MAX_ROOMS = 1000000
+
     # game logic handled by POSTs
     def post(self):
         # initialise variables if they do not exist and persist in registry
@@ -181,7 +183,7 @@ class Play(webapp2.RequestHandler):
 
         # what is the current room we are filling up
         if current_room is None:
-            current_room = random.randrange(sys.maxint)
+            current_room = random.randrange(self.MAX_ROOMS)
             app.registry['current_room'] = current_room
 
         # rooms existing in memory
@@ -198,6 +200,7 @@ class Play(webapp2.RequestHandler):
 
             # room has expired -- save logic and etc
             if current_time > _room['end_time'] and _room['end_time'] != -1:
+                print('housekeeping on ' + str(_id))
                 # remove the reference from the game
                 del rooms[_id]
 
@@ -302,7 +305,7 @@ class Play(webapp2.RequestHandler):
                     # check if room is full or start time has passed current time (TODO: fix/optimise)
                     if len(room['players']) == self.MAX_PLAYERS or (room['start_time'] < current_time and room['start_time'] != -1):
                         # generate a random room ID, this will (very rarely) collide with a valid room or create a new room
-                        current_room = random.randrange(sys.maxint)
+                        current_room = random.randrange(self.MAX_ROOMS)
 
                         # set the room to None
                         room = None
