@@ -1,12 +1,14 @@
 initConn();
 
-var words_done = 1;
-var roomId;
-var playerId;
-var playersInfo;
-var typeWords;
-var gameEnd = false;
-var startTime = 0;
+var correctWords = 0,
+timestamp,
+roomId = -1,
+playerId,
+playersInfo = [],
+typeWords,
+gameEnd = false,
+startTime = 0,
+endTime;
 
 //Unix timestamp in seconds
 function unixTimeStamp() {
@@ -30,7 +32,7 @@ function initConn() {
         },
         error: function (e) {
             console.log(e);
-            alert('No response from server');
+            // alert('No response from server');
         }
     });
 }
@@ -40,29 +42,34 @@ function handleInitialResponse(jsonReply) {
     this.typeWords = jsonReply.room.text;
     this.roomId = jsonReply.room.room_id;
     this.playerId = jsonReply.player_id;
+    this.playersInfo = jsonReply.room.players;
 
+    textCheck(getWordPassage());
     // start sending info at 2 seconds interval
-    var gameTicker = setInterval(function(){
-        sendInfo();
-    }, 2000);
+    gameTicker = setInterval(sendInfo, 2000);
 }
-
 
 // Sends information to server periodically
 function sendInfo() {
     console.log("sendinfo");
+    var correctWords = getCorrectWord();
+    var mistakes = getMistakes();
     $.ajax({
         type: 'POST',
         url: '/play',
         contentType: 'application/json',
-        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: words_done}),
+        data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: correctWords, mistakes:mistakes}),
         dataType: 'json',
         success: function (response) {
+            console.log(response);
             handleResponse(response);
         },
         error: function (e) {
             console.log(e);
             alert('Lost connection, try again');
+            $("#GameCanvas").hide();
+            $("#SplashScreen").show();
+            clearInterval(gameTicker);
         }
     });
 }
@@ -71,23 +78,27 @@ function handleResponse(jsonReply) {
     // Send (words_done), with timestamp to server every 2 seconds
     // startTime -1 means game has not started
     // roomid -1 means game has ended
-    var roomId = jsonReply.room.room_id;
-    var playerId = jsonReply.player_id;
-    this.startTime = jsonReply.room.start_time;
-    var endTime = jsonReply.room.end_time;
-
-    var currentTime = unixTimeStamp();
+    var room = jsonReply.room;
+    if (room !== null) {
+        this.roomId = jsonReply.room.room_id;
+        this.endTime = jsonReply.room.end_time;
+        this.startTime = jsonReply.room.start_time;
+        this.playersInfo = jsonReply.room.players;
+    }
 
     // have to utilise other players information
-    this.playersInfo = jsonReply.room.players;
+    var playerId = jsonReply.player_id;
+    var currentTime = unixTimeStamp();
+    this.timestamp = jsonReply.timestamp;
 
-    if (jsonReply.room === null || (endTime < currentTime && endTime !== -1)) {
+    if (room === null || (endTime < currentTime && endTime !== -1)) {
         console.log("clearInterval");
         // game ended or invalid room
         room_id = -1;
+        $("#GameCanvas").hide();
+        $("#SplashScreen").show();
         clearInterval(gameTicker)
         // exit screen
-
         // give benoit a reset request
         this.gameEnd = true;
     } else {
@@ -130,6 +141,11 @@ function getPlayerId(){
 function getStartTime(){
     // return -1 when game has not started, return valid when started
     return startTime;
+}
+
+// add delta to take into consideration of drift timestamp
+function getDeltaTimestamp() {
+
 }
 
 // Set cookie with player id set, time expiry and path

@@ -22,12 +22,14 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 	<link rel="stylesheet" type="text/css" href="css/test.css">
+	<link rel="stylesheet" type="text/css" href="css/folding-cube.css">
+	<link rel="stylesheet" type="text/css" href="css/player-icon.css">
 
 	<!-- Javascript dependent files -->
 	<script src="js/slide.js"></script>
-
 	<script src="js/battle.js"></script>
 	<script src="js/textcheck.js"></script>
+
 </head>
 
 <body>
@@ -99,7 +101,18 @@
 					<div id="animate-area" width="100%" style="position: relative;">
 						<div class="half-canvas">
 							<div id="shade-area" class="col-sm-10 col-md-offset-1">
+								<div id="waiting-panel">
+									<div class="sk-folding-cube">
+										<div class="sk-cube1 sk-cube"></div>
+										<div class="sk-cube2 sk-cube"></div>
+										<div class="sk-cube4 sk-cube"></div>
+										<div class="sk-cube3 sk-cube"></div>
+									</div>
+									<p>Waiting for players</p>
+									<button onclick="beginCountdown();">continue</button>
+								</div>
 								<div id="countdown-panel">
+									<audio id="cound-down-audio" src="sound/count-down.mp3" preload="auto" autobuffer></audio>
 									<p>Battle begins in</p>
 									<div id="number-countdown"></div>
 								</div>
@@ -117,37 +130,27 @@
 							</div>
 						</div>
 						<div id="fighting-ground" class="half-canvas">
-							<img id="WarriorImage" src="img/warrior2.png" />
+
 						</div>
 					</div>
 
-					<!-- Warrior image -->
-
-					<!-- Sliding Code -->
-					<script>
-					/***
-					 * Image Slider
-					 * para1: Player's challenge
-					 * para2: Canvas Maximum width
-					 */
-					var slider = new Slider("a a a a a a a", $("#animate-area").width());
-					// Call function
-					$(document).keypress(null, slider.shift);
-					</script>
-					
+					<script src="js/connection.js"></script>
 					<script>
 						$("#StartButton").click(function() {
-							// Towards Benoit text checking, TODO: need a function to return words done
-						  textCheck(getWordPassage());
-							// console.log(getPlayersInfo());
-
+							// $.getScript("js/connection.js");
 							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
-							beginCountdown();
+
+							var slider = new Slider('player1','warrior-image-1',8, $("#animate-area").width());
+							// Call function
+							$(document).keypress(null, slider.shift);
+
+							console.log(getPlayersInfo());
+
+
 						});
 					</script>
-					<script src="js/connection.js"></script>
 				</div>
 			</div>
 		</div>

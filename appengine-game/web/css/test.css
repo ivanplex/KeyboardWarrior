@@ -116,6 +116,7 @@ span {
   background-color:rgba(0, 0, 0, 0.5);
 }
 #countdown-panel{
+  display: none;
   text-align: center;
 }
 
@@ -143,12 +144,4 @@ span {
 
 #user-input-block {
   display: none;
-}
-
-#WarriorImage {
-  height: 100px;
-  width: 70px;
-  position:absolute;
-  top:65%;
-  left: 0;
 }

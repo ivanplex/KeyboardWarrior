@@ -1,0 +1,26 @@
+#fighting-ground {
+	height: 500px;
+	width: 100%;
+	bottom: 0;
+	position: absolute;
+}
+
+
+.player_icon{
+	height: 100px;
+ 	width: 70px;
+ 	clear: both;
+	margin-left: 0px;
+
+}
+
+.WarriorImage {
+  height: 80px;
+  width: 60px;
+}
+
+.player-name {
+	font-size: 14px;
+	text-align: center;
+	clear: both;
+}

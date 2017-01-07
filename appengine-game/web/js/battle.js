@@ -1,19 +1,56 @@
+function waitingScreen(){
 
+}
+
+
+/**
+ * 
+ */
+function initBattleGround() {
+
+	//Add player in fighting ground
+	var fightingGround = document.getElementById("fighting-ground");
+
+	var players = getPlayersInfo();
+
+	for(var i = 0; i<players.length; i++){
+		fightingGround.innerHTML += '<div id="player'+(i+1)+'" playerID="'+players[i].id+'" class="player_icon"> <img id="warrior-image-'+(i+1)+'" class="WarriorImage" src="img/warrior2.png" /><div class="player-name">'+players[i].name+'</div></div>';	
+
+		//Add color filters to warrior image
+		var image = document.getElementById("warrior-image-"+(i+1));
+		degreeRotation = 360/players.length*i;
+		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
+		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
+	}
+
+}
 
 function beginCountdown() {
+
+	var waitingPanel = document.getElementById("waiting-panel");
+	waitingPanel.style.display = "none";
+
+	var countdownPanel = document.getElementById("countdown-panel");
+	countdownPanel.style.display = "block";
+
+	//Add players
+	initBattleGround();
+
 	var countdownNumber = document.getElementById("number-countdown");
 	var countdownFrom = 5;
 	countdownNumber.innerHTML = countdownFrom;
+
+	var countdownAudio = document.getElementById("cound-down-audio");
 
 	//LET THE COUNT DOWN BEGIN!!
 	var timeinterval = setInterval(function(){
 	    countdownFrom--;
 	    countdownNumber.innerHTML = countdownFrom;
+
 	    if(countdownFrom<0){
 		    clearInterval(timeinterval);
 
 		    //Hide Countdown
-		    var countdownPanel = document.getElementById("countdown-panel");
 		    countdownPanel.style.display = "none";
 
 		    //Show fight sign
@@ -32,6 +69,8 @@ function beginCountdown() {
 			  fight();
 			}, 1500);
 
+		}else{
+			countdownAudio.play();
 		}
 	},1000);
 
