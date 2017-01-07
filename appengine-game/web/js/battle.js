@@ -3,6 +3,9 @@
 
 var slider = {};
 
+var countingDown = false;
+var inBattle = false;
+
 
 /**
  * 
@@ -28,7 +31,10 @@ function initBattleGround() {
 
 }
 
-function beginCountdown() {
+function beginCountdown(tMinus) {
+
+	//Change count down state
+	countingDown = true;
 
 	var waitingPanel = document.getElementById("waiting-panel");
 	waitingPanel.style.display = "none";
@@ -40,7 +46,7 @@ function beginCountdown() {
 	initBattleGround();
 
 	var countdownNumber = document.getElementById("number-countdown");
-	var countdownFrom = 5;
+	var countdownFrom = tMinus;
 	countdownNumber.innerHTML = countdownFrom;
 
 	var countdownAudio = document.getElementById("cound-down-audio");
@@ -72,6 +78,9 @@ function beginCountdown() {
 			  fight();
 			}, 1500);
 
+			countingDown = false;
+			inBattle = true;
+
 		}else{
 			countdownAudio.play();
 		}
@@ -90,14 +99,18 @@ function fight() {
 	var userInput = document.getElementById("user-input");
 	userInput.focus();
 
-	updateBattle();
 }
 
 function updateBattle(){
 
-	var players = getPlayersInfo();
+	if(inBattle){
 
-	for(var i = 0; i<players.length; i++){
-		slider[players[i].id].shift(players[i].words_done);
+		var players = getPlayersInfo();
+
+		for(var i = 0; i<players.length; i++){
+			slider[players[i].id].shift(players[i].words_done);
+		}
+	}else if(!countingDown && getStartTime() !== -1){
+		beginCountdown(getStartTime() - unixTimeStamp());
 	}
 }
