@@ -134,20 +134,16 @@
 					// Call function
 					$(document).keypress(null, slider.shift);
 					</script>
-					
+
 					<script>
 						$("#StartButton").click(function() {
-							// Towards Benoit text checking, TODO: need a function to return words done
-						  textCheck(getWordPassage());
-							// console.log(getPlayersInfo());
-
+							$.getScript("js/connection.js");
 							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
 							beginCountdown();
 						});
 					</script>
-					<script src="js/connection.js"></script>
 				</div>
 			</div>
 		</div>

@@ -41,6 +41,7 @@ function handleInitialResponse(jsonReply) {
     this.roomId = jsonReply.room.room_id;
     this.playerId = jsonReply.player_id;
 
+    textCheck(getWordPassage());
     // start sending info at 2 seconds interval
     var gameTicker = setInterval(function(){
         sendInfo();
