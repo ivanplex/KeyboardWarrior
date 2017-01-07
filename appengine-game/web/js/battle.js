@@ -1,4 +1,26 @@
+/**
+ * 
+ */
+function initBattleGround() {
+	var numOfPlayer = 5;
 
+	//Add player in fighting ground
+	var fightingGround = document.getElementById("fighting-ground");
+
+	for(var i = 1; i<=numOfPlayer; i++){
+		fightingGround.innerHTML += '<div id="player'+i+'" playerID="" class="player_icon"> <img id="warrior-image-'+i+'" class="WarriorImage" src="img/warrior2.png" /><div class="player-name">'+"Ivan Chan"+'</div></div>';	
+
+		//Add color filters to warrior image
+		var image = document.getElementById("warrior-image-"+i);
+		degreeRotation = 360/numOfPlayer*(i-1);
+		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
+		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
+	}
+	
+
+	//Insert player icon
+	var newPlayerIcon = document.getElementById("undefinedPlayer");
+}
 
 function beginCountdown() {
 	var countdownNumber = document.getElementById("number-countdown");

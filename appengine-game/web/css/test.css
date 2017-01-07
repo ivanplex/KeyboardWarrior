@@ -144,11 +144,3 @@ span {
 #user-input-block {
   display: none;
 }
-
-#WarriorImage {
-  height: 100px;
-  width: 70px;
-  position:absolute;
-  top:65%;
-  left: 0;
-}
