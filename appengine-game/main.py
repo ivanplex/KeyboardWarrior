@@ -218,7 +218,7 @@ class Play(webapp2.RequestHandler):
 
                     if _player['updated_at'] > _room['start_time']:
                         wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
-                        
+
                     words_typed = _player['words_done'] + _player['mistakes']
 
                     accuracy = 0
@@ -401,10 +401,6 @@ class Play(webapp2.RequestHandler):
                         player['words_done'] = words_done
                         player['updated_at'] = current_time
                         player['mistakes'] = mistakes
-
-                        # player finished game early
-                        if words_done == words_length:
-                            room = None
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
             return
