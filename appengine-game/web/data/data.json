@@ -3,3 +3,21 @@
   "race_id": 1,
   "text": "Good morning, how are you?"
 }
+
+{
+    "player_id": 5,
+    "room": [{
+      "players": [{
+        "id": 5,
+        "name": "asdsada",
+        "updated_at": 1483,
+        "words_done": 0
+      }],
+      "room_id": 8,
+      "source": "etc",
+      "start_time": -1,
+      "text":"asdasdasd",
+      "text_id": "21",
+    }],
+    "timestamp": 1483
+}
