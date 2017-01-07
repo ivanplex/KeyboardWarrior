@@ -103,7 +103,7 @@ class MainPage(webapp2.RequestHandler):
             player = models.Player.get_by_user(models.Player, user)
             print(player.nickname)
 
-            template_values['nickname'] = player.nickname,
+            template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
 
         template = JINJA_ENVIRONMENT.get_template('web/index.html')
