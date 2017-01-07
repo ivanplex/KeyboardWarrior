@@ -168,6 +168,8 @@ class Play(webapp2.RequestHandler):
     MIN_PLAYERS = 3
     MAX_PLAYERS = 5
 
+    MAX_ROOMS = 1000000
+
     # game logic handled by POSTs
     def post(self):
         # initialise variables if they do not exist and persist in registry
@@ -181,7 +183,7 @@ class Play(webapp2.RequestHandler):
 
         # what is the current room we are filling up
         if current_room is None:
-            current_room = random.randrange(sys.maxint)
+            current_room = random.randrange(self.MAX_ROOMS)
             app.registry['current_room'] = current_room
 
         # rooms existing in memory
@@ -198,6 +200,7 @@ class Play(webapp2.RequestHandler):
 
             # room has expired -- save logic and etc
             if current_time > _room['end_time'] and _room['end_time'] != -1:
+                print('housekeeping on ' + str(_id))
                 # remove the reference from the game
                 del rooms[_id]
 
@@ -212,15 +215,17 @@ class Play(webapp2.RequestHandler):
                 # we can create the racerstats here this way
                 for _player in _room['players']:
                     wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
+                    accuracy = float(_player['words_done']) / float(_player['words_done'] + _player['mistakes'])
 
-                    raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm)
+                    raceStats = models.RacerStats(race_id = race.key.id(), user_id = _player['id'], wpm = wpm, accuracy = accuracy)
                     raceStats.created_at = datetime.fromtimestamp(_room['start_time'])
                     raceStats.updated_at = datetime.fromtimestamp(_player['updated_at'])
                     raceStats.put()
 
                     ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
                     ndb_player.games_played = ndb_player.games_played + 1
-                    ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
+                    ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / ndb_player.games_played
+                    ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / ndb_player.games_played
                     ndb_player.put()
 
         """
@@ -300,7 +305,7 @@ class Play(webapp2.RequestHandler):
                     # check if room is full or start time has passed current time (TODO: fix/optimise)
                     if len(room['players']) == self.MAX_PLAYERS or (room['start_time'] < current_time and room['start_time'] != -1):
                         # generate a random room ID, this will (very rarely) collide with a valid room or create a new room
-                        current_room = random.randrange(sys.maxint)
+                        current_room = random.randrange(self.MAX_ROOMS)
 
                         # set the room to None
                         room = None
@@ -323,6 +328,7 @@ class Play(webapp2.RequestHandler):
                             player['id'] = ndb_player.user_id
                             player['name'] = ndb_player.nickname
                             player['words_done'] = 0
+                            player['mistakes'] = 0
                             player['updated_at'] = current_time
 
                             # add the player to the current room
@@ -355,6 +361,8 @@ class Play(webapp2.RequestHandler):
                     # game is going on
                     if current_time > room['start_time'] and current_time < room['end_time']:
                         words_done = obj.get('words_done')
+                        mistakes = obj.get('mistakes')
+
                         words_length = len(room['text'])
 
                         # we don't have words done in this request...
@@ -368,9 +376,20 @@ class Play(webapp2.RequestHandler):
                             self.response.write('Words Done Is Not Valid')
                             return
 
+                        if mistakes is None:
+                            self.response.set_status(400, 'Mistakes Not In Request')
+                            self.response.write('Unable to find Mistakes')
+                            return
+
+                        if mistakes < 0:
+                            self.response.set_status(400, 'Invalid Mistakes Done Do Not Cheat')
+                            self.response.write('Mistakes Is Not Valid')
+                            return
+
                         # update the users :D
                         player['words_done'] = words_done
                         player['updated_at'] = current_time
+                        player['mistakes'] = mistakes
 
                         # player finished game early
                         if words_done == words_length:
