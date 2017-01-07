@@ -21,7 +21,6 @@ import urllib
 import json
 import random
 import time
-import numpy
 
 from datetime import datetime
 
@@ -97,15 +96,6 @@ class Leaderboard(webapp2.RequestHandler):
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
         responseDict["lb"] = json.dumps(leaderStats.to_dict())
         return leaderStats
-
-        allRaceStats = []
-        for race in races.fetch()
-
-            allRaceStats.extend(racerStats)
-        allRaceStats.sort
-
-
-
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
