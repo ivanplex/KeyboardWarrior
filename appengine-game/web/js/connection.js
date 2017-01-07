@@ -1,6 +1,6 @@
 initConn();
 
-var words_done = 1;
+var words_done = 0;
 var roomId;
 var playerId;
 var playersInfo;
