@@ -10,7 +10,9 @@ function Slider(id, imageID, stringLength, max_width){
   this.lastStep = 0;
 
   this.shift = function(step){
-    if(step > stringLength){
+    if(this.lastStep === step){
+
+    }else if(step > stringLength){
       console.log('Invalid step');
     }else if(step < this.lastStep){
       console.log('Player moved backwards?');
@@ -37,6 +39,7 @@ function Slider(id, imageID, stringLength, max_width){
       //}
 
     }else{
+      //alert(this.lastStep);
       console.log('Out of Bound!');
     }
   }
