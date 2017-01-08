@@ -162,7 +162,7 @@ class Player(webapp2.RequestHandler):
 
 # [START play]
 class Play(webapp2.RequestHandler):
-    ROOM_TIMEOUT = 10
+    ROOM_TIMEOUT = 4
 
     GAME_INTERVAL = 60
     WAIT_INTERVAL = 15
@@ -215,6 +215,12 @@ class Play(webapp2.RequestHandler):
                 # iterate over players in room -- the wpm is calculated here
                 # we can create the racerstats here this way
                 for _player in _room['players']:
+
+                    # skip if player isn't valid but this should NEVER happen
+                    if _player['updated_at'] < _room['start_time']:
+                        print('BIG ERROR TELL BOON')
+                        continue
+
                     wpm = 0
 
                     if _player['updated_at'] > _room['start_time']:
@@ -239,7 +245,7 @@ class Play(webapp2.RequestHandler):
                     ndb_player.put()
 
             # room hasn't started, we purge players which have not connected in a while
-            elif _room['start_time'] > current_time:
+            elif _room['start_time'] > current_time or _room['start_time'] == -1:
                 _idx = []
                 _players = _room['players']
 
@@ -253,8 +259,8 @@ class Play(webapp2.RequestHandler):
 
                     # reset the room to not start if less than minimum players
                     if len(_players) < self.MIN_PLAYERS:
-                        room['start_time'] = -1
-                        room['end_time'] = -1
+                        _room['start_time'] = -1
+                        _room['end_time'] = -1
 
 
         """

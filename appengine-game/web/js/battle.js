@@ -36,7 +36,6 @@ function initBattleGround() {
 
 	//clear slider array
 	slider = {};
-
 	drawPlayers();
 }
 
