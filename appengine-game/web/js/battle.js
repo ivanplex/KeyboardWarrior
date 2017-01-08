@@ -73,52 +73,44 @@ function beginCountdown(tMinus) {
 	initBattleGround();
 
 	var countdownNumber = document.getElementById("number-countdown");
-	var countdownFrom = tMinus;
-	countdownNumber.innerHTML = countdownFrom;
+	countdownNumber.innerHTML = tMinus;
 
 	//Load Audio
 	var countdownAudio = document.getElementById("cound-down-audio");
 	var fightAudio = document.getElementById("fight-audio");
 
-	//LET THE COUNT DOWN BEGIN!!
-	var timeinterval = setInterval(function(){
-	    countdownFrom--;
-	    countdownNumber.innerHTML = countdownFrom;
-
+	if(tMinus>0){	
+	    countdownNumber.innerHTML = tMinus;
 	    drawPlayers();
+	    countdownAudio.play();
 
-	    if(countdownFrom<1){
-		    clearInterval(timeinterval);
+    }else{
+	    clearInterval(timeinterval);
 
-		    //Hide Countdown
-		    countdownPanel.style.display = "none";
+	    //Hide Countdown
+	    countdownPanel.style.display = "none";
 
-		    //Show fight sign
-		    var fightSign = document.getElementById("fight-sign");
-		    fightSign.style.display = "block";
-		    $("#fight-sign").animate({
-		    	opacity: '1',
-		    	width: '80%',
-		    	paddingLeft: '20%'
-		    });
-		    //Play "FIGHT" audio
-		    fightAudio.play();
+	    //Show fight sign
+	    var fightSign = document.getElementById("fight-sign");
+	    fightSign.style.display = "block";
+	    $("#fight-sign").animate({
+	    	opacity: '1',
+	    	width: '80%',
+	    	paddingLeft: '20%'
+	    });
+	    //Play "FIGHT" audio
+	    fightAudio.play();
 
-		    //Hide fight sign in 1.5 second
-		    // FIGHT!
-		    setTimeout(function (){
-			  fightSign.style.display = "none";
-			  fight();
-			}, 1500);
+	    //Hide fight sign in 1.5 second
+	    // FIGHT!
+	    setTimeout(function (){
+		  fightSign.style.display = "none";
+		  fight();
+		}, 1500);
 
-			countingDown = false;
-			inBattle = true;
-
-		}else{
-			countdownAudio.play();
-		}
-	},1000);
-
+		countingDown = false;
+		inBattle = true;
+	}3
 }
 
 function fight() {
@@ -175,6 +167,7 @@ function updateBattle(){
 
 	}else if(!countingDown && getStartTime() !== -1){
 		beginCountdown(getStartTime() - unixTimeStamp());
+		alert("begin");
 	}
 }
 
