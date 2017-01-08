@@ -33,7 +33,7 @@ class Player(ndb.Model):
 
     @classmethod
     def get_by_user_id(self, user_id):
-        return ndb.Key(Player, user_id.get())
+        return ndb.Key(Player, user_id).get()
 
 class Excerpt(ndb.Model):
     passage = ndb.TextProperty()
