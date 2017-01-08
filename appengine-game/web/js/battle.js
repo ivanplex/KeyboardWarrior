@@ -22,6 +22,12 @@ function loadingScreen(){
 	var completePanel = document.getElementById("complete-panel");
 	completePanel.style.display = "none";
 
+	var gameFinishedPanel = document.getElementById("game-finished-panel");
+	gameFinishedPanel.style.display = "none";
+
+	var wpmPanel = document.getElementById("wpm-panel");
+	wpmPanel.style.display = "none";
+
 	var leaderboardShade = document.getElementById("leaderboard-shade-area");
 	leaderboardShade.style.display = "none";
 
