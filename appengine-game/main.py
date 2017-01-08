@@ -45,22 +45,21 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 class Generate(webapp2.RequestHandler):
 
     def get(self):
-
-        for i in range(30, 130):
-            result = urlfetch.fetch('http://www.seanwrona.com/typeracer/text.php?id=' + str(i))
+        for i in range(1, 21):
+            result = urlfetch.fetch('http://www.seanwrona.com/typeracer/text.php?id=' + str(i + 30))
             htmltree = lxml.html.fromstring(result.content)
 
             p_tags = htmltree.xpath('//p')
             p_content = [p.text_content() for p in p_tags]
 
-            quote = p_content[0].strip().replace('\n', ' ').replace('\r', ' ').replace('  ', ' ')
-            source = p_content[1].strip().replace('\n', ' ').replace('\r', ' ').replace('  ', ' ')
+            # clear whitespace and then rebuild nicely
+            quote = " ".join(p_content[0].strip().split())
+            source = " ".join(p_content[1].strip().split())
 
             print(str(i) + ' "' + quote + '" "' + source + '"')
-            print(i);
 
             tempEx = models.Excerpt(passage = quote, source = source)
-            tempEx.key = ndb.Key(models.Excerpt, i-30);
+            tempEx.key = ndb.Key(models.Excerpt, i);
             tempEx.put()
 
 class Load(webapp2.RequestHandler):
@@ -75,8 +74,8 @@ class Leaderboard(webapp2.RequestHandler):
     def Global_Leaders(self,PLAYERS_PER_PAGE):
         user = users.get_current_user()
         if user:
-            query = models.Player.query(models.Player.user_id == user.user_id())
-            player = query.fetch(1);
+            #query = models.Player.query(models.Player.key.id() == user.user_id())
+            player = models.Player.get_by_user(user)
             #Return this as well if the current user stats is required
         query = models.Player.query().order(-models.Player.wpm)
         leaders = query.fetch(PLAYERS_PER_PAGE)
@@ -133,7 +132,7 @@ class MainPage(webapp2.RequestHandler):
         }
 
         if user:
-            player = models.Player.get_by_user(models.Player, user)
+            player = models.Player.get_by_user(user)
 
             template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
@@ -153,14 +152,10 @@ class Player(webapp2.RequestHandler):
             self.redirect('/')
             return
 
-        p = models.Player.get_by_user(models.Player, user)
-
-        if not p:
-            p = models.Player(nickname=user.nickname(), id=user.user_id())
+        p = models.Player.get_by_user(user)
 
         new_nickname = self.request.get("new_nickname", default_value="null")
-
-        exists_in_db = not models.Player.get_by_nickname(models.Player, new_nickname) == None
+        exists_in_db = not models.Player.get_by_nickname(new_nickname) == None
 
         if new_nickname == "null" or len(new_nickname) >= 50 or len(new_nickname) == 0 or exists_in_db:
             self.response.set_status(400, 'Unrecognised Media Type')
@@ -252,7 +247,7 @@ class Play(webapp2.RequestHandler):
                     raceStats.updated_at = datetime.fromtimestamp(_player['updated_at'])
                     raceStats.put()
 
-                    ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
+                    ndb_player = models.Player.get_by_user_id(_player['id'])
                     ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
                     ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / (ndb_player.games_played + 1)
                     ndb_player.games_played = ndb_player.games_played + 1
@@ -377,9 +372,9 @@ class Play(webapp2.RequestHandler):
                             # user is allowed to participate in the current room
                             player = {}
 
-                            ndb_player = models.Player.get_by_user(models.Player, user)
+                            ndb_player = models.Player.get_by_user(user)
 
-                            player['id'] = ndb_player.user_id
+                            player['id'] = ndb_player.key.id()
                             player['name'] = ndb_player.nickname
                             player['words_done'] = 0
                             player['mistakes'] = 0
