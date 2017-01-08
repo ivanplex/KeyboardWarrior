@@ -111,8 +111,8 @@ class Leaderboard(webapp2.RequestHandler):
     @classmethod
     def inject_nicknames(self, stats):
         for stat in stats:
-            player = models.Player.query(models.Player.user_id == stat.user_id)
-            _nickname = player.fetch(1)[0].nickname;
+            player = models.Player.get_user_by_id(stat.user_id)
+            _nickname = player.nickname;
             stat.nickname = _nickname
         return stats
 
@@ -226,19 +226,15 @@ class Play(webapp2.RequestHandler):
                 for _player in _room['players']:
 
                     # skip if player isn't valid but this should NEVER happen
-                    if _player['updated_at'] < _room['start_time']:
+                    if _player['updated_at'] <= _room['start_time']:
                         print('BIG ERROR TELL BOON')
                         continue
 
-                    wpm = 0
-
-                    if _player['updated_at'] > _room['start_time']:
-                        wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
-
-                    words_typed = _player['words_done'] + _player['mistakes']
+                    wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
 
                     accuracy = 0
 
+                    words_typed = _player['words_done'] + _player['mistakes']
                     if words_typed != 0:
                         accuracy = float(_player['words_done']) / float(words_typed)
 
@@ -409,7 +405,7 @@ class Play(webapp2.RequestHandler):
                         return
 
                     # game is going on -- started and hasn't ended
-                    if current_time > room['start_time'] and current_time < room['end_time']:
+                    if current_time >= room['start_time'] and current_time < room['end_time']:
                         words_done = obj.get('words_done')
                         mistakes = obj.get('mistakes')
 
