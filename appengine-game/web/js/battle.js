@@ -24,6 +24,9 @@ function loadingScreen(){
 
 	var leaderboardShade = document.getElementById("leaderboard-shade-area");
 	leaderboardShade.style.display = "none";
+
+	var fightingGround = document.getElementById("fighting-ground");
+	fightingGround.innerHTML = "";
 }
 
 /**
@@ -185,8 +188,11 @@ function updateBattle(){
 			}
 		}
 
-	}else if(getStartTime() !== -1){
-		beginCountdown(getStartTime() - unixTimeStamp());
+	}else if(!inBattle && getStartTime() !== -1){
+		beginCountdown(getStartTime() - unixTimeStamp());	//Counting Down
+	}else if(!inBattle && getStartTime() === -1){
+		//alert("Game Suspended");
+		loadingScreen();		//Count down is suspended
 	}
  
 }
