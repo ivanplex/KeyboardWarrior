@@ -55,7 +55,7 @@ function textCheck(receivedText) {
         myInput.value = "";
         return false;
       } else {
-        changeInputColor("red");
+        changeInputColor("deeppink");
         handleWordColor(correctWords, false);
         mistakes++;
         return false;
@@ -75,7 +75,7 @@ function textCheck(receivedText) {
 /**
  * Change color of a word
  * @param integer   index of the word in the string
- * @param boolean   span if the word is correct, class='wrong' otherwise 
+ * @param boolean   span if the word is correct, class='wrong' otherwise
  */
 function handleWordColor(index, isCorrect) {
   if (index !== myArray.length) {
@@ -83,7 +83,7 @@ function handleWordColor(index, isCorrect) {
     var localArray = myArray.slice(0);
 
     localArray[index] = "<span" + (isCorrect ? ">" : " class='wrong'>") + localArray[index] + "</span>";
-    
+
     myParagraph.innerHTML = localArray.join(" ");
   }
 }
