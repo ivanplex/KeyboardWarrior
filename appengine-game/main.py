@@ -53,8 +53,8 @@ class Generate(webapp2.RequestHandler):
             p_tags = htmltree.xpath('//p')
             p_content = [p.text_content() for p in p_tags]
 
-            quote = p_content[0].strip().replace('\n', '').replace('\r', '')
-            source = p_content[1].strip().replace('\n', '').replace('\r', '')
+            quote = p_content[0].strip().replace('\n', ' ').replace('\r', ' ').replace('  ', ' ')
+            source = p_content[1].strip().replace('\n', ' ').replace('\r', ' ').replace('  ', ' ')
 
             print(str(i) + ' "' + quote + '" "' + source + '"')
             print(i);
