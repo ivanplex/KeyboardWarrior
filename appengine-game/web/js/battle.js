@@ -70,7 +70,9 @@ function beginCountdown(tMinus) {
 	var countdownFrom = tMinus;
 	countdownNumber.innerHTML = countdownFrom;
 
+	//Load Audio
 	var countdownAudio = document.getElementById("cound-down-audio");
+	var fightAudio = document.getElementById("fight-audio");
 
 	//LET THE COUNT DOWN BEGIN!!
 	var timeinterval = setInterval(function(){
@@ -91,6 +93,8 @@ function beginCountdown(tMinus) {
 		    	width: '80%',
 		    	paddingLeft: '20%'
 		    });
+		    //Play "FIGHT" audio
+		    fightAudio.play();
 
 		    //Hide fight sign in 1.5 second
 		    // FIGHT!
