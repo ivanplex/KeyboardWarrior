@@ -41,7 +41,7 @@ window.onload = function loadAllPanels(){
 	paragraph = document.getElementById("paragraph-input");			//Paragraph to type
 	source = document.getElementById("paragraph-source");			//Quote of paragraph
 	userInputBlock = document.getElementById("user-input-block");	//Player's input
-	gamePanels = {paragraph, source, userInputBlock};
+	gamePanels = [paragraph, source, userInputBlock];
 
 	completePanel = document.getElementById("complete-panel");		
 	gameFinishedPanel = document.getElementById("game-finished-panel");
@@ -49,7 +49,7 @@ window.onload = function loadAllPanels(){
 	userInputBlock = document.getElementById("user-input-block");
 	gameFinishedPanel = document.getElementById("game-finished-panel");
 	leaderboardShade = document.getElementById("leaderboard-shade-area");
-	gameCompletionPanels = {completePanel, gameFinishedPanel, wpmPanel, userInputBlock, gameFinishedPanel, leaderboardShade};
+	gameCompletionPanels = [completePanel, gameFinishedPanel, wpmPanel, userInputBlock, gameFinishedPanel, leaderboardShade];1
 
 	fightingGround = document.getElementById("fighting-ground");
 }
