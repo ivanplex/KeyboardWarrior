@@ -16,7 +16,7 @@ initConn();
 
 //Unix timestamp in seconds
 function unixTimeStamp() {
-    return Math.round(new Date().getTime() / 1000 + deltaTimestamp)
+    return Math.round(new Date().getTime() / 1000 + deltaTimestamp);
 }
 
 // Initalise connection with server

@@ -4,7 +4,6 @@
 }
 
 #number-countdown{
-  font-size: 160px;
   color: red;
 }
 
@@ -26,5 +25,12 @@ and (min-height: 600px)
 and (max-height: 799px) {
   #number-countdown{
     font-size: 90px;
+  }
+}
+
+@media only screen 
+and (min-height: 800px){
+  #number-countdown{
+    font-size: 60px;
   }
 }
