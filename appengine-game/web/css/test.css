@@ -166,4 +166,5 @@ caption {
 #user-input{
   font-size: 1.5em;
   font-weight: bold;
+  z-index: 3;
 }

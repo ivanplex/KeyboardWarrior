@@ -37,6 +37,7 @@ $('#username_form').submit(function(e) {
         success: function(response)
         {
            modal.style.display = "none";
+           $('#hello').text("Hello " + $('#new_nickname').val());
         }
     });
     return false;
