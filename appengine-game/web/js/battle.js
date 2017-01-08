@@ -6,6 +6,7 @@ var slider = {};
 var inBattle = false;
 
 function loadingScreen(){
+
 	var waitingPanel = document.getElementById("waiting-panel");
 	waitingPanel.style.display = "block";
 
@@ -24,7 +25,8 @@ function loadingScreen(){
 	var leaderboardShade = document.getElementById("leaderboard-shade-area");
 	leaderboardShade.style.display = "none";
 
-	inBattle = false;
+	var fightingGround = document.getElementById("fighting-ground");
+	fightingGround.innerHTML = "";
 }
 
 /**
@@ -34,7 +36,6 @@ function initBattleGround() {
 
 	//clear slider array
 	slider = {};
-
 	drawPlayers();
 }
 
@@ -78,11 +79,11 @@ function beginCountdown(tMinus) {
 	var countdownAudio = document.getElementById("cound-down-audio");
 	var fightAudio = document.getElementById("fight-audio");
 
-	if (tMinus > 1) {	
+	if(tMinus>0) {	
 	    countdownNumber.innerHTML = tMinus;
 	    drawPlayers();
 	    countdownAudio.play();
-    } else if (tMinus <= 1) {
+    } else {
 	    //Hide Countdown
 	    countdownPanel.style.display = "none";
 
@@ -95,7 +96,6 @@ function beginCountdown(tMinus) {
 	    	width: '80%',
 	    	paddingLeft: '20%'
 	    });
-
 	    //Play "FIGHT" audio
 	    fightAudio.play();
 
@@ -104,7 +104,7 @@ function beginCountdown(tMinus) {
 	    setTimeout(function (){
 		  fightSign.style.display = "none";
 		  fight();
-		}, 1000);
+		}, 1500);
 
 		inBattle = true;
 	}
@@ -142,6 +142,9 @@ function gameCompleted(excerpt){
 	var userInputBlock = document.getElementById("user-input-block");
 	userInputBlock.style.display = "none";
 
+	var gameFinishedPanel = document.getElementById("game-finished-panel");
+	gameFinishedPanel.style.display = "block";
+
 	var completePanel = document.getElementById("complete-panel");
 	completePanel.style.display = "block";
 
@@ -165,6 +168,9 @@ function playerCompleted(){
 	var completePanel = document.getElementById("complete-panel");
 	completePanel.style.display = "block";
 
+	var wpmPanel = document.getElementById("wpm-panel");
+	wpmPanel.style.display = "block";
+
 	var wpm = document.getElementById("wpm-div");
 	wpm.innerHTML = getWPM();
 
@@ -186,10 +192,11 @@ function updateBattle(){
 			}
 		}
 
-	}else if(getStartTime() !== -1){
-		beginCountdown(getStartTime() - unixTimeStamp());
-	} else {
-		loadingScreen()
+	}else if(!inBattle && getStartTime() !== -1){
+		beginCountdown(getStartTime() - unixTimeStamp());	//Counting Down
+	}else if(!inBattle && getStartTime() === -1){
+		//alert("Game Suspended");
+		loadingScreen();		//Count down is suspended
 	}
  
 }
