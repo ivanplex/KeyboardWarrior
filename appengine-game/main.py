@@ -237,7 +237,7 @@ class Play(webapp2.RequestHandler):
                     ndb_player.put()
 
             # room hasn't started, we purge players which have not connected in a while
-            else if _room['start_time'] == -1:
+            elif _room['start_time'] == -1:
                 _room['players'] = [_player for _player in _room['players'] if _player['updated_at'] < current_time + 10]
 
 
