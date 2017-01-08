@@ -162,7 +162,9 @@ class Player(webapp2.RequestHandler):
 
 # [START play]
 class Play(webapp2.RequestHandler):
-    GAME_INTERVAL = 90
+    ROOM_TIMEOUT = 10
+
+    GAME_INTERVAL = 60
     WAIT_INTERVAL = 15
 
     MIN_PLAYERS = 3
@@ -238,8 +240,17 @@ class Play(webapp2.RequestHandler):
 
             # room hasn't started, we purge players which have not connected in a while
             elif _room['start_time'] == -1:
-                _room['players'] = [_player for _player in _room['players'] if _player['updated_at'] < current_time + 10]
+                _idx = []
+                _players = _room['players']
 
+                for i in range(len(_players)):
+                    if _players[i]['updated_at'] + self.ROOM_TIMEOUT < current_time:
+                        _idx.append(i)
+
+                if len(_idx) != 0:
+                    for i in reversed(_idx):
+                        print(_players[i])
+                        del _players[i]
 
         """
         END HOUSEKEEPING SECTION
@@ -356,8 +367,6 @@ class Play(webapp2.RequestHandler):
             # user is in a game, we do game stuff
             else:
                 room = rooms.get(room_id)
-                print(room)
-                print(room_id)
 
                 # room doesn't exist anymore, game over or invalid room?
                 if room:
