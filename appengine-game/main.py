@@ -236,6 +236,10 @@ class Play(webapp2.RequestHandler):
                     ndb_player.games_played = ndb_player.games_played + 1
                     ndb_player.put()
 
+            # room hasn't started, we purge players which have not connected in a while
+            else if _room['start_time'] == -1:
+                _room['players'] = [_player for _player in _room['players'] if _player['updated_at'] < current_time + 10]
+
 
         """
         END HOUSEKEEPING SECTION
@@ -401,10 +405,15 @@ class Play(webapp2.RequestHandler):
                         print("word length: " + str(words_length) + " words done: " + str(words_done))
 
                         # update the users :D only if words_done has changed
-                        if player['words_done'] > words_done:
+                        if words_done > player['words_done']:
                             player['words_done'] = words_done
                             player['updated_at'] = current_time
                             player['mistakes'] = mistakes
+
+                    # we want to keep player ping even though game hasn't started
+                    else if room['start_time'] == -1:
+                        player['updated_at'] = current_time
+
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
             return
