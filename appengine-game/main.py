@@ -102,12 +102,19 @@ class Leaderboard(webapp2.RequestHandler):
             racesIds.extend([race.key.id()])
         racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(racesIds)).order(-models.RacerStats.wpm)
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
-        return leaderStats
+        return Leaderboard.inject_nicknames(leaderStats)
     @classmethod
     def Users_Top(self, user_id, PLAYERS_PER_PAGE):
         racerStats = models.RacerStats.query(models.RacerStats.user_id==user_id).order(-models.RacerStats.wpm)
         topStats = racerStats.fetch(PLAYERS_PER_PAGE)
-        return topStats
+        return Leaderboard.inject_nicknames(topStats)
+    @classmethod
+    def inject_nicknames(self, stats):
+        for stat in stats:
+            player = models.Player.query(models.Player.user_id == stat.user_id)
+            _nickname = player.fetch(1)[0].nickname;
+            stat.nickname = _nickname
+        return stats
 
 
 # [START main_page]
