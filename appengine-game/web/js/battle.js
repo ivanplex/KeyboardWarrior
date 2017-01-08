@@ -107,8 +107,6 @@ function beginCountdown(tMinus) {
 
 		inBattle = true;
 	}
-
-	console.log('Counting Down');
 }
 
 function fight() {
@@ -146,9 +144,6 @@ function gameCompleted(excerpt){
 	var completePanel = document.getElementById("complete-panel");
 	completePanel.style.display = "block";
 
-	var wpm = document.getElementById("wpm-div");
-	wpm.innerHTML = getWPM();
-
 	var leaderboardShade = document.getElementById("leaderboard-shade-area");
 	leaderboardShade.style.display = "block";
 
@@ -161,8 +156,20 @@ function gameCompleted(excerpt){
 	inBattle = false;
 }
 
+function playerCompleted(){
+
+	var userInputBlock = document.getElementById("user-input-block");
+	userInputBlock.style.display = "none";
+
+	var completePanel = document.getElementById("complete-panel");
+	completePanel.style.display = "block";
+
+	var wpm = document.getElementById("wpm-div");
+	wpm.innerHTML = getWPM();
+
+}
+
 function updateBattle(){
-	
 
 	if(inBattle){
 
@@ -171,6 +178,11 @@ function updateBattle(){
 		//Update all player's status
 		for(var i = 0; i<players.length; i++){
 			slider[players[i].id].shift(players[i].words_done);
+
+			//Check if the player has finished the game
+			if(players[i].id === getPlayerId() && players[i].words_done === getWordLength()){
+				playerCompleted();
+			}
 		}
 
 	}else if(getStartTime() !== -1){

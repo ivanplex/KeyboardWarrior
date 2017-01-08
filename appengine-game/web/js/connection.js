@@ -7,7 +7,8 @@ var correctWords = 0,
     wordLength,
     gameEnd = false,
     startTime = 0,
-    endTime;
+    endTime,
+    textId;
 var gameTicker;
 
 initConn();
@@ -19,7 +20,7 @@ function unixTimeStamp() {
 
 // Initalise connection with server
 function initConn() {
-    // console.log(unixTimeStamp());
+    console.log(unixTimeStamp());
     // Send timestamp and roomid waiting for server response
     $.ajax({
         type: 'POST',
@@ -28,7 +29,7 @@ function initConn() {
         data: JSON.stringify({timestamp: unixTimeStamp(), room_id: -1}),
         dataType: 'json',
         success: function (response) {
-            console.log(response);
+            console.log(response, "initial response");
             handleInitialResponse(response);
         },
         error: function (e) {
@@ -45,7 +46,7 @@ function handleInitialResponse(jsonReply) {
     this.wordLength = jsonReply.room.text_length;
     this.playerId = jsonReply.player_id;
     this.playersInfo = jsonReply.room.players;
-
+    this.textId = jsonReply.room.text_id;
     // correct time drift from server
     this.deltaTimestamp = 0;
     this.deltaTimestamp = jsonReply.timestamp - unixTimeStamp();
@@ -59,7 +60,7 @@ function handleInitialResponse(jsonReply) {
 function sendInfo() {
     // console.log("sendinfo");
     var correctWords = getCorrectWord();
-    console.log(correctWords, "correctWords");
+    // console.log(correctWords, "correctWords");
     var mistakes = getMistakes();
     $.ajax({
         type: 'POST',
@@ -68,7 +69,7 @@ function sendInfo() {
         data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: correctWords, mistakes: mistakes}),
         dataType: 'json',
         success: function (response) {
-            // console.log(response);
+            console.log(response, "sendinfo");
             handleResponse(response);
         },
         error: function (e) {
@@ -76,13 +77,6 @@ function sendInfo() {
             endGame();
         }
     });
-}
-
-function endGame() {
-    this.gameEnd = true;
-    this.roomId = -1;
-    clearInterval(gameTicker);
-    gameCompleted();
 }
 
 function handleResponse(jsonReply) {
@@ -94,8 +88,8 @@ function handleResponse(jsonReply) {
         this.endTime = jsonReply.room.end_time;
         this.startTime = jsonReply.room.start_time;
         this.playersInfo = jsonReply.room.players;
-        // console.log(this.playersInfo, "players");
-        // console.log(getTimeLeft(), "time left in game");
+        console.log(this.playersInfo, "players");
+        console.log(getTimeLeft(), "time left in game");
     }
 
     var playerId = jsonReply.player_id;
@@ -103,15 +97,22 @@ function handleResponse(jsonReply) {
     var serverTimestamp = jsonReply.timestamp;
 
     if (room === null || (endTime < currentTime && endTime !== -1)) {
-        // console.log("clearInterval");
+        console.log("clearInterval");
         // game ended or invalid room
-        gameCompleted(jsonReply.room['text_id]']);
+        gameCompleted();
         endGame();
     } else {
         // ongoing game, call the board to update itself
         this.gameEnd = false;
         updateBattle();
     }
+}
+
+function endGame() {
+    this.gameEnd = true;
+    this.roomId = -1;
+    clearInterval(gameTicker);
+    gameCompleted(textId);
 }
 
 function getGameStatus() {
