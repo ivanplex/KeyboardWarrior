@@ -375,7 +375,7 @@ class Play(webapp2.RequestHandler):
                         words_done = obj.get('words_done')
                         mistakes = obj.get('mistakes')
 
-                        words_length = len(room['text'])
+                        words_length = room['text_length']
 
                         # we don't have words done in this request...
                         if words_done is None:
