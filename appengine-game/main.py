@@ -215,6 +215,12 @@ class Play(webapp2.RequestHandler):
                 # iterate over players in room -- the wpm is calculated here
                 # we can create the racerstats here this way
                 for _player in _room['players']:
+
+                    # skip if player isn't valid but this should NEVER happen
+                    if _player['updated_at'] < _room['start_time']:
+                        print('BIG ERROR TELL BOON')
+                        continue
+
                     wpm = 0
 
                     if _player['updated_at'] > _room['start_time']:
