@@ -148,7 +148,7 @@
 							<div id="fight-sign"><img src="img/fight.png" style="width: 100%;" /></div>
 							<audio id="fight-audio" src="sound/fight.mp3" preload="auto" autobuffer></audio>
 							<div id="leaveBttn" class="leaveButton" role="main">
-								<img src="img/exit.png" height="35px" width="35px" />
+								<input type="image" src="img/exit.png" height="35px" width="35px" />
 							</div>
 							<div id="user-input-block" class="col-sm-6 col-md-offset-3">
 								<div class="form-group">
@@ -162,8 +162,6 @@
 
 						</div>
 					</div>
-
-					<!-- <script src="js/connection.js"></script> -->
 					<script>
 						$("#StartButton").click(function() {
 							$.getScript("js/connection.js");
@@ -174,8 +172,9 @@
 					</script>
 					<script>
 						$("#leaveBttn").click(function() {
-							$("#SplashScreen").show();
+							endGame();
 							$("#GameCanvas").hide();
+							$("#SplashScreen").show();
 						});
 					</script>
 				</div>
