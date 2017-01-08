@@ -232,9 +232,9 @@ class Play(webapp2.RequestHandler):
                     raceStats.put()
 
                     ndb_player = models.Player.get_by_user_id(models.Player, _player['id'])
+                    ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / (ndb_player.games_played + 1)
+                    ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / (ndb_player.games_played + 1)
                     ndb_player.games_played = ndb_player.games_played + 1
-                    ndb_player.wpm = ((ndb_player.wpm * ndb_player.games_played) + wpm) / ndb_player.games_played
-                    ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / ndb_player.games_played
                     ndb_player.put()
 
         """
