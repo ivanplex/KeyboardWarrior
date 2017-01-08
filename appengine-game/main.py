@@ -111,7 +111,7 @@ class Leaderboard(webapp2.RequestHandler):
     @classmethod
     def inject_nicknames(self, stats):
         for stat in stats:
-            player = models.Player.get_user_by_id(stat.user_id)
+            player = models.Player.get_by_user_id(stat.user_id)
             _nickname = player.nickname;
             stat.nickname = _nickname
         return stats
