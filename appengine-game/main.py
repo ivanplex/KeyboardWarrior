@@ -88,18 +88,24 @@ class Leaderboard(webapp2.RequestHandler):
             races = models.Race.query(models.Race.excerpt_id == excerpt_id)
             if not races.get():
                 return None
-            racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(races.fetch()), models.RacerStats.user_id == user.user_id()).order(models.RacerStats.wpm)
+            racesIds = []
+            for race in races.fetch():
+                racesIds.extend([race.key.id()])
+            racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(racesIds), models.RacerStats.user_id == user.user_id()).order(-models.RacerStats.wpm)
             racerStats.fetch(1);
             #Return this as well if the current user stats is required
         races = models.Race.query(models.Race.excerpt_id == excerpt_id)
         if not races.get():
             return None
-        racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(races.fetch())).order(models.RacerStats.wpm)
+        racesIds = []
+        for race in races.fetch():
+            racesIds.extend([race.key.id()])
+        racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(racesIds)).order(-models.RacerStats.wpm)
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return leaderStats
     @classmethod
     def Users_Top(self, user_id, PLAYERS_PER_PAGE):
-        racerStats = models.RacerStats.query(models.RacerStats.user_id==user_id).order(models.RacerStats.wpm)
+        racerStats = models.RacerStats.query(models.RacerStats.user_id==user_id).order(-models.RacerStats.wpm)
         topStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return topStats
 
@@ -330,7 +336,7 @@ class Play(webapp2.RequestHandler):
                         room['players'] = []
                         room['start_time'] = -1
                         room['end_time'] = -1
-                        room['text_id'] = excerpt.id
+                        room['text_id'] = excerpt.key.id()
                         room['text'] = excerpt.passage
                         room['text_length'] = len(excerpt.passage.split())
                         room['source'] = excerpt.source

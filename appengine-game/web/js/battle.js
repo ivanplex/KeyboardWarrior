@@ -79,19 +79,18 @@ function beginCountdown(tMinus) {
 	var countdownAudio = document.getElementById("cound-down-audio");
 	var fightAudio = document.getElementById("fight-audio");
 
-	if(tMinus>0){	
+	if(tMinus>0) {	
 	    countdownNumber.innerHTML = tMinus;
 	    drawPlayers();
 	    countdownAudio.play();
-
-    }else{
-
+    } else {
 	    //Hide Countdown
 	    countdownPanel.style.display = "none";
 
 	    //Show fight sign
 	    var fightSign = document.getElementById("fight-sign");
 	    fightSign.style.display = "block";
+
 	    $("#fight-sign").animate({
 	    	opacity: '1',
 	    	width: '80%',
@@ -146,6 +145,9 @@ function gameCompleted(excerpt){
 	var gameFinishedPanel = document.getElementById("game-finished-panel");
 	gameFinishedPanel.style.display = "block";
 
+	var completePanel = document.getElementById("complete-panel");
+	completePanel.style.display = "block";
+
 	var leaderboardShade = document.getElementById("leaderboard-shade-area");
 	leaderboardShade.style.display = "block";
 
@@ -165,6 +167,9 @@ function playerCompleted(){
 
 	var completePanel = document.getElementById("complete-panel");
 	completePanel.style.display = "block";
+
+	var wpmPanel = document.getElementById("wpm-panel");
+	wpmPanel.style.display = "block";
 
 	var wpm = document.getElementById("wpm-div");
 	wpm.innerHTML = getWPM();

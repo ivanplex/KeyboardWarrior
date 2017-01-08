@@ -172,6 +172,11 @@ span {
   display: none;
 }
 
+#wpm-panel{
+  text-align: center;
+  display: none;
+}
+
 #wpm-div{
   clear: both;
 }

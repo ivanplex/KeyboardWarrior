@@ -49,26 +49,26 @@
 		</div>
 
 		{% if leaders|length > 1 %}
-		<div id="leaderboardTable" style="margin-left:-100px">
+		<div id="leaderboardTable" style="margin-left:-50px">
 			<table class="table">
 				<thead>
 					<tr>
-						<th>Pos</th>
-						<th>Player</th>
-						<th>WPM</th>
-						<th>Accuracy</th>
-					</tr>
-				</thead>
-				{% for _leader in leaders %}
-				<tr>
-				   <td>{{loop.index}}</th>
-				   <td>{{_leader.nickname}}</th>
-				   <td>{{_leader.wpm}}</th>
-					 <td>{{_leader.accuracy}}</th>
-				</th>
-				{% endfor %}
-			</table>
-		</div>
+					<th>Pos</th>
+					<th>Player</th>
+					<th>WPM</th>
+					<th>Accuracy</th>
+				</tr>
+			 </thead>
+			{% for _leader in leaders %}
+			<tr>
+			   <td>{{loop.index}}</td>
+			   <td>{{_leader.nickname}}</td>
+			   <td>{{_leader.wpm|round(2)}}</td>
+			   <td>{{_leader.accuracy|round(2)}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
 		{% endif %}
 
 	</div>
@@ -133,9 +133,12 @@
 									<p>Game finished!</p>
 								</div>
 
-								<div id="complete-panel">
+								<div id="wpm-panel">
 									<p>Words per minute</p>
 									<div id="wpm-div"></div>
+								</div>
+
+								<div id="complete-panel">
 									<div class="col-sm-4 col-md-offset-4">
 										<button id="replay" class="btn btn-lg btn-primary btn-block" type="submit" onclick="restartGame()">Play another game!</button>
 									</div>
