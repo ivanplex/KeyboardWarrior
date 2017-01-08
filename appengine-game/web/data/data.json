@@ -16,6 +16,9 @@
       "room_id": 8,
       "source": "etc",
       "start_time": -1,
+      "end_time": -1,
+      "text_length": 32,
+      "text_source": "boon pek"
       "text":"asdasdasd",
       "text_id": "21",
     }],
