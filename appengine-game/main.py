@@ -53,8 +53,8 @@ class Generate(webapp2.RequestHandler):
             p_tags = htmltree.xpath('//p')
             p_content = [p.text_content() for p in p_tags]
 
-            quote = p_content[0].strip().replace('\n', ' ').replace('\r', '')
-            source = p_content[1].strip().replace('\n', ' ').replace('\r', '')
+            quote = p_content[0].strip().replace('\n', '').replace('\r', '')
+            source = p_content[1].strip().replace('\n', '').replace('\r', '')
 
             print(str(i) + ' "' + quote + '" "' + source + '"')
             print(i);
@@ -162,7 +162,9 @@ class Player(webapp2.RequestHandler):
 
 # [START play]
 class Play(webapp2.RequestHandler):
-    GAME_INTERVAL = 90
+    ROOM_TIMEOUT = 10
+
+    GAME_INTERVAL = 60
     WAIT_INTERVAL = 15
 
     MIN_PLAYERS = 3
@@ -200,7 +202,6 @@ class Play(webapp2.RequestHandler):
 
             # room has expired -- save logic and etc
             if current_time > _room['end_time'] and _room['end_time'] != -1:
-                print('housekeeping on ' + str(_id))
                 # remove the reference from the game
                 del rooms[_id]
 
@@ -236,6 +237,20 @@ class Play(webapp2.RequestHandler):
                     ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / (ndb_player.games_played + 1)
                     ndb_player.games_played = ndb_player.games_played + 1
                     ndb_player.put()
+
+            # room hasn't started, we purge players which have not connected in a while
+            elif _room['start_time'] == -1:
+                _idx = []
+                _players = _room['players']
+
+                for i in range(len(_players)):
+                    if _players[i]['updated_at'] + self.ROOM_TIMEOUT < current_time:
+                        _idx.append(i)
+
+                if len(_idx) != 0:
+                    for i in reversed(_idx):
+                        print(_players[i])
+                        del _players[i]
 
         """
         END HOUSEKEEPING SECTION
@@ -352,8 +367,6 @@ class Play(webapp2.RequestHandler):
             # user is in a game, we do game stuff
             else:
                 room = rooms.get(room_id)
-                print(room)
-                print(room_id)
 
                 # room doesn't exist anymore, game over or invalid room?
                 if room:
@@ -401,10 +414,15 @@ class Play(webapp2.RequestHandler):
                         print("word length: " + str(words_length) + " words done: " + str(words_done))
 
                         # update the users :D only if words_done has changed
-                        if player['words_done'] > words_done:
+                        if words_done > player['words_done']:
                             player['words_done'] = words_done
                             player['updated_at'] = current_time
                             player['mistakes'] = mistakes
+
+                    # we want to keep player ping even though game hasn't started
+                    elif room['start_time'] == -1:
+                        player['updated_at'] = current_time
+
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
             return

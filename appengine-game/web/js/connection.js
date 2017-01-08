@@ -1,12 +1,13 @@
 var correctWords = 0,
-deltaTimestamp = 0,
-roomId = -1,
-playerId,
-playersInfo = [],
-typeWords,
-gameEnd = false,
-startTime = 0,
-endTime;
+    deltaTimestamp = 0,
+    roomId = -1,
+    playerId,
+    playersInfo = [],
+    typeWords,
+    wordLength,
+    gameEnd = false,
+    startTime = 0,
+    endTime;
 
 initConn();
 
@@ -19,7 +20,7 @@ var gameTicker;
 
 // Initalise connection with server
 function initConn() {
-    console.log(unixTimeStamp());
+    // console.log(unixTimeStamp());
     // Send timestamp and roomid waiting for server response
     $.ajax({
         type: 'POST',
@@ -42,6 +43,7 @@ function handleInitialResponse(jsonReply) {
     console.log("handleInitialResponse");
     this.typeWords = jsonReply.room.text;
     this.roomId = jsonReply.room.room_id;
+    this.wordLength = jsonReply.room.text_length;
     this.playerId = jsonReply.player_id;
     this.playersInfo = jsonReply.room.players;
 
@@ -56,8 +58,9 @@ function handleInitialResponse(jsonReply) {
 
 // Sends information to server periodically with timestamp, roomid, correctWords and mistakes
 function sendInfo() {
-    console.log("sendinfo");
+    // console.log("sendinfo");
     var correctWords = getCorrectWord();
+    console.log(correctWords, "correctWords");
     var mistakes = getMistakes();
     $.ajax({
         type: 'POST',
@@ -66,13 +69,14 @@ function sendInfo() {
         data: JSON.stringify({timestamp: unixTimeStamp(), room_id: roomId, words_done: correctWords, mistakes: mistakes}),
         dataType: 'json',
         success: function (response) {
-            console.log(response);
+            // console.log(response);
             handleResponse(response);
         },
         error: function (e) {
             console.log('Lost connection, try again');
             clearInterval(gameTicker);
             this.gameEnd = true;
+            this.roomId = -1;
             gameCompleted();
         }
     });
@@ -87,6 +91,7 @@ function handleResponse(jsonReply) {
         this.endTime = jsonReply.room.end_time;
         this.startTime = jsonReply.room.start_time;
         this.playersInfo = jsonReply.room.players;
+        console.log(this.playersInfo, "players");
     }
 
     var playerId = jsonReply.player_id;
@@ -122,18 +127,29 @@ function getWordPassage() {
     return typeWords;
 }
 
-function getPlayerId(){
+function getPlayerId() {
     // return current player's id
     return playerId;
 }
 
-function getStartTime(){
+function getStartTime() {
     // return -1 when game has not started, return valid when started
     return startTime;
 }
 
-function getEndTime(){
+function getEndTime() {
+    // return time when the game is supposed to end after game has started
     return endTime;
+}
+
+function getTimeLeft() {
+    // return time left in the game
+    return (endTime - unixTimeStamp());
+}
+
+function getWordLength() {
+    // return numbers of words needed to be typed
+    return wordLength;
 }
 
 // Set cookie with player id set, time expiry and path
