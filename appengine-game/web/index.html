@@ -51,24 +51,26 @@
 		</div>
 
 		{% if leaders|length > 1 %}
-		<table class="table">
-			<thead>
-				<tr>
+		<div id="leaderboardTable" style="margin-left:-50px">
+			<table class="table">
+				<thead>
+					<tr>
 					<th>Pos</th>
 					<th>Player</th>
 					<th>WPM</th>
 					<th>Accuracy</th>
 				</tr>
-			</thead>
+			 </thead>
 			{% for _leader in leaders %}
 			<tr>
 			   <td>{{loop.index}}</td>
 			   <td>{{_leader.nickname}}</td>
 			   <td>{{_leader.wpm|round(2)}}</td>
 			   <td>{{_leader.accuracy|round(2)}}</td>
-			</th>
+			</tr>
 			{% endfor %}
 		</table>
+	</div>
 		{% endif %}
 
 	</div>
@@ -127,7 +129,8 @@
 									<p>Battle begins in</p>
 									<div id="number-countdown"></div>
 								</div>
-								<p id="paragraph-input"></p>
+								<p id="paragraph-input">Penises yay!</p>
+								<p id="paragraph-source" style="font-size:50%;display:none"></p>
 
 								<div id="game-finished-panel">
 									<p>Game finished!</p>
