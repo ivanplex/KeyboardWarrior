@@ -47,6 +47,7 @@ function drawPlayers(){
 function countDown(tMinus) {
 
 	clearloadingScreen();
+	showCountDown();
 
 	//clear slider array
 	slider = {};
