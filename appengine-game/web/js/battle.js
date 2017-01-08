@@ -143,8 +143,8 @@ function gameCompleted(excerpt){
 	var userInputBlock = document.getElementById("user-input-block");
 	userInputBlock.style.display = "none";
 
-	var completePanel = document.getElementById("complete-panel");
-	completePanel.style.display = "block";
+	var gameFinishedPanel = document.getElementById("game-finished-panel");
+	gameFinishedPanel.style.display = "block";
 
 	var leaderboardShade = document.getElementById("leaderboard-shade-area");
 	leaderboardShade.style.display = "block";
