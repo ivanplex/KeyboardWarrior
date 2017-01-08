@@ -44,9 +44,9 @@ function handleInitialResponse(jsonReply) {
     this.typeWords = jsonReply.room.text;
     this.roomId = jsonReply.room.room_id;
     this.wordLength = jsonReply.room.text_length;
+    this.textId = jsonReply.room.text_id;
     this.playerId = jsonReply.player_id;
     this.playersInfo = jsonReply.room.players;
-    this.textId = jsonReply.room.text_id;
     // correct time drift from server
     this.deltaTimestamp = 0;
     this.deltaTimestamp = jsonReply.timestamp - unixTimeStamp();
@@ -54,6 +54,7 @@ function handleInitialResponse(jsonReply) {
     textCheck(getWordPassage());
     // start sending info at every second interval
     gameTicker = setInterval(sendInfo, 1000);
+    console.log(textId,"textid");
 }
 
 // Sends information to server periodically with timestamp, roomid, correctWords and mistakes
@@ -99,7 +100,6 @@ function handleResponse(jsonReply) {
     if (room === null || (endTime < currentTime && endTime !== -1)) {
         console.log("clearInterval");
         // game ended or invalid room
-        gameCompleted();
         endGame();
     } else {
         // ongoing game, call the board to update itself
@@ -112,6 +112,7 @@ function endGame() {
     this.gameEnd = true;
     this.roomId = -1;
     clearInterval(gameTicker);
+    console.log(textId);
     gameCompleted(textId);
 }
 
