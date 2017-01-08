@@ -21,6 +21,9 @@ function drawPlayers(){
 	//Clear players from fighting ground and re-draw
 	clearFightingGround();
 	
+	//clear slider array
+	slider = {};
+
 	var players = getPlayersInfo();
 
 	for(var i = 0; i<players.length; i++){
@@ -34,14 +37,15 @@ function drawPlayers(){
 		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
 		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
 	}
+
 }
 
 
 /**
  * Initiate count down with T-minus: tMinus
- * 
+ *
  * This function is called repeatedly by updateBattle()
- * 
+ *
  * @para {Number} tMinus
  */
 function countDown(tMinus) {
@@ -49,10 +53,8 @@ function countDown(tMinus) {
 	clearloadingScreen();
 	showCountDown();
 
-	//clear slider array
-	slider = {};
 
-	//Display T-Minus 
+	//Display T-Minus
 	var countdownNumber = document.getElementById("number-countdown");
 	countdownNumber.innerHTML = tMinus;
 
@@ -61,7 +63,7 @@ function countDown(tMinus) {
 	var fightAudio = document.getElementById("fight-audio");
 
 	//Before Game begins
-	if(tMinus>0) {	
+	if(tMinus>0) {
 
 	    drawPlayers();	//Redraw players
 	    countdownAudio.play();	//Play count-down beeps
@@ -104,6 +106,9 @@ function gameCompleted(excerpt){
 
 	clearGamePanels();
 
+	var userInputBlock = document.getElementById("user-input-block");
+	userInputBlock.style.display = "none";
+
 	var gameFinishedPanel = document.getElementById("game-finished-panel");
 	gameFinishedPanel.style.display = "block";
 
@@ -115,9 +120,14 @@ function gameCompleted(excerpt){
 
 	var leaderboardPanel = document.getElementById("leaderboard-panel");
 
-	$.post( "/finished?excerpt="+excerpt, function( data ) {
-		leaderboardPanel.innerHTML =  data ;
-	});
+	setTimeout(
+		function()
+			{
+				console.log("Getting Leaderboard");
+				$.post( "/finished?excerpt="+excerpt, function( data ) {
+				leaderboardPanel.innerHTML =  data ;
+			})
+	}, 2000);
 
 	inBattle = false;
 }
@@ -149,6 +159,7 @@ function updateBattle(){
 
 		//Update all player's status
 		for(var i = 0; i<players.length; i++){
+
 			slider[players[i].id].shift(players[i].words_done);
 
 			//Check if the player has finished the game
@@ -163,5 +174,5 @@ function updateBattle(){
 		//alert("Game Suspended");
 		showLoadingScreen();		//Count down is suspended
 	}
- 
+
 }
