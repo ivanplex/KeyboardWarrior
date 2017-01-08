@@ -38,7 +38,7 @@ function textCheck(receivedText) {
     if (evt.keyCode == 32) {
 
       // if we exceed the boundary
-      if (correctWords === myArray.length - 1) {
+      if (correctWords === myArray.length) {
         myParagraph.innerHTML = myText
         myInput.value = ""
         return false
@@ -74,12 +74,14 @@ function textCheck(receivedText) {
  * @param boolean   span if the word is correct, class='wrong' otherwise 
  */
 function handleWordColor(index, isCorrect) {
-  // clone the global array
-  var localArray = myArray.slice(0)
+  if (index !== myArray.length) {
+    // clone the global array
+    var localArray = myArray.slice(0)
 
-  localArray[index] = "<span" + (isCorrect ? ">" : " class='wrong'>") + localArray[index] + "</span>"
-  
-  myParagraph.innerHTML = localArray.join(" ")
+    localArray[index] = "<span" + (isCorrect ? ">" : " class='wrong'>") + localArray[index] + "</span>"
+    
+    myParagraph.innerHTML = localArray.join(" ")
+  }
 }
 
 /**
