@@ -82,14 +82,14 @@ function beginCountdown(tMinus) {
 	    countdownNumber.innerHTML = tMinus;
 	    drawPlayers();
 	    countdownAudio.play();
-    } else if (tMinus == 1) {
+    } else if (tMinus <= 1) {
 	    //Hide Countdown
 	    countdownPanel.style.display = "none";
 
 	    //Show fight sign
 	    var fightSign = document.getElementById("fight-sign");
 	    fightSign.style.display = "block";
-	    
+
 	    $("#fight-sign").animate({
 	    	opacity: '1',
 	    	width: '80%',

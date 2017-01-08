@@ -60,6 +60,7 @@ class Generate(webapp2.RequestHandler):
             print(i);
 
             tempEx = models.Excerpt(passage = quote, source = source)
+            tempEx.id = i-30
             tempEx.key = ndb.Key(models.Excerpt, i-30);
             tempEx.put()
 
