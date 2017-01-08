@@ -7,7 +7,8 @@ var correctWords = 0,
     wordLength,
     gameEnd = false,
     startTime = 0,
-    endTime;
+    endTime,
+    textId;
 var gameTicker;
 
 initConn();
@@ -45,14 +46,14 @@ function handleInitialResponse(jsonReply) {
     this.wordLength = jsonReply.room.text_length;
     this.playerId = jsonReply.player_id;
     this.playersInfo = jsonReply.room.players;
-
+    this.textId = jsonReply.room.text_id;
     // correct time drift from server
     this.deltaTimestamp = 0;
     this.deltaTimestamp = jsonReply.timestamp - unixTimeStamp();
     // load text received from server
     textCheck(getWordPassage());
     // start sending info at every second interval
-    gameTicker = setInterval(sendInfo(), 1000);
+    gameTicker = setInterval(sendInfo, 1000);
 }
 
 // Sends information to server periodically with timestamp, roomid, correctWords and mistakes
@@ -78,13 +79,6 @@ function sendInfo() {
     });
 }
 
-function endGame() {
-    this.gameEnd = true;
-    this.roomId = -1;
-    clearInterval(gameTicker);
-    gameCompleted();
-}
-
 function handleResponse(jsonReply) {
     // startTime -1 means game has not started, room null means game has ended
     var room = jsonReply.room;
@@ -105,13 +99,20 @@ function handleResponse(jsonReply) {
     if (room === null || (endTime < currentTime && endTime !== -1)) {
         console.log("clearInterval");
         // game ended or invalid room
-        gameCompleted(jsonReply.room['text_id]']);
+        gameCompleted();
         endGame();
     } else {
         // ongoing game, call the board to update itself
         this.gameEnd = false;
         updateBattle();
     }
+}
+
+function endGame() {
+    this.gameEnd = true;
+    this.roomId = -1;
+    clearInterval(gameTicker);
+    gameCompleted(textId);
 }
 
 function getGameStatus() {
