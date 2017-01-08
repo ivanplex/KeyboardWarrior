@@ -118,6 +118,7 @@ function fight() {
 
 	//Focus on user input
 	var userInput = document.getElementById("user-input");
+	userInput.value = "";
 	userInput.focus();
 
 }
