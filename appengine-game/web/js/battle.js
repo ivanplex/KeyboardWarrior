@@ -21,6 +21,9 @@ function drawPlayers(){
 	//Clear players from fighting ground and re-draw
 	clearFightingGround();
 	
+	//clear slider array
+	slider = {};
+
 	var players = getPlayersInfo();
 
 	for(var i = 0; i<players.length; i++){
@@ -34,6 +37,7 @@ function drawPlayers(){
 		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
 		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
 	}
+
 }
 
 
@@ -49,8 +53,6 @@ function countDown(tMinus) {
 	clearloadingScreen();
 	showCountDown();
 
-	//clear slider array
-	slider = {};
 
 	//Display T-Minus 
 	var countdownNumber = document.getElementById("number-countdown");
@@ -104,6 +106,9 @@ function gameCompleted(excerpt){
 
 	clearGamePanels();
 
+	var userInputBlock = document.getElementById("user-input-block");
+	userInputBlock.style.display = "none";
+
 	var gameFinishedPanel = document.getElementById("game-finished-panel");
 	gameFinishedPanel.style.display = "block";
 
@@ -149,6 +154,7 @@ function updateBattle(){
 
 		//Update all player's status
 		for(var i = 0; i<players.length; i++){
+
 			slider[players[i].id].shift(players[i].words_done);
 
 			//Check if the player has finished the game
