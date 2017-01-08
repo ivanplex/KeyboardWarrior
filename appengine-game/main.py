@@ -306,6 +306,7 @@ class Play(webapp2.RequestHandler):
                         room['end_time'] = -1
                         room['text_id'] = excerpt.id
                         room['text'] = excerpt.passage
+                        room['text_length'] = len(excerpt.passage.split())
                         room['source'] = excerpt.source
                         room['room_id'] = current_room
 
@@ -396,6 +397,8 @@ class Play(webapp2.RequestHandler):
                             self.response.set_status(400, 'Invalid Mistakes Done Do Not Cheat')
                             self.response.write('Mistakes Is Not Valid')
                             return
+
+                        print("word length: " + str(words_length))
 
                         # update the users :D
                         if words_done < words_length:
