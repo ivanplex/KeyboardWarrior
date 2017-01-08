@@ -1,0 +1,30 @@
+#countdown-panel{
+  display: none;
+  text-align: center;
+}
+
+#number-countdown{
+  font-size: 160px;
+  color: red;
+}
+
+#fight-sign {
+
+  width: 200%;
+  padding-top: 10%;
+
+  opacity: 0;
+
+  position: absolute;
+  z-index: 99;
+
+  display: none;
+}
+
+@media only screen 
+and (min-height: 600px)
+and (max-height: 799px) {
+  #number-countdown{
+    font-size: 90px;
+  }
+}

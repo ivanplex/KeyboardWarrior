@@ -4,6 +4,7 @@ var correctWords = 0,
     playerId,
     playersInfo = [],
     typeWords,
+    textSource,
     wordLength,
     gameEnd = false,
     startTime = 0,
@@ -45,6 +46,7 @@ function handleInitialResponse(jsonReply) {
     this.roomId = jsonReply.room.room_id;
     this.wordLength = jsonReply.room.text_length;
     this.textId = jsonReply.room.text_id;
+    this.textSource = jsonReply.room.text_source;
     this.playerId = jsonReply.player_id;
     this.playersInfo = jsonReply.room.players;
     // correct time drift from server
