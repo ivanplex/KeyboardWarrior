@@ -35,7 +35,7 @@ function textCheck(receivedText) {
     evt = evt || window.event
 
     // if space is pressed
-    if (evt.keyCode == 32) {
+    if (evt.charCode == 32) {
 
       // if we exceed the boundary
       if (correctWords === myArray.length) {

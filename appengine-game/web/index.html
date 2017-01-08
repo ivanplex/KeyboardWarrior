@@ -60,7 +60,7 @@
 			{% for _leader in leaders %}
 			<tr>
 			   <td>{{loop.index}}</th>
-			   <td>{{_leader.username}}</th>
+			   <td>{{_leader.nickname}}</th>
 			   <td>{{_leader.wpm}}</th>
 			</th>
 			{% endfor %}
@@ -110,6 +110,13 @@
 										<div class="sk-cube3 sk-cube"></div>
 									</div>
 									<p>Waiting for players</p>
+									<!--Testing only
+									<button onclick="initBattleGround()">Init Battle</button>
+									<button onclick="testMove(3)">3</button>
+									<button onclick="testMove(5)">5</button>
+									<button onclick="testMove(10)">10</button>
+									<button onclick="testMove(20)">20</button>
+									 End Testing -->
 								</div>
 								<div id="countdown-panel">
 									<audio id="cound-down-audio" src="sound/count-down.mp3" preload="auto" autobuffer></audio>
@@ -132,6 +139,7 @@
 								</div>
 							</div>
 							<div id="fight-sign"><img src="img/fight.png" style="width: 100%;" /></div>
+							<audio id="fight-audio" src="sound/fight.mp3" preload="auto" autobuffer></audio>
 							<div id="leaveBttn" class="leaveButton" role="main">
 								<img src="img/exit.png" height="35px" width="35px" />
 							</div>
@@ -155,6 +163,12 @@
 							// Game Starts
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
+						});
+					</script>
+					<script>
+						$("#leaveBttn").click(function() {
+							$("#SplashScreen").show();
+							$("#GameCanvas").hide();
 						});
 					</script>
 				</div>

@@ -19,7 +19,7 @@ function Slider(id, imageID, stringLength, max_width){
     }else if(step > this.lastStep && (parseInt($('#'+id).css("margin-left")) + parseInt($('#'+imageID).css("width")))< max_width){
 
 
-      //while(lastStep < step){
+      while(this.lastStep < step){
         var availableWidth = (max_width - parseInt($('#'+imageID).css("width")))/stringLength;
 
         $('#'+id).animate({marginLeft:'+='+(availableWidth/4)}, 75, function(){
@@ -36,7 +36,7 @@ function Slider(id, imageID, stringLength, max_width){
         });
 
         this.lastStep++;
-      //}
+      }
 
     }else{
       //alert(this.lastStep);
