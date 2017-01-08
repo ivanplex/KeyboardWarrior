@@ -170,3 +170,18 @@ function restartGame(){
 	initConn();
 	loadingScreen();
 }
+
+
+
+
+/**
+ * Testing only 
+ */
+function testMove(move){
+	var players = getPlayersInfo();
+
+	//Update all player's status
+	for(var i = 0; i<players.length; i++){
+		slider[players[i].id].shift(move);
+	}
+}
