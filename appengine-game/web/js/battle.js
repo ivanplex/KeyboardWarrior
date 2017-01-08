@@ -6,7 +6,6 @@ var slider = {};
 var inBattle = false;
 
 function loadingScreen(){
-
 	var waitingPanel = document.getElementById("waiting-panel");
 	waitingPanel.style.display = "block";
 
@@ -24,6 +23,8 @@ function loadingScreen(){
 
 	var leaderboardShade = document.getElementById("leaderboard-shade-area");
 	leaderboardShade.style.display = "none";
+
+	inBattle = false;
 }
 
 /**
@@ -77,24 +78,24 @@ function beginCountdown(tMinus) {
 	var countdownAudio = document.getElementById("cound-down-audio");
 	var fightAudio = document.getElementById("fight-audio");
 
-	if(tMinus>0){	
+	if (tMinus > 1) {	
 	    countdownNumber.innerHTML = tMinus;
 	    drawPlayers();
 	    countdownAudio.play();
-
-    }else{
-
+    } else if (tMinus == 1) {
 	    //Hide Countdown
 	    countdownPanel.style.display = "none";
 
 	    //Show fight sign
 	    var fightSign = document.getElementById("fight-sign");
 	    fightSign.style.display = "block";
+	    
 	    $("#fight-sign").animate({
 	    	opacity: '1',
 	    	width: '80%',
 	    	paddingLeft: '20%'
 	    });
+
 	    //Play "FIGHT" audio
 	    fightAudio.play();
 
@@ -103,7 +104,7 @@ function beginCountdown(tMinus) {
 	    setTimeout(function (){
 		  fightSign.style.display = "none";
 		  fight();
-		}, 1500);
+		}, 1000);
 
 		inBattle = true;
 	}
