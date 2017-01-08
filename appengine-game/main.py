@@ -239,7 +239,7 @@ class Play(webapp2.RequestHandler):
                     ndb_player.put()
 
             # room hasn't started, we purge players which have not connected in a while
-            elif _room['start_time'] == -1:
+            elif _room['start_time'] > current_time:
                 _idx = []
                 _players = _room['players']
 
@@ -249,8 +249,13 @@ class Play(webapp2.RequestHandler):
 
                 if len(_idx) != 0:
                     for i in reversed(_idx):
-                        print(_players[i])
                         del _players[i]
+
+                    # reset the room to not start if less than minimum players
+                    if len(_players) < self.MIN_PLAYERS:
+                        room['start_time'] = -1
+                        room['end_time'] = -1
+
 
         """
         END HOUSEKEEPING SECTION
@@ -305,7 +310,7 @@ class Play(webapp2.RequestHandler):
             # user isn't in a room, allocate user to a room
             if room_id == -1:
 
-                while room == None:
+                while room is None:
                     # test the current room for whether it is full or not
                     room = rooms.get(current_room)
 
@@ -336,6 +341,7 @@ class Play(webapp2.RequestHandler):
                         room = None
                     else:
                         userInRoom = False
+
                         # user is allowed to participate in the current room
                         player = {}
 
@@ -343,6 +349,7 @@ class Play(webapp2.RequestHandler):
                         for player in room['players']:
                             if player['id'] == player_id:
                                 userInRoom = True
+                                break
 
                         if not userInRoom:
                             # user is allowed to participate in the current room
@@ -378,12 +385,13 @@ class Play(webapp2.RequestHandler):
                             player = _player
                             break
 
+                    # user isn't in this room
                     if player is None:
                         self.response.set_status(403, 'Not In Room')
                         self.response.write('User Not In Room')
                         return
 
-                    # game is going on
+                    # game is going on -- started and hasn't ended
                     if current_time > room['start_time'] and current_time < room['end_time']:
                         words_done = obj.get('words_done')
                         mistakes = obj.get('mistakes')
@@ -411,8 +419,6 @@ class Play(webapp2.RequestHandler):
                             self.response.write('Mistakes Is Not Valid')
                             return
 
-                        print("word length: " + str(words_length) + " words done: " + str(words_done))
-
                         # update the users :D only if words_done has changed
                         if words_done > player['words_done']:
                             player['words_done'] = words_done
@@ -420,11 +426,12 @@ class Play(webapp2.RequestHandler):
                             player['mistakes'] = mistakes
 
                     # we want to keep player ping even though game hasn't started
-                    elif room['start_time'] == -1:
+                    else:
                         player['updated_at'] = current_time
 
         else:
             self.response.set_status(400, 'Room_ID Must Be A Number')
+            self.response.write('RoomID NaN')
             return
 
         # build the response json
