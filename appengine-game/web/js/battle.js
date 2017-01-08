@@ -6,7 +6,6 @@ var slider = {};
 var inBattle = false;
 
 function loadingScreen(){
-
 	var waitingPanel = document.getElementById("waiting-panel");
 	waitingPanel.style.display = "block";
 
@@ -15,6 +14,9 @@ function loadingScreen(){
 
 	var paragraph = document.getElementById("paragraph-input");
 	paragraph.style.display = "none";
+
+	var source = document.getElementById("paragraph-source");
+	source.style.display = "none";
 
 	var userInputBlock = document.getElementById("user-input-block");
 	userInputBlock.style.display = "none";
@@ -117,6 +119,9 @@ function fight() {
 	var userInputBlock = document.getElementById("user-input-block");
 	userInputBlock.style.display = "block";
 
+	var source = document.getElementById("paragraph-source");
+	source.style.display = "block";
+
 	//Focus on user input
 	var userInput = document.getElementById("user-input");
 	userInput.value = "";
@@ -138,6 +143,9 @@ function gameCompleted(excerpt){
 
 	var paragraph = document.getElementById("paragraph-input");
 	paragraph.style.display = "none";
+
+	var source = document.getElementById("paragraph-source");
+	source.style.display = "none";
 
 	var userInputBlock = document.getElementById("user-input-block");
 	userInputBlock.style.display = "none";

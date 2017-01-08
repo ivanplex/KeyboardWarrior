@@ -333,7 +333,7 @@ class Play(webapp2.RequestHandler):
                         room['text_id'] = excerpt.key.id()
                         room['text'] = excerpt.passage
                         room['text_length'] = len(excerpt.passage.split())
-                        room['source'] = excerpt.source
+                        room['text_source'] = excerpt.source
                         room['room_id'] = current_room
 
                         rooms[current_room] = room

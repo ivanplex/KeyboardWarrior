@@ -24,7 +24,7 @@ class Player(ndb.Model):
         tempUser.accuracy = 0
 
         tempUser.put()
-        
+
         return tempUser
 
     @classmethod
@@ -37,7 +37,6 @@ class Player(ndb.Model):
         return cls.query().filter(cls.user_id == user_id).get()
 
 class Excerpt(ndb.Model):
-    id = ndb.IntegerProperty()
     passage = ndb.TextProperty()
     created_at = ndb.DateTimeProperty(auto_now_add=True)
     updated_at = ndb.DateTimeProperty(auto_now=True)
