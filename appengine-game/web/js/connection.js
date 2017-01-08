@@ -32,12 +32,12 @@ function initConn() {
             handleInitialResponse(response);
         },
         error: function (e) {
-            console.log(e);
-            // alert('No response from server');
+            console.log('No response from server');
         }
     });
 }
 
+// Handles init connection response
 function handleInitialResponse(jsonReply) {
     console.log("handleInitialResponse");
     this.typeWords = jsonReply.room.text;
@@ -45,15 +45,16 @@ function handleInitialResponse(jsonReply) {
     this.playerId = jsonReply.player_id;
     this.playersInfo = jsonReply.room.players;
 
+    // correct time drift from server
     this.deltaTimestamp = 0;
     this.deltaTimestamp = jsonReply.timestamp - unixTimeStamp();
-
+    // load text received from server
     textCheck(getWordPassage());
     // start sending info at 2 seconds interval
     gameTicker = setInterval(sendInfo, 2000);
 }
 
-// Sends information to server periodically
+// Sends information to server periodically with timestamp, roomid, correctWords and mistakes
 function sendInfo() {
     console.log("sendinfo");
     var correctWords = getCorrectWord();
@@ -69,18 +70,16 @@ function sendInfo() {
             handleResponse(response);
         },
         error: function (e) {
-            console.log(e);
-            alert('Lost connection, try again');
-            $("#GameCanvas").hide();
-            $("#SplashScreen").show();
+            console.log('Lost connection, try again');
             clearInterval(gameTicker);
+            this.gameEnd = true;
+            gameCompleted();
         }
     });
 }
 
 function handleResponse(jsonReply) {
-    // startTime -1 means game has not started
-    // room null means game has ended
+    // startTime -1 means game has not started, room null means game has ended
     var room = jsonReply.room;
     // if room returned is null, dont process it
     if (room !== null) {
@@ -102,12 +101,9 @@ function handleResponse(jsonReply) {
         this.gameEnd = true;
         gameCompleted();
     } else {
+        // ongoing game, call the board to update itself
         this.gameEnd = false;
         updateBattle();
-        // tell Mr. Ivan to update the board.
-        // he can then ask for the startTime, and have state in the battle.js
-        // to determine whether or not to start the countdown-
-        // as well as to update the players movements by requesting it from you
     }
 }
 

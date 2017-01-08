@@ -94,7 +94,7 @@ span {
 	background-position: 0px 0px;
 	background-repeat: repeat-x;
 
-	animation: animatedBackground 30s linear infinite;
+	animation: animatedBackground 120s linear infinite;
 }
 
 #half-canvas {
