@@ -411,7 +411,7 @@ class Play(webapp2.RequestHandler):
                             player['mistakes'] = mistakes
 
                     # we want to keep player ping even though game hasn't started
-                    else if room['start_time'] == -1:
+                    elif room['start_time'] == -1:
                         player['updated_at'] = current_time
 
         else:
