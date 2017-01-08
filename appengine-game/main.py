@@ -60,7 +60,6 @@ class Generate(webapp2.RequestHandler):
             print(i);
 
             tempEx = models.Excerpt(passage = quote, source = source)
-            tempEx.id = i-30
             tempEx.key = ndb.Key(models.Excerpt, i-30);
             tempEx.put()
 
@@ -331,7 +330,7 @@ class Play(webapp2.RequestHandler):
                         room['players'] = []
                         room['start_time'] = -1
                         room['end_time'] = -1
-                        room['text_id'] = excerpt.id
+                        room['text_id'] = excerpt.key.id()
                         room['text'] = excerpt.passage
                         room['text_length'] = len(excerpt.passage.split())
                         room['source'] = excerpt.source
