@@ -40,7 +40,7 @@ function initConn() {
 
 // Handles init connection response
 function handleInitialResponse(jsonReply) {
-    console.log("handleInitialResponse");
+    // console.log("handleInitialResponse");
     this.typeWords = jsonReply.room.text;
     this.roomId = jsonReply.room.room_id;
     this.wordLength = jsonReply.room.text_length;
@@ -91,7 +91,8 @@ function handleResponse(jsonReply) {
         this.endTime = jsonReply.room.end_time;
         this.startTime = jsonReply.room.start_time;
         this.playersInfo = jsonReply.room.players;
-        console.log(this.playersInfo, "players");
+        // console.log(this.playersInfo, "players");
+        // console.log(getTimeLeft(), "time left in game");
     }
 
     var playerId = jsonReply.player_id;
@@ -99,7 +100,7 @@ function handleResponse(jsonReply) {
     var serverTimestamp = jsonReply.timestamp;
 
     if (room === null || (endTime < currentTime && endTime !== -1)) {
-        console.log("clearInterval");
+        // console.log("clearInterval");
         // game ended or invalid room
         room_id = -1;
         clearInterval(gameTicker)
@@ -144,7 +145,7 @@ function getEndTime() {
 
 function getTimeLeft() {
     // return time left in the game
-    return (endTime - unixTimeStamp());
+    return getEndTime() - unixTimeStamp();
 }
 
 function getWordLength() {
