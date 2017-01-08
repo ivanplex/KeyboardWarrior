@@ -45,8 +45,8 @@ function handleInitialResponse(jsonReply) {
     this.playerId = jsonReply.player_id;
     this.playersInfo = jsonReply.room.players;
 
-    deltaTimestamp = 0;
-    deltaTimestamp = jsonReply.timestamp - unixTimeStamp();
+    this.deltaTimestamp = 0;
+    this.deltaTimestamp = jsonReply.timestamp - unixTimeStamp();
 
     textCheck(getWordPassage());
     // start sending info at 2 seconds interval
@@ -101,33 +101,17 @@ function handleResponse(jsonReply) {
         $("#GameCanvas").hide();
         $("#SplashScreen").show();
         clearInterval(gameTicker)
-
         // resetBoard()
         // exit screen
         // give benoit a reset request
         this.gameEnd = true;
     } else {
         this.gameEnd = false;
-        // updateBoard()
+        updateBattle();
         // tell Mr. Ivan to update the board.
         // he can then ask for the startTime, and have state in the battle.js
         // to determine whether or not to start the countdown-
         // as well as to update the players movements by requesting it from you
-
-        // game is ongoing
-        if (startTime !== -1) {
-            //updateBoard()
-            // call this and have ivan
-            // game has started
-            if (startTime < currentTime) {
-                // Start counting down to start game
-                var countdownDifference = startTime - currentTime;
-                beginCountdown(countdownDifference);
-            }
-        } else {
-            // wait for startTime, show waiting screen at #gamecanvas
-            // document.getElementById("countdown-panel").style.display = "none";
-        }
     }
 }
 
@@ -156,9 +140,8 @@ function getStartTime(){
     return startTime;
 }
 
-// add delta to take into consideration of drift timestamp
-function getDeltaTimestamp() {
-    return (deltaTimestamp + unixTimeStamp());
+function getEndTime(){
+    return endTime;
 }
 
 // Set cookie with player id set, time expiry and path
