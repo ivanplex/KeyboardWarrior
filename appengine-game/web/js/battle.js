@@ -146,6 +146,9 @@ function gameCompleted(excerpt){
 	var gameFinishedPanel = document.getElementById("game-finished-panel");
 	gameFinishedPanel.style.display = "block";
 
+	var completePanel = document.getElementById("complete-panel");
+	completePanel.style.display = "block";
+
 	var leaderboardShade = document.getElementById("leaderboard-shade-area");
 	leaderboardShade.style.display = "block";
 
@@ -165,6 +168,9 @@ function playerCompleted(){
 
 	var completePanel = document.getElementById("complete-panel");
 	completePanel.style.display = "block";
+
+	var wpmPanel = document.getElementById("wpm-panel");
+	wpmPanel.style.display = "block";
 
 	var wpm = document.getElementById("wpm-div");
 	wpm.innerHTML = getWPM();
