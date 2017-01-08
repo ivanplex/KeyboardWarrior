@@ -167,6 +167,16 @@ span {
   display: none;
 }
 
+#game-finished-panel{
+  text-align: center;
+  display: none;
+}
+
+#wpm-panel{
+  text-align: center;
+  display: none;
+}
+
 #wpm-div{
   clear: both;
 }
