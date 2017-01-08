@@ -23,10 +23,12 @@ function loadingScreen(){
 	var completePanel = document.getElementById("complete-panel");
 	completePanel.style.display = "none";
 
+	var leaderboardShade = document.getElementById("leaderboard-shade-area");
+	leaderboardShade.style.display = "none";
 }
 
 /**
- * 
+ *
  */
 function initBattleGround() {
 
@@ -39,7 +41,7 @@ function initBattleGround() {
 	var players = getPlayersInfo();
 
 	for(var i = 0; i<players.length; i++){
-		fightingGround.innerHTML += '<div id="player'+(i+1)+'" playerID="'+players[i].id+'" class="player_icon"> <img id="warrior-image-'+(i+1)+'" class="WarriorImage" src="img/warrior2.png" /><div class="player-name">'+players[i].name+'</div></div>';	
+		fightingGround.innerHTML += '<div id="player'+(i+1)+'" playerID="'+players[i].id+'" class="player_icon"> <img id="warrior-image-'+(i+1)+'" class="WarriorImage" src="img/warrior2.png" /><div class="player-name">'+players[i].name+'</div></div>';
 
 		slider[players[i].id] = new Slider('player'+(i+1),'warrior-image-'+(i+1),myArray.length, $("#animate-area").width());
 
@@ -127,7 +129,7 @@ function gameTimeOut(){
 
 }
 
-function gameCompleted(){
+function gameCompleted(excerpt){
 
 	var waitingPanel = document.getElementById("waiting-panel");
 	waitingPanel.style.display = "none";
@@ -147,7 +149,16 @@ function gameCompleted(){
 	var wpm = document.getElementById("wpm-div");
 	wpm.innerHTML = getWPM();
 
-	inBattle = false;
+	var leaderboardShade = document.getElementById("leaderboard-shade-area");
+	leaderboardShade.style.display = "block";
+
+	var leaderboardPanel = document.getElementById("leaderboard-panel");
+
+	$.post( "/finished?excerpt="+excerpt, function( data ) {
+		leaderboardPanel.innerHTML =  data ;
+	});
+
+	inBattle = false
 }
 
 function updateBattle(){

@@ -100,7 +100,7 @@ function handleResponse(jsonReply) {
         room_id = -1;
         clearInterval(gameTicker)
         this.gameEnd = true;
-        gameCompleted();
+        gameCompleted(jsonReply.room['text_id]']);
     } else {
         this.gameEnd = false;
         updateBattle();

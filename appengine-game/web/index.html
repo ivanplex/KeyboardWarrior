@@ -86,17 +86,6 @@
 
 	<script src="js/settings.js"></script>
 
-	<div id="leaderboardModal" class="modal">
-		<!-- Modal content -->
-		<div class="modal-content">
-			<span class="close">&times;</span>
-			<div class="container" id="completedbox">
-			</div>
-		</div>
-	</div>
-
-	<script src="js/leaderboard.js"></script>
-
 	<!--<div id="SplashScreen" class="center">
         <img src="img/logo.jpg" height="400px" width="400px" />
         <div>
@@ -138,6 +127,10 @@
 									</div>
 								</div>
 							</div>
+							<div id="leaderboard-shade-area" class="col-sm-10 col-md-offset-1 leaderboard-shade-area">
+								<div id="leaderboard-panel">
+								</div>
+							</div>
 							<div id="fight-sign"><img src="img/fight.png" style="width: 100%;" /></div>
 							<div id="leaveBttn" class="leaveButton" role="main">
 								<img src="img/exit.png" height="35px" width="35px" />
@@ -148,7 +141,7 @@
 									<input type="text" class="form-control" id="user-input" />
 								</div>
 							</div>
-							<button onclick="gameCompleted()">Complete</button>
+							<button onclick="gameCompleted('1')">Complete</button>
 						</div>
 						<div id="fighting-ground" class="half-canvas">
 
