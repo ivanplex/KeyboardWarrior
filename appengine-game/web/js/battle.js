@@ -6,6 +6,24 @@ var slider = {};
 var countingDown = false;
 var inBattle = false;
 
+function loadingScreen(){
+
+	var waitingPanel = document.getElementById("waiting-panel");
+	waitingPanel.style.display = "block";
+
+	var countdownPanel = document.getElementById("countdown-panel");
+	countdownPanel.style.display = "none";
+
+	var paragraph = document.getElementById("paragraph-input");
+	paragraph.style.display = "none";
+
+	var userInputBlock = document.getElementById("user-input-block");
+	userInputBlock.style.display = "none";
+
+	var completePanel = document.getElementById("complete-panel");
+	completePanel.style.display = "none";
+
+}
 
 /**
  * 
@@ -101,15 +119,44 @@ function fight() {
 
 }
 
+function gameTimeOut(){
+
+}
+
+function gameCompleted(){
+
+	var waitingPanel = document.getElementById("waiting-panel");
+	waitingPanel.style.display = "none";
+
+	var countdownPanel = document.getElementById("countdown-panel");
+	countdownPanel.style.display = "none";
+
+	var paragraph = document.getElementById("paragraph-input");
+	paragraph.style.display = "none";
+
+	var userInputBlock = document.getElementById("user-input-block");
+	userInputBlock.style.display = "none";
+
+	var completePanel = document.getElementById("complete-panel");
+	completePanel.style.display = "block";
+
+	var wpm = document.getElementById("wpm-div");
+	wpm.innerHTML = getWPM();
+
+	inBattle = false;
+}
+
 function updateBattle(){
 
 	if(inBattle){
 
 		var players = getPlayersInfo();
 
+		//Update all player's status
 		for(var i = 0; i<players.length; i++){
 			slider[players[i].id].shift(players[i].words_done);
 		}
+
 	}else if(!countingDown && getStartTime() !== -1){
 		beginCountdown(getStartTime() - unixTimeStamp());
 	}

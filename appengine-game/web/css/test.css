@@ -145,3 +145,13 @@ span {
 #user-input-block {
   display: none;
 }
+
+
+#complete-panel{
+  text-align: center;
+  display: none;
+}
+
+#wpm-div{
+  clear: both;
+}
