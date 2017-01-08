@@ -187,6 +187,8 @@ function updateBattle(){
 
 	}else if(getStartTime() !== -1){
 		beginCountdown(getStartTime() - unixTimeStamp());
+	} else {
+		loadingScreen()
 	}
  
 }
