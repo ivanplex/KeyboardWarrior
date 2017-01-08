@@ -98,13 +98,9 @@ function handleResponse(jsonReply) {
         console.log("clearInterval");
         // game ended or invalid room
         room_id = -1;
-        $("#GameCanvas").hide();
-        $("#SplashScreen").show();
         clearInterval(gameTicker)
-        // resetBoard()
-        // exit screen
-        // give benoit a reset request
         this.gameEnd = true;
+        gameCompleted();
     } else {
         this.gameEnd = false;
         updateBattle();
