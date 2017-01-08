@@ -20,7 +20,7 @@ function drawPlayers(){
 
 	//Clear players from fighting ground and re-draw
 	clearFightingGround();
-	
+
 	var players = getPlayersInfo();
 
 	for(var i = 0; i<players.length; i++){
@@ -39,9 +39,9 @@ function drawPlayers(){
 
 /**
  * Initiate count down with T-minus: tMinus
- * 
+ *
  * This function is called repeatedly by updateBattle()
- * 
+ *
  * @para {Number} tMinus
  */
 function countDown(tMinus) {
@@ -52,7 +52,7 @@ function countDown(tMinus) {
 	//clear slider array
 	slider = {};
 
-	//Display T-Minus 
+	//Display T-Minus
 	var countdownNumber = document.getElementById("number-countdown");
 	countdownNumber.innerHTML = tMinus;
 
@@ -61,7 +61,7 @@ function countDown(tMinus) {
 	var fightAudio = document.getElementById("fight-audio");
 
 	//Before Game begins
-	if(tMinus>0) {	
+	if(tMinus>0) {
 
 	    drawPlayers();	//Redraw players
 	    countdownAudio.play();	//Play count-down beeps
@@ -115,9 +115,14 @@ function gameCompleted(excerpt){
 
 	var leaderboardPanel = document.getElementById("leaderboard-panel");
 
-	$.post( "/finished?excerpt="+excerpt, function( data ) {
-		leaderboardPanel.innerHTML =  data ;
-	});
+	setTimeout(
+		function()
+			{
+				console.log("Getting Leaderboard");
+				$.post( "/finished?excerpt="+excerpt, function( data ) {
+				leaderboardPanel.innerHTML =  data ;
+			})
+	}, 2000);
 
 	inBattle = false;
 }
@@ -163,5 +168,5 @@ function updateBattle(){
 		//alert("Game Suspended");
 		showLoadingScreen();		//Count down is suspended
 	}
- 
+
 }
