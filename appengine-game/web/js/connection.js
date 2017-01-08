@@ -105,6 +105,7 @@ function handleResponse(jsonReply) {
         // exit screen
         // give benoit a reset request
         this.gameEnd = true;
+        gameCompleted();
     } else {
         this.gameEnd = false;
         updateBattle();
