@@ -126,7 +126,7 @@ function gameCompleted(excerpt){
 				console.log("Getting Leaderboard");
 				$.post( "/finished?excerpt="+excerpt, function( data ) {
 				leaderboardPanel.innerHTML =  data ;
-			})
+			});
 	}, 2000);
 
 	inBattle = false;
