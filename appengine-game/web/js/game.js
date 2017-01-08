@@ -19,5 +19,5 @@ function getWPM(){
  */
 function restartGame(){
 	initConn();
-	loadingScreen();
+	showLoadingScreen();
 }
