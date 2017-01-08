@@ -401,7 +401,7 @@ class Play(webapp2.RequestHandler):
                         print("word length: " + str(words_length) + " words done: " + str(words_done))
 
                         # update the users :D only if words_done has changed
-                        if player['words_done'] > words_done and words_done <= words_length:
+                        if player['words_done'] > words_done:
                             player['words_done'] = words_done
                             player['updated_at'] = current_time
                             player['mistakes'] = mistakes
