@@ -38,9 +38,9 @@ indexes:
   properties:
   - name: user_id
   - name: wpm
-    direction: desc
 
 - kind: RacerStats
   properties:
   - name: user_id
   - name: wpm
+    direction: desc

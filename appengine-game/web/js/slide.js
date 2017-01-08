@@ -42,5 +42,5 @@ function Slider(id, imageID, stringLength, max_width){
       //alert(this.lastStep);
       console.log('Out of Bound!');
     }
-  }
+  };
 }
