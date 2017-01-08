@@ -22,10 +22,15 @@ var gamePanels =  null;
 var completePanel =  null;
 var gameFinishedPanel =  null;
 var wpmPanel =  null;
+var userInputBlock = null;
+var gameFinishedPanel = null;
 var leaderboardShade =  null;
 var gameCompletionPanels =  null;
 
 var fightingGround = null;
+
+
+
 
 
 window.onload = function loadAllPanels(){
@@ -41,8 +46,10 @@ window.onload = function loadAllPanels(){
 	completePanel = document.getElementById("complete-panel");		
 	gameFinishedPanel = document.getElementById("game-finished-panel");
 	wpmPanel = document.getElementById("wpm-panel");
+	userInputBlock = document.getElementById("user-input-block");
+	gameFinishedPanel = document.getElementById("game-finished-panel");
 	leaderboardShade = document.getElementById("leaderboard-shade-area");
-	gameCompletionPanels = {completePanel, gameFinishedPanel, wpmPanel, leaderboardShade};
+	gameCompletionPanels = {completePanel, gameFinishedPanel, wpmPanel, userInputBlock, gameFinishedPanel, leaderboardShade};
 
 	fightingGround = document.getElementById("fighting-ground");
 }
@@ -113,6 +120,7 @@ function clearCountDown(){
  * Clear all game panels
  */
 function clearGamePanels(){
+	alert('load');
 	for(var i=0;i<gamePanels.length;i++){
 		gamePanels[i].style.display = "none";
 	}

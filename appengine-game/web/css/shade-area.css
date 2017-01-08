@@ -54,6 +54,13 @@
 }
 
 @media only screen 
+and (max-height: 599px) {
+  #shade-area {
+    font-size: 12px;
+  }
+}
+
+@media only screen 
 and (min-height: 600px)
 and (max-height: 799px) {
   #shade-area {
