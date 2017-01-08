@@ -33,6 +33,9 @@ function initBattleGround() {
 	//Add player in fighting ground
 	var fightingGround = document.getElementById("fighting-ground");
 
+	//Empty warriors if exist in previous game
+	fightingGround.innerHTML = "";
+
 	var players = getPlayersInfo();
 
 	for(var i = 0; i<players.length; i++){
