@@ -30,10 +30,17 @@ function loadingScreen(){
  */
 function initBattleGround() {
 
+	//clear slider array
+	slider = {};	
+
+	drawPlayers();
+}
+
+function drawPlayers(){
+
 	//Add player in fighting ground
 	var fightingGround = document.getElementById("fighting-ground");
 
-	//Empty warriors if exist in previous game
 	fightingGround.innerHTML = "";
 
 	var players = getPlayersInfo();
@@ -49,7 +56,6 @@ function initBattleGround() {
 		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
 		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
 	}
-
 }
 
 function beginCountdown(tMinus) {
@@ -78,6 +84,8 @@ function beginCountdown(tMinus) {
 	var timeinterval = setInterval(function(){
 	    countdownFrom--;
 	    countdownNumber.innerHTML = countdownFrom;
+
+	    drawPlayers();
 
 	    if(countdownFrom<1){
 		    clearInterval(timeinterval);
