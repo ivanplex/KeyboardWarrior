@@ -3,7 +3,6 @@ from random import randint
 from google.appengine.ext import ndb
 
 class Player(ndb.Model):
-    user_id = ndb.StringProperty()
     nickname = ndb.StringProperty()
     wpm = ndb.FloatProperty()
     accuracy = ndb.FloatProperty()
