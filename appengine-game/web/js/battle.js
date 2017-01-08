@@ -74,7 +74,7 @@ function beginCountdown(tMinus) {
 	    countdownFrom--;
 	    countdownNumber.innerHTML = countdownFrom;
 
-	    if(countdownFrom<0){
+	    if(countdownFrom<1){
 		    clearInterval(timeinterval);
 
 		    //Hide Countdown
