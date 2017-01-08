@@ -83,6 +83,7 @@ class Leaderboard(webapp2.RequestHandler):
         return leaders
     @classmethod
     def Excerpt_Leaders(self, excerpt_id, PLAYERS_PER_PAGE):
+        print "getting excerpt leader"
         user = users.get_current_user()
         if user:
             races = models.Race.query(models.Race.excerpt_id == excerpt_id)
@@ -256,6 +257,8 @@ class Play(webapp2.RequestHandler):
                     ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / (ndb_player.games_played + 1)
                     ndb_player.games_played = ndb_player.games_played + 1
                     ndb_player.put()
+
+                    print "things put to db"
 
             # room hasn't started, we purge players which have not connected in a while
             elif _room['start_time'] > current_time or _room['start_time'] == -1:
