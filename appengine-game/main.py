@@ -53,8 +53,8 @@ class Generate(webapp2.RequestHandler):
             p_tags = htmltree.xpath('//p')
             p_content = [p.text_content() for p in p_tags]
 
-            quote = p_content[0].strip().replace('\n', ' ').replace('\r', '')
-            source = p_content[1].strip().replace('\n', ' ').replace('\r', '')
+            quote = p_content[0].strip().replace('\n', '').replace('\r', '')
+            source = p_content[1].strip().replace('\n', '').replace('\r', '')
 
             print(str(i) + ' "' + quote + '" "' + source + '"')
             print(i);
@@ -200,7 +200,6 @@ class Play(webapp2.RequestHandler):
 
             # room has expired -- save logic and etc
             if current_time > _room['end_time'] and _room['end_time'] != -1:
-                print('housekeeping on ' + str(_id))
                 # remove the reference from the game
                 del rooms[_id]
 
@@ -236,6 +235,7 @@ class Play(webapp2.RequestHandler):
                     ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / (ndb_player.games_played + 1)
                     ndb_player.games_played = ndb_player.games_played + 1
                     ndb_player.put()
+
 
         """
         END HOUSEKEEPING SECTION
