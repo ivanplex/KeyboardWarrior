@@ -1,27 +1,67 @@
 #fighting-ground {
-	height: 500px;
 	width: 100%;
 	bottom: 0;
 	position: absolute;
 	clear: both;
 }
 
-
 .player_icon{
-	height: 100px;
- 	width: 70px;
  	clear: both;
 	margin-left: 0px;
-
-}
-
-.WarriorImage {
-  height: 80px;
-  width: 60px;
 }
 
 .player-name {
-	font-size: 14px;
 	text-align: center;
 	clear: both;
 }
+
+@media only screen 
+and (min-height: 600px)
+and (max-height: 799px) {
+	#fighting-ground{
+		height: 300px;
+	}
+
+    .player_icon{
+		height: 60px;
+	 	width: 40px;
+	}
+
+	.WarriorImage {
+	  height: 50px;
+	  width: 40px;
+	}
+
+	.player-name {
+		font-size: 10px;
+	}
+}
+
+@media only screen 
+and (min-height: 800px){
+	#fighting-ground{
+		height: 500px;
+	}
+
+    .player_icon{
+		height: 100px;
+	 	width: 70px;
+	}
+
+	.WarriorImage {
+	  height: 80px;
+	  width: 60px;
+	}
+
+	.player-name {
+		font-size: 14px;
+	}
+}
+
+
+
+
+
+
+
+
