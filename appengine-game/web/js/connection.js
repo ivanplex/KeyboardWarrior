@@ -54,7 +54,6 @@ function handleInitialResponse(jsonReply) {
     textCheck(getWordPassage());
     // start sending info at every second interval
     gameTicker = setInterval(sendInfo, 1000);
-    console.log(textId,"textid");
 }
 
 // Sends information to server periodically with timestamp, roomid, correctWords and mistakes
@@ -89,7 +88,7 @@ function handleResponse(jsonReply) {
         this.endTime = jsonReply.room.end_time;
         this.startTime = jsonReply.room.start_time;
         this.playersInfo = jsonReply.room.players;
-        console.log(this.playersInfo, "players");
+        // console.log(this.playersInfo, "players");
         console.log(getTimeLeft(), "time left in game");
     }
 
@@ -112,7 +111,7 @@ function endGame() {
     this.gameEnd = true;
     this.roomId = -1;
     clearInterval(gameTicker);
-    console.log(textId);
+    console.log(textId, "textId");
     gameCompleted(textId);
 }
 
