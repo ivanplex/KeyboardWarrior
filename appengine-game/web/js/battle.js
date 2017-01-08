@@ -161,3 +161,8 @@ function updateBattle(){
 		beginCountdown(getStartTime() - unixTimeStamp());
 	}
 }
+
+function restartGame(){
+	initConn();
+	loadingScreen();
+}
