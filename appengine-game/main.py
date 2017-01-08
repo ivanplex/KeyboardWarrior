@@ -343,6 +343,7 @@ class Play(webapp2.RequestHandler):
                         room['text_source'] = excerpt.source
                         room['room_id'] = current_room
 
+                        app.registry['current_room'] = current_room
                         rooms[current_room] = room
 
                     # check if room is full or start time has passed current time (TODO: fix/optimise)
