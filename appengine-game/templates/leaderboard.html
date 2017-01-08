@@ -7,13 +7,15 @@
             <th>Pos</th>
             <th>Player</th>
             <th>WPM</th>
+            <th>Accuracy</th>
           </tr>
         </thead>
         {% for _leader in excerpt_leaders %}
         <tr>
            <td>{{loop.index}}</th>
-           <td>{{_leader.username}}</th>
-           <td>{{_leader.wpm}}</th>
+           <td>{{_leader.nickname}}</th>
+           <td>{{_leader.wpm|round(2)}}</td>
+  			   <td>{{_leader.accuracy|round(2)}}</td>
         </th>
         {% endfor %}
       </table>
@@ -21,20 +23,22 @@
     </div>
     <div class="col-md-2"></div>
     <div class="col-md-5">
-      {% if user_leaders and user_leaders|length > 1 %}
+      {% if users_top and users_top|length > 1 %}
       <table class="table">
         <thead>
           <tr>
             <th>Pos</th>
             <th>Player</th>
             <th>WPM</th>
+            <th>Accuracy</th>
           </tr>
         </thead>
-        {% for _leader in user_leaders %}
+        {% for _leader in users_top %}
         <tr>
            <td>{{loop.index}}</th>
-           <td>{{_leader.username}}</th>
-           <td>{{_leader.wpm}}</th>
+           <td>{{_leader.nickname}}</th>
+           <td>{{_leader.wpm|round(2)}}</td>
+  			   <td>{{_leader.accuracy|round(2)}}</td>
         </th>
         {% endfor %}
       </table>

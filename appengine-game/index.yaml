@@ -12,5 +12,35 @@ indexes:
 
 - kind: RacerStats
   properties:
+  - name: race_id
   - name: user_id
   - name: wpm
+
+- kind: RacerStats
+  properties:
+  - name: race_id
+  - name: user_id
+  - name: wpm
+    direction: desc
+
+- kind: RacerStats
+  properties:
+  - name: race_id
+  - name: wpm
+
+- kind: RacerStats
+  properties:
+  - name: race_id
+  - name: wpm
+    direction: desc
+
+- kind: RacerStats
+  properties:
+  - name: user_id
+  - name: wpm
+
+- kind: RacerStats
+  properties:
+  - name: user_id
+  - name: wpm
+    direction: desc

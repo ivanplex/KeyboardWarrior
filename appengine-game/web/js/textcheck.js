@@ -24,6 +24,10 @@ function textCheck(receivedText) {
   // display text
   displayParagraph(receivedText);
 
+  // show paragraph source
+  var source = document.getElementById("paragraph-source");
+  source.innerHTML = textSource;
+
   // highlight the first word as green
   handleWordColor(0, true);
 
