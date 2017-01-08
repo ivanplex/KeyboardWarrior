@@ -52,7 +52,7 @@ function handleInitialResponse(jsonReply) {
     // load text received from server
     textCheck(getWordPassage());
     // start sending info at every second interval
-    gameTicker = setInterval(sendInfo, 1000);
+    gameTicker = setInterval(sendInfo(), 1000);
 }
 
 // Sends information to server periodically with timestamp, roomid, correctWords and mistakes
