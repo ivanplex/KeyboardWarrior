@@ -55,13 +55,15 @@
 					<th>Pos</th>
 					<th>Player</th>
 					<th>WPM</th>
+					<th>Accuracy</th>
 				</tr>
 			</thead>
 			{% for _leader in leaders %}
 			<tr>
-			   <td>{{loop.index}}</th>
-			   <td>{{_leader.nickname}}</th>
-			   <td>{{_leader.wpm}}</th>
+			   <td>{{loop.index}}</td>
+			   <td>{{_leader.nickname}}</td>
+			   <td>{{_leader.wpm|round(2)}}</td>
+			   <td>{{_leader.accuracy|round(2)}}</td>
 			</th>
 			{% endfor %}
 		</table>
