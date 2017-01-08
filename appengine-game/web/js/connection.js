@@ -105,6 +105,7 @@ function handleResponse(jsonReply) {
     if (room === null || (endTime < currentTime && endTime !== -1)) {
         // console.log("clearInterval");
         // game ended or invalid room
+        gameCompleted(jsonReply.room['text_id]']);
         endGame();
     } else {
         // ongoing game, call the board to update itself
