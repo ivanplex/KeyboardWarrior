@@ -3,7 +3,6 @@
 
 var slider = {};
 
-var countingDown = false;
 var inBattle = false;
 
 function loadingScreen(){
@@ -62,9 +61,6 @@ function drawPlayers(){
 
 function beginCountdown(tMinus) {
 
-	//Change count down state
-	countingDown = true;
-
 	var waitingPanel = document.getElementById("waiting-panel");
 	waitingPanel.style.display = "none";
 
@@ -87,7 +83,6 @@ function beginCountdown(tMinus) {
 	    countdownAudio.play();
 
     }else{
-	    clearInterval(timeinterval);
 
 	    //Hide Countdown
 	    countdownPanel.style.display = "none";
@@ -110,9 +105,10 @@ function beginCountdown(tMinus) {
 		  fight();
 		}, 1500);
 
-		countingDown = false;
 		inBattle = true;
-	}3
+	}
+
+	console.log('Counting Down');
 }
 
 function fight() {
@@ -162,10 +158,11 @@ function gameCompleted(excerpt){
 		leaderboardPanel.innerHTML =  data ;
 	});
 
-	inBattle = false
+	inBattle = false;
 }
 
 function updateBattle(){
+	
 
 	if(inBattle){
 
@@ -176,10 +173,10 @@ function updateBattle(){
 			slider[players[i].id].shift(players[i].words_done);
 		}
 
-	}else if(!countingDown && getStartTime() !== -1){
+	}else if(getStartTime() !== -1){
 		beginCountdown(getStartTime() - unixTimeStamp());
-		alert("begin");
 	}
+ 
 }
 
 function restartGame(){
