@@ -20,4 +20,5 @@ function getWPM(){
 function restartGame(){
 	initConn();
 	showLoadingScreen();
+	paragraph.style.display = "none";
 }

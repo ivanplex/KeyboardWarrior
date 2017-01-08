@@ -120,9 +120,8 @@ function clearCountDown(){
  * Clear all game panels
  */
 function clearGamePanels(){
-	alert('load');
-	for(var i=0;i<gamePanels.length;i++){
-		gamePanels[i].style.display = "none";
+	for(var j=0;j<gamePanels.length;j++){
+		gamePanels[j].style.display = "none";
 	}
 }
 
