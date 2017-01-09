@@ -49,10 +49,10 @@ window.onload = function loadAllPanels(){
 	userInputBlock = document.getElementById("user-input-block");
 	gameFinishedPanel = document.getElementById("game-finished-panel");
 	leaderboardShade = document.getElementById("leaderboard-shade-area");
-	gameCompletionPanels = [completePanel, gameFinishedPanel, wpmPanel, userInputBlock, gameFinishedPanel, leaderboardShade];
+	gameCompletionPanels = [completePanel, gameFinishedPanel, wpmPanel, userInputBlock, leaderboardShade];
 
 	fightingGround = document.getElementById("fighting-ground");
-}
+};
 
 /**
  * Show loading Screen
