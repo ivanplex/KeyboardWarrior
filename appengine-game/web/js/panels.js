@@ -41,7 +41,8 @@ window.onload = function loadAllPanels(){
 	paragraph = document.getElementById("paragraph-input");			//Paragraph to type
 	source = document.getElementById("paragraph-source");			//Quote of paragraph
 	userInputBlock = document.getElementById("user-input-block");	//Player's input
-	gamePanels = [paragraph, source, userInputBlock];
+	gameTimeContainer = document.getElementById("gametime-container");
+	gamePanels = [paragraph, source, userInputBlock, gameTimeContainer];
 
 	completePanel = document.getElementById("complete-panel");		
 	gameFinishedPanel = document.getElementById("game-finished-panel");
@@ -82,14 +83,10 @@ function showCountDown(){
  * Display main Game Play
  */
 function showGamePlay() {
-	var paragraph = document.getElementById("paragraph-input");
-	paragraph.style.display = "block";
 
-	var userInputBlock = document.getElementById("user-input-block");
-	userInputBlock.style.display = "block";
-
-	var source = document.getElementById("paragraph-source");
-	source.style.display = "block";
+	for(var i=0;i<gamePanels.length;i++){
+		gamePanels[i].style.display = "block";
+	}
 
 	//Focus on user input
 	var userInput = document.getElementById("user-input");
