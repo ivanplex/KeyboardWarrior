@@ -46,13 +46,12 @@
 		<h4 id="hello" style="text-align: center">Hello {{ nickname }}</h4>
 		<button id="StartButton" class="btn btn-lg btn-primary btn-block" type="submit">Start Game</button>
 		<a class="btn btn-sm btn-link btn-block" href="{{ logouturl }}">Log Out</a>
-		<div id="cog" class="settingsCog" role="main">
-			<img src="img/cog.png" height="50px" width="50px" />
-		</div>
 		{% else %}
 		<a class="btn btn-lg btn-primary btn-block" href="{{ loginurl }}">Log In</a>
 		{% endif %}
-
+		<div id="cog" class="settingsCog" role="main">
+			<img src="img/cog.png" height="50px" width="50px" />
+		</div>
 
 		{% if leaders|length > 1 %}
 		<div id="leaderboardTable" style="margin-left:-50px">
@@ -160,6 +159,9 @@
 							<div id="leaveBttn" class="leaveButton" role="main">
 								<input type="image" src="img/exit.png" height="35px" width="35px" />
 							</div>
+							<div id="gametime-container">
+								<p id="gametime-left"></p>
+							</div>
 							<div id="user-input-block" class="col-sm-6 col-md-offset-3">
 								<div class="form-group">
 									<label for="user-input">Start typing:</label>
@@ -173,8 +175,8 @@
 					</div>
 					<script>
 						$("#StartButton").click(function() {
-							$.getScript("js/connection.js");
 							// Game Starts
+							$.getScript("js/connection.js");
 							$("#SplashScreen").hide();
 							$("#GameCanvas").show();
 						});

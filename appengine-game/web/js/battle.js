@@ -20,7 +20,7 @@ function drawPlayers(){
 
 	//Clear players from fighting ground and re-draw
 	clearFightingGround();
-	
+
 	//clear slider array
 	slider = {};
 
@@ -53,6 +53,8 @@ function countDown(tMinus) {
 	clearloadingScreen();
 	showCountDown();
 
+	var timeLeft = document.getElementById("gametime-left");
+	timeLeft.style.display = "inline";
 
 	//Display T-Minus
 	var countdownNumber = document.getElementById("number-countdown");
@@ -152,6 +154,9 @@ function playerCompleted(){
 }
 
 function updateBattle(){
+
+	var timeLeft = document.getElementById("gametime-left");
+	timeLeft.innerHTML = "Time left: " + getTimeLeft();
 
 	if(inBattle){
 

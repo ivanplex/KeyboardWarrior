@@ -154,6 +154,14 @@ caption {
   display: none;
 }
 
+#gametime-container{
+  font-size: 1em;
+  position: absolute;
+  top: 5;
+  right:5;
+  z-index: 10;
+}
+
 #wpm-panel{
   text-align: center;
   display: none;
