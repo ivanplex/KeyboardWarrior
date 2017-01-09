@@ -97,7 +97,7 @@ class Leaderboard(webapp2.RequestHandler):
         racerStats = models.RacerStats.query(models.RacerStats.user_id==user_id).order(-models.RacerStats.wpm)
         topStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return Leaderboard.inject_nicknames(topStats)
-        
+
     # Puts nicknames in RacerStats for the client
     @classmethod
     def inject_nicknames(self, stats):
@@ -130,7 +130,7 @@ class MainPage(webapp2.RequestHandler):
 
             template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
-            template_values['leaders'] = Leaderboard.Global_Leaders(LEADERBOARD_LENGTH)
+            template_values['leaders'] = Leaderboard.Global_Leaders(self.LEADERBOARD_LENGTH)
 
         template = JINJA_ENVIRONMENT.get_template('web/index.html')
         self.response.write(template.render(template_values))
@@ -477,8 +477,8 @@ class Finished(webapp2.RequestHandler):
 
         template_values = {}
 
-        template_values['excerpt_leaders'] = Leaderboard.Excerpt_Leaders(int(excerpt),LEADERBOARD_LENGTH)
-        template_values['users_top'] = Leaderboard.Users_Top(user.user_id(),LEADERBOARD_LENGTH)
+        template_values['excerpt_leaders'] = Leaderboard.Excerpt_Leaders(int(excerpt),self.LEADERBOARD_LENGTH)
+        template_values['users_top'] = Leaderboard.Users_Top(user.user_id(),self.LEADERBOARD_LENGTH)
 
         # contains templates for both tables. tables only rendered if data is available
         template = JINJA_ENVIRONMENT.get_template('templates/leaderboard.html')
