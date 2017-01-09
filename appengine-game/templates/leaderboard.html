@@ -1,5 +1,6 @@
   <div class="row">
     <div class="col-md-5">
+      {# only render table if data available #}
       {% if excerpt_leaders and excerpt_leaders|length > 0 %}
       <table class="table">
         <caption>Excerpt Leaderboard</caption>
@@ -13,11 +14,11 @@
         </thead>
         {% for _leader in excerpt_leaders %}
         <tr>
-           <td>{{loop.index}}</th>
-           <td>{{_leader.nickname}}</th>
+           <td>{{loop.index}}</td>  {# position in leaderboard #}
+           <td>{{_leader.nickname}}</td>
            <td>{{_leader.wpm|round(2)}}</td>
   			   <td>{{_leader.accuracy|round(2)}}</td>
-        </th>
+        </tr>
         {% endfor %}
       </table>
       {% endif %}

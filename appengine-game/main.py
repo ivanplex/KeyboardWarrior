@@ -71,29 +71,16 @@ class Load(webapp2.RequestHandler):
 
 # [START Leaderboard]
 class Leaderboard(webapp2.RequestHandler):
+    # Gets the global top leaders
     @classmethod
     def Global_Leaders(self,PLAYERS_PER_PAGE):
-        user = users.get_current_user()
-        if user:
-            #query = models.Player.query(models.Player.key.id() == user.user_id())
-            player = models.Player.get_by_user(user)
-            #Return this as well if the current user stats is required
         query = models.Player.query().order(-models.Player.wpm)
         leaders = query.fetch(PLAYERS_PER_PAGE)
         return leaders
+
+    # Gets the leaders for this excerpt
     @classmethod
     def Excerpt_Leaders(self, excerpt_id, PLAYERS_PER_PAGE):
-        user = users.get_current_user()
-        if user:
-            races = models.Race.query(models.Race.excerpt_id == excerpt_id)
-            if not races.get():
-                return None
-            racesIds = []
-            for race in races.fetch():
-                racesIds.extend([race.key.id()])
-            racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(racesIds), models.RacerStats.user_id == user.user_id()).order(-models.RacerStats.wpm)
-            racerStats.fetch(1);
-            #Return this as well if the current user stats is required
         races = models.Race.query(models.Race.excerpt_id == excerpt_id)
         if not races.get():
             return None
@@ -103,11 +90,15 @@ class Leaderboard(webapp2.RequestHandler):
         racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(racesIds)).order(-models.RacerStats.wpm)
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return Leaderboard.inject_nicknames(leaderStats)
+
+    # Gets the user's top scores
     @classmethod
     def Users_Top(self, user_id, PLAYERS_PER_PAGE):
         racerStats = models.RacerStats.query(models.RacerStats.user_id==user_id).order(-models.RacerStats.wpm)
         topStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return Leaderboard.inject_nicknames(topStats)
+
+    # Puts nicknames in RacerStats for the client
     @classmethod
     def inject_nicknames(self, stats):
         for stat in stats:
@@ -120,6 +111,8 @@ class Leaderboard(webapp2.RequestHandler):
 # [START main_page]
 # handles the main page as well as templating prompting for login or play game
 class MainPage(webapp2.RequestHandler):
+    LEADERBOARD_LENGTH = 15
+
     def get(self):
         user = users.get_current_user()
         logout = users.create_logout_url('/')
@@ -137,7 +130,7 @@ class MainPage(webapp2.RequestHandler):
 
             template_values['nickname'] = player.nickname
             template_values['loggedin'] = True
-            template_values['leaders'] = Leaderboard.Global_Leaders(15)
+            template_values['leaders'] = Leaderboard.Global_Leaders(self.LEADERBOARD_LENGTH)
 
         template = JINJA_ENVIRONMENT.get_template('web/index.html')
         self.response.write(template.render(template_values))
@@ -471,20 +464,23 @@ class Play(webapp2.RequestHandler):
 
 # [START get_final_leaderboards]
 class Finished(webapp2.RequestHandler):
+    LEADERBOARD_LENGTH = 10
+
     def post(self):
         user = users.get_current_user()
 
-        # if not user:
-        #     self.redirect('/')
-        #     return
+        if not user:
+            self.redirect('/')
+            return
 
         excerpt = self.request.get("excerpt", default_value="10")
 
         template_values = {}
 
-        template_values['excerpt_leaders'] = Leaderboard.Excerpt_Leaders(int(excerpt),15)
-        template_values['users_top'] = Leaderboard.Users_Top(user.user_id(),15)
+        template_values['excerpt_leaders'] = Leaderboard.Excerpt_Leaders(int(excerpt),self.LEADERBOARD_LENGTH)
+        template_values['users_top'] = Leaderboard.Users_Top(user.user_id(),self.LEADERBOARD_LENGTH)
 
+        # contains templates for both tables. tables only rendered if data is available
         template = JINJA_ENVIRONMENT.get_template('templates/leaderboard.html')
 
         self.response.write(template.render(template_values))
