@@ -7,7 +7,7 @@ function getWPM(){
 
 	for(var i = 0; i<players.length; i++){
 		if(players[i].id === getPlayerId()){
-			return players[i].words_done/(players[i].updated_at - getStartTime())*60;
+			return parseInt(players[i].words_done/(players[i].updated_at - getStartTime())*60);
 		}
 	}
 
@@ -20,4 +20,6 @@ function getWPM(){
 function restartGame(){
 	initConn();
 	showLoadingScreen();
+	//paragraph.style.display = "none";
+	//source.style.display = "none";
 }

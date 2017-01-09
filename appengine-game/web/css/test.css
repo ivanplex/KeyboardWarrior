@@ -93,12 +93,12 @@ caption {
   width: 100%;
   max-width: 1280px;
 	height: 100vh;;
-  max-height: 1200px;
+  max-height: 1080px;
 	background-image: url(../img/backgroundtree.png);
 	background-position: 0px 0px;
 	background-repeat: repeat-x;
 
-	animation: animatedBackground 120s linear infinite;
+	animation: animatedBackground 100s linear infinite;
 }
 
 #half-canvas {
