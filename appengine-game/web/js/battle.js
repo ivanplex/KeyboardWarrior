@@ -36,9 +36,6 @@ function drawPlayers(){
 		degreeRotation = 360/players.length*i;
 		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
 		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
-
-		var timeLeft = document.getElementById("gametime-left");
-		timeLeft.style.display ="hidden";
 	}
 
 }
@@ -55,9 +52,6 @@ function countDown(tMinus) {
 
 	clearloadingScreen();
 	showCountDown();
-
-	var timeLeft = document.getElementById("gametime-left");
-	timeLeft.style.display = "inline";
 
 	//Display T-Minus
 	var countdownNumber = document.getElementById("number-countdown");
@@ -124,9 +118,6 @@ function gameCompleted(excerpt){
 	leaderboardShade.style.display = "block";
 
 	var leaderboardPanel = document.getElementById("leaderboard-panel");
-
-	var timeLeft = document.getElementById("gametime-left");
-	timeLeft.style.display ="none";
 
 	setTimeout(
 		function()
