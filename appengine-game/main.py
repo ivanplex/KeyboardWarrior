@@ -29,7 +29,6 @@ from google.appengine.api import users
 from google.appengine.ext import ndb
 #from django.utils import simplejson as json
 
-import races
 import models
 
 import jinja2
