@@ -71,29 +71,16 @@ class Load(webapp2.RequestHandler):
 
 # [START Leaderboard]
 class Leaderboard(webapp2.RequestHandler):
+    # Gets the global top leaders
     @classmethod
     def Global_Leaders(self,PLAYERS_PER_PAGE):
-        user = users.get_current_user()
-        if user:
-            #query = models.Player.query(models.Player.key.id() == user.user_id())
-            player = models.Player.get_by_user(user)
-            #Return this as well if the current user stats is required
         query = models.Player.query().order(-models.Player.wpm)
         leaders = query.fetch(PLAYERS_PER_PAGE)
         return leaders
+
+    # Gets the leaders for this excerpt
     @classmethod
     def Excerpt_Leaders(self, excerpt_id, PLAYERS_PER_PAGE):
-        user = users.get_current_user()
-        if user:
-            races = models.Race.query(models.Race.excerpt_id == excerpt_id)
-            if not races.get():
-                return None
-            racesIds = []
-            for race in races.fetch():
-                racesIds.extend([race.key.id()])
-            racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(racesIds), models.RacerStats.user_id == user.user_id()).order(-models.RacerStats.wpm)
-            racerStats.fetch(1);
-            #Return this as well if the current user stats is required
         races = models.Race.query(models.Race.excerpt_id == excerpt_id)
         if not races.get():
             return None
@@ -103,11 +90,15 @@ class Leaderboard(webapp2.RequestHandler):
         racerStats = models.RacerStats.query(models.RacerStats.race_id.IN(racesIds)).order(-models.RacerStats.wpm)
         leaderStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return Leaderboard.inject_nicknames(leaderStats)
+
+    # Gets the user's top scores
     @classmethod
     def Users_Top(self, user_id, PLAYERS_PER_PAGE):
         racerStats = models.RacerStats.query(models.RacerStats.user_id==user_id).order(-models.RacerStats.wpm)
         topStats = racerStats.fetch(PLAYERS_PER_PAGE)
         return Leaderboard.inject_nicknames(topStats)
+        
+    # Puts nicknames in RacerStats for the client
     @classmethod
     def inject_nicknames(self, stats):
         for stat in stats:
