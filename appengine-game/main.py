@@ -42,6 +42,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 # [END imports]
 
+# called to build the excerpts
 class Generate(webapp2.RequestHandler):
 
     def get(self):
@@ -62,6 +63,7 @@ class Generate(webapp2.RequestHandler):
             tempEx.key = ndb.Key(models.Excerpt, i);
             tempEx.put()
 
+# test if the excerpts have been loaded correctly
 class Load(webapp2.RequestHandler):
     def get(self):
         for i in range(0,100):
@@ -117,6 +119,7 @@ class Leaderboard(webapp2.RequestHandler):
 
 
 # [START main_page]
+# handles the main page as well as templating prompting for login or play game
 class MainPage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -143,6 +146,7 @@ class MainPage(webapp2.RequestHandler):
 # [END main_page]
 
 # [START change_player_name]
+# allows the user to change their nicknames
 class Player(webapp2.RequestHandler):
     def post(self):
         user = users.get_current_user()
@@ -169,15 +173,22 @@ class Player(webapp2.RequestHandler):
 # [END change_player_name]
 
 # [START play]
+# main game logic
 class Play(webapp2.RequestHandler):
+    # how long a user has to be inactive to time out before game starts
+    # allows the user to leave the game
     ROOM_TIMEOUT = 4
 
+    # length of game and how long until game starts once we have enough players
     GAME_INTERVAL = 60
     WAIT_INTERVAL = 15
 
+    # minimum and maximum players per lobby
     MIN_PLAYERS = 3
     MAX_PLAYERS = 5
 
+    # constant to determine how many rooms in our system concurrently
+    # we use an RNG to prevent concurrency issues with incrementing IDs
     MAX_ROOMS = 1000000
 
     # game logic handled by POSTs
@@ -188,6 +199,7 @@ class Play(webapp2.RequestHandler):
         # current unix timestamp
         current_time = int(time.time())
 
+        # store these in the app registry of webapp2
         current_room = app.registry.get('current_room')
         rooms = app.registry.get('rooms')
 
@@ -203,6 +215,7 @@ class Play(webapp2.RequestHandler):
 
         """
         HOUSEKEEPING SECTION, I SUGGEST WE PROCESS/SAVE HERE INSTEAD OF WHEN THE GAME 'ENDS'
+        called every time /play is posted to, and updates the entire game status
         """
 
         for _id in rooms.keys():
@@ -224,7 +237,7 @@ class Play(webapp2.RequestHandler):
                 # we can create the racerstats here this way
                 for _player in _room['players']:
 
-                    # skip if player isn't valid but this should NEVER happen
+                    # skip if player didn't really participate in the game
                     if _player['updated_at'] <= _room['start_time']:
                         continue
 
@@ -252,11 +265,14 @@ class Play(webapp2.RequestHandler):
                 _idx = []
                 _players = _room['players']
 
+                # build indexes of players last updated before game start
                 for i in range(len(_players)):
                     if _players[i]['updated_at'] + self.ROOM_TIMEOUT < current_time:
                         _idx.append(i)
 
+                # if we have players to remove, we remove them
                 if len(_idx) != 0:
+                    # remove in reverse to prevent having to recompute new indexes
                     for i in reversed(_idx):
                         del _players[i]
 
@@ -476,12 +492,12 @@ class Finished(webapp2.RequestHandler):
 # [END get_final_leaderboards]
 
 # [START app]
+# app routes handling
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/play', Play),
     ('/generate', Generate),
     ('/load', Load),
-    ('/races/new', 'races.New'),
     ('/player', Player),
     ('/finished', Finished),
 ], debug=True)

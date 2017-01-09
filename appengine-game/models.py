@@ -2,6 +2,24 @@ from random import randint
 
 from google.appengine.ext import ndb
 
+"""
+Defines the models used by NDB and the game
+
+Player: 
+Represents the User, has a unique UserID key, wpm stats, accuracy and games played
+Has helper methods to create new user if not exist as well as retrieve user by ID
+
+Excerpt: Represents the text used in races.
+Has strings representing the source of the texts as well as the texts
+Helper method to get a random excerpt
+
+RacerStats: Stats of a Race
+Have the race_id, user_id, wpm, accuracy and time
+
+Race: has a unique ID of the race used in race_id references
+Also has the excerpt's ID and the start time of the race
+"""
+
 class Player(ndb.Model):
     nickname = ndb.StringProperty()
     wpm = ndb.FloatProperty()
