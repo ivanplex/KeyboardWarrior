@@ -27,12 +27,12 @@ function drawPlayers(){
 	var players = getPlayersInfo();
 
 	for(var i = 0; i<players.length; i++){
-		fightingGround.innerHTML += '<div id="player'+(i+1)+'" playerID="'+players[i].id+'" class="player_icon"> <img id="warrior-image-'+(i+1)+'" class="WarriorImage" src="img/warrior2.png" /><div class="player-name">'+players[i].name+'</div></div>';
+		fightingGround.innerHTML += '<div id="player'+(i+1)+'" playerID="'+players[i].id+'" class="player_icon"> <img id="warrior-image-'+(i+1)+'-2" class="WarriorImage" src="img/warrior2.png" /><img id="warrior-image-'+(i+1)+'-3" class="WarriorImage" src="img/warrior3.png" style="display: none;"/><img id="warrior-image-'+(i+1)+'-4" class="WarriorImage" src="img/warrior4.png" style="display: none;"/><div class="player-name">'+players[i].name+'</div></div>';
 
 		slider[players[i].id] = new Slider('player'+(i+1),'warrior-image-'+(i+1),myArray.length, $("#animate-area").width());
 
 		//Add color filters to warrior image
-		var image = document.getElementById("warrior-image-"+(i+1));
+		var image = document.getElementById("player"+(i+1));
 		degreeRotation = 360/players.length*i;
 		image.style.filter = "hue-rotate("+degreeRotation+"deg)";
 		image.style.WebkitFilter = "hue-rotate("+degreeRotation+"deg)";
