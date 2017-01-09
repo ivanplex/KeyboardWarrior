@@ -82,7 +82,6 @@ class Leaderboard(webapp2.RequestHandler):
         return leaders
     @classmethod
     def Excerpt_Leaders(self, excerpt_id, PLAYERS_PER_PAGE):
-        print "getting excerpt leader"
         user = users.get_current_user()
         if user:
             races = models.Race.query(models.Race.excerpt_id == excerpt_id)
@@ -112,7 +111,7 @@ class Leaderboard(webapp2.RequestHandler):
     def inject_nicknames(self, stats):
         for stat in stats:
             player = models.Player.get_by_user_id(stat.user_id)
-            _nickname = player.nickname;
+            _nickname = player.nickname
             stat.nickname = _nickname
         return stats
 
@@ -227,7 +226,6 @@ class Play(webapp2.RequestHandler):
 
                     # skip if player isn't valid but this should NEVER happen
                     if _player['updated_at'] <= _room['start_time']:
-                        print('BIG ERROR TELL BOON')
                         continue
 
                     wpm = float(_player['words_done']) / float(_player['updated_at'] - _room['start_time']) * 60
@@ -248,8 +246,6 @@ class Play(webapp2.RequestHandler):
                     ndb_player.accuracy = ((ndb_player.accuracy * ndb_player.games_played) + accuracy) / (ndb_player.games_played + 1)
                     ndb_player.games_played = ndb_player.games_played + 1
                     ndb_player.put()
-
-                    print "things put to db"
 
             # room hasn't started, we purge players which have not connected in a while
             elif _room['start_time'] > current_time or _room['start_time'] == -1:
@@ -434,7 +430,7 @@ class Play(webapp2.RequestHandler):
                             return
 
                         # update the users :D only if words_done has changed
-                        if words_done > player['words_done']:
+                        if words_done > player['words_done'] or mistakes > player['mistakes']:
                             player['words_done'] = words_done
                             player['updated_at'] = current_time
                             player['mistakes'] = mistakes
