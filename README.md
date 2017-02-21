@@ -25,3 +25,37 @@ word will not be submitted and no progress will be made.
 correct words are typed by the user the server will be notified how many mistakes the
 user has made. From this information we can tell which excerpts are the most difficult as
 well as allow users to track their typing improvements.
+
+## Tools Used
+
+- Postman
+	- Allows testing of HTTP API’s
+	- Used Google App Engine login cookies from browser to imitate sessions
+	- Tested valid and invalid data for our endpoint
+	- https://www.getpostman.com/
+- CLOC
+	- Used to calculate lines of code
+- Git repository hosted on github.com
+	- Manage source -- separate front and back end branches.
+	- Assign bugs/ features requests
+	- All merges and conflict resolution was done with the physical presence of all commit authors
+- Firefox developer tools
+	- Testing different screen sizes for correct scaling
+	- Invoking javascript functions from console to speed up development
+- JSHint : testing tool for javascript code (via sublime-jshint)
+
+## Statistics
+
+Lines of code: 1481 (according to CLOC)
+
+## Non-Original Source Code
+
+- Libraries used - jquery - webapp2 - bootstrap - google app engine api (ndb and users)
+- JQuery
+	- https://jquery.com/
+- Bootstrap
+	- http://getbootstrap.com/
+- LXML
+	- http://lxml.de/​ - provided with Google App Engine
+	- Utilised for extraction of text excerpts from excerpt source.
+- Used official CDN for these common libraries to reduces GAE bandwidth use.
